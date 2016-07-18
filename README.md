@@ -1,5 +1,146 @@
 # Robust Back-fitting
 
-Code implementing the robust back-fitting algorithm as proposed in 
+R package implementing the robust back-fitting algorithm as proposed in 
 [this submitted manuscript](http://www.stat.ubc.ca/~matias/RBF.pdf). 
+
+The package can be installed from within `R` by using
+```R
+library(devtools)
+install_github("msalibian/RBF")
+```
+Here is a (longish) example on how to use the code. 
+```R
+# Airquality example
+# of RBF (robust backfitting)
+
+library(RBF)
+
+# Prepare the matrix "x" of explanatory variables
+# and the vector "y" of responses 
+data(airquality)
+x <- airquality
+x <- x[ complete.cases(x), ]
+x <- x[, c('Ozone', 'Solar.R', 'Wind', 'Temp')]
+y <- as.vector(x$Ozone)
+x <- as.matrix(x[, c('Solar.R', 'Wind', 'Temp')])
+
+n <- nrow(x)
+
+# Display the data
+pairs(cbind(y,x), labels=c('Ozone', colnames(x)), pch=19, col='gray30', cex=1.5)
+
+# Optimal bandwidths (obtained via robust leave-one-out CV)
+# (described in the paper)
+bandw <- c(136.728453,   8.894283,   4.764985)
+
+# Use the robust backfitting algorithm to fit an additive
+# model using Tukey's bisquare loss (the default tuning
+# constant for this loss function is 4.685)
+fit.full <- backf.rob(Xp=x, yp=y, windows=bandw, epsilon=1e-6, 
+                     degree=1, type='Tukey')
+
+# Display the 3 fits (one per additive component)
+# lim.cl and lim.rob will be used to obtain common
+# axis limits when displaying both robust and classical
+# fits on the same plot
+
+lim.cl <- lim.rob <- matrix(0, 2, 3)
+par(mfrow=c(2,2))
+for(j in 1:3) {
+  re <- y - fit.full$alpha - rowSums(fit.full$g.matrix[,-j])
+  lim.rob[,j] <- c(min(re), max(re))
+  plot(re ~ x[,j], type='p', pch=19, col='gray30', xlab=colnames(x)[j], ylab='', cex=1.5)
+  oo <- order(x[,j])
+  lines(x[oo,j], fit.full$g.matrix[oo,j], lwd=5, col='blue')
+}
+
+# Compute the classical backfitting 
+# Bandwidths chosen via leave-one-out CV
+bandw.cl <- c(91.15, 10.67, 9.53)
+fit.cl <- backf.cl(Xp=x, yp=y, windows=bandw.cl, epsilon=1e-6, 
+                   degree=1)
+
+# Display the 3 fits (one per additive component)
+par(mfrow=c(2,2))
+for(j in 1:3) {
+  re <- y - fit.cl$alpha - rowSums(fit.cl$g.matrix[,-j])
+  lim.cl[,j] <- c(min(re), max(re))
+  plot(re ~ x[,j], type='p', pch=19, col='gray30', xlab=colnames(x)[j], ylab='', cex=1.5)
+  oo <- order(x[,j])
+  lines(x[oo,j], fit.cl$g.matrix[oo,j], lwd=5, col='magenta')
+}
+
+# Determine common y-axis limits
+lims <- lim.cl
+for(j in 1:3) {
+  lims[1,j] <- min(lim.cl[1,j], lim.rob[1,j])
+  lims[2,j] <- max(lim.cl[2,j], lim.rob[2,j])
+}
+
+# Overlay classic and robust backfitting fits
+# on the partial residuals plots of the classical estimator
+par(mfrow=c(2,2))
+for(j in 1:3) {
+  re <- y - fit.cl$alpha - rowSums(fit.cl$g.matrix[,-j])
+  plot(re ~ x[,j], type='p', pch=19, col='gray30', xlab=colnames(x)[j], ylab='', cex=1.5,
+      ylim=lims[,j])
+  oo <- order(x[,j])
+  lines(x[oo,j], fit.cl$g.matrix[oo,j], lwd=5, col='magenta')
+  lines(x[oo,j], fit.full$g.matrix[oo,j], lwd=5, col='blue')
+}
+
+
+# Find possile outliers 
+
+re.ro <- y - fit.full$alpha - rowSums(fit.full$g.matrix)
+ou.ro <- boxplot(re.ro, plot=FALSE)$out
+ou.ro <- (1:n)[ re.ro %in% ou.ro ]
+
+boxplot(re.ro, col='gray80', pch=19, cex=1.5)
+points(rep(1, length(ou.ro)), re.ro[ou.ro], pch=19, cex=2, col='red')
+
+# Highlight the potential outliers on the scatter plots
+cs <- rep('gray30', nrow(x))
+cs[ou.ro] <- 'red'
+os <- 1:nrow(x)
+os2 <- c(os[-ou.ro], os[ou.ro])
+pairs(cbind(y,x)[os2,], labels=c('Ozone', colnames(x)), pch=19, col=cs[os2], cex=1.5)
+
+
+# Highlight outliers on the partial residuals plots
+# of the robust estimator
+par(mfrow=c(2,2))
+for(j in 1:3) {
+  re <- y - fit.full$alpha - rowSums(fit.full$g.matrix[,-j])
+  plot(re ~ x[,j], type='p', pch=19, col='gray30', xlab=colnames(x)[j], ylab='', cex=1.5,
+       ylim=lims[,j])
+  points(re[ou.ro] ~ x[ou.ro,j], pch=19, col='red', cex=1.5)
+  oo <- order(x[,j])
+  lines(x[oo,j], fit.cl$g.matrix[oo,j], lwd=5, col='magenta')
+  lines(x[oo,j], fit.full$g.matrix[oo,j], lwd=5, col='blue')
+}
+
+
+# Run the classical backfitting algorithm without outliers
+x2 <- x[-ou.ro,]
+y2 <- y[-ou.ro]
+bandw.cl2 <- c(138.87, 10.52, 4.85)
+fit.cl2 <- backf.cl(Xp=x2, yp=y2, windows=bandw.cl2, epsilon=1e-6, 
+                   degree=1)
+
+# Overlay the "clean" classic and the robust backfitting fits
+# on the partial residuals plots of the robust estimator
+par(mfrow=c(2,2))
+for(j in 1:3) {
+  re <- y - fit.full$alpha - rowSums(fit.full$g.matrix[,-j])
+  plot(re ~ x[,j], type='p', pch=19, col='gray30', xlab=colnames(x)[j], ylab='', cex=1.5,
+       ylim=lims[,j])
+  points(re[ou.ro] ~ x[ou.ro,j], pch=19, col='red', cex=1.5)
+  oo <- order(x2[,j])
+  lines(x2[oo,j], fit.cl2$g.matrix[oo,j], lwd=5, col='magenta')
+  oo <- order(x[,j])
+  lines(x[oo,j], fit.full$g.matrix[oo,j], lwd=5, col='blue')
+}
+```
+
 
