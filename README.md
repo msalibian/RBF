@@ -1,4 +1,4 @@
-# Robust Back-fitting
+# Robust Backfitting
 
 R package implementing the robust back-fitting algorithm as proposed in 
 [this submitted manuscript](http://www.stat.ubc.ca/~matias/RBF.pdf). 
