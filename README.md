@@ -1,7 +1,7 @@
 Robust backfitting
 ================
 Matias Salibian
-2016-08-01
+2016-10-31
 
 A robust backfitting algorithm
 ------------------------------
