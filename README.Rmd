@@ -11,7 +11,9 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## A robust backfitting algorithm
 
-An `R` package implementing the robust back-fitting algorithm as proposed in 
+This repository contains an `R` package 
+implementing the robust back-fitting algorithm as proposed by
+Boente, Martinez and Salibian-Barrera  in 
 [this submitted manuscript](http://www.stat.ubc.ca/~matias/RBF.pdf). 
 
 The package can be installed from within `R` by using

@@ -1,12 +1,12 @@
 Robust backfitting
 ================
 Matias Salibian
-2016-10-31
+2016-11-05
 
 A robust backfitting algorithm
 ------------------------------
 
-An `R` package implementing the robust back-fitting algorithm as proposed in [this submitted manuscript](http://www.stat.ubc.ca/~matias/RBF.pdf).
+This repository contains an `R` package implementing the robust back-fitting algorithm as proposed by Boente, Martinez and Salibian-Barrera in [this submitted manuscript](http://www.stat.ubc.ca/~matias/RBF.pdf).
 
 The package can be installed from within `R` by using
 
