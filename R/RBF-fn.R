@@ -338,7 +338,7 @@ backf.rob <- function(Xp, yp, windows, point=NULL, epsilon=1e-6, degree=0,
 # CV functions
 
 backf.rob.cv <- function(k=5, Xp, yp, windows, epsilon, 
-                         degree, type, seed=123) {
+                         degree, type, seed=123, max.it=50) {
   # does k-fold CV and returns "robust mean-squared prediction error"
   n <- length(yp)
   
@@ -355,7 +355,7 @@ backf.rob.cv <- function(k=5, Xp, yp, windows, epsilon,
     XX <- Xp[ids!=j,]
     yy <- yp[ids!=j]
     tmp <- try( backf.rob(Xp=XX, yp=yy, point=Xp[ids==j,], windows=windows, epsilon=epsilon,
-                          degree=degree, type=type) )
+                          degree=degree, type=type, max.it=max.it) )
     if( class(tmp) != 'try-error') {
       preds[ids==j] <- rowSums(tmp$prediction) + tmp$alpha
     }
@@ -367,7 +367,7 @@ backf.rob.cv <- function(k=5, Xp, yp, windows, epsilon,
 
 
 backf.l2.cv <- function(k=5, Xp, yp, windows, epsilon, 
-                        degree, type) {
+                        degree, type, max.it=50) {
   # does k-fold CV and returns mean-squared prediction error
   n <- length(yp)
   # k1 <- floor(n/k)
@@ -382,7 +382,7 @@ backf.l2.cv <- function(k=5, Xp, yp, windows, epsilon,
     XX <- Xp[ids!=j,]
     yy <- yp[ids!=j]
     tmp <- try( backf.cl(Xp=XX, yp=yy, point=Xp[ids==j,], windows=windows, epsilon=epsilon,
-                         degree=degree) )
+                         degree=degree, max.it=max.it) )
     if( class(tmp) != 'try-error') {
       preds[ids==j] <- rowSums(tmp$prediction) + tmp$alpha
     }
