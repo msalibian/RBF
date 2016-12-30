@@ -335,3 +335,61 @@ backf.rob <- function(Xp, yp, windows, point=NULL, epsilon=1e-6, degree=0,
 }
 
 
+# CV functions
+
+backf.rob.cv <- function(k=5, Xp, yp, windows, epsilon, 
+                         degree, type, seed=123) {
+  # does k-fold CV and returns "robust mean-squared prediction error"
+  n <- length(yp)
+  
+  # k1 <- floor(n/k)
+  # ids <- rep(1:k, each=k1)
+  # if( length(ids) < n ) ids <- c(ids, 1:(n%%k))
+  
+  # save existing random seed
+  if(exists(".Random.seed", where=.GlobalEnv)) old.seed <- .Random.seed
+  set.seed(seed)
+  ids <- sample( (1:n) %% k + 1 )
+  preds <- rep(NA, n)
+  for(j in 1:k) {
+    XX <- Xp[ids!=j,]
+    yy <- yp[ids!=j]
+    tmp <- try( backf.rob(Xp=XX, yp=yy, point=Xp[ids==j,], windows=windows, epsilon=epsilon,
+                          degree=degree, type=type) )
+    if( class(tmp) != 'try-error') {
+      preds[ids==j] <- rowSums(tmp$prediction) + tmp$alpha
+    }
+  }
+  # restore seed existing before call
+  if(exists('old.seed')) assign('.Random.seed', old.seed, envir=.GlobalEnv)
+  return( mad( (preds-yp), na.rm=TRUE )^2 + median( (preds-yp), na.rm=TRUE )^2 )
+}
+
+
+backf.l2.cv <- function(k=5, Xp, yp, windows, epsilon, 
+                        degree, type) {
+  # does k-fold CV and returns mean-squared prediction error
+  n <- length(yp)
+  # k1 <- floor(n/k)
+  # ids <- rep(1:k, each=k1)
+  # if( length(ids) < n ) ids <- c(ids, 1:(n%%k))
+  # save existing random seed
+  if(exists(".Random.seed", where=.GlobalEnv)) old.seed <- .Random.seed
+  set.seed(seed)
+  ids <- sample( (1:n) %% k + 1 )
+  preds <- rep(NA, n)
+  for(j in 1:k) {
+    XX <- Xp[ids!=j,]
+    yy <- yp[ids!=j]
+    tmp <- try( backf.cl(Xp=XX, yp=yy, point=Xp[ids==j,], windows=windows, epsilon=epsilon,
+                         degree=degree) )
+    if( class(tmp) != 'try-error') {
+      preds[ids==j] <- rowSums(tmp$prediction) + tmp$alpha
+    }
+  }
+  # restore seed existing before call
+  if(exists('old.seed')) assign('.Random.seed', old.seed, envir=.GlobalEnv)
+  return( mean( (preds-yp)^2, na.rm=TRUE ) )
+}
+
+
