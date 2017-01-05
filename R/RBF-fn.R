@@ -341,15 +341,14 @@ backf.rob.cv <- function(k=5, Xp, yp, windows, epsilon,
                          degree, type, seed=123, max.it=50) {
   # does k-fold CV and returns "robust mean-squared prediction error"
   n <- length(yp)
-  
-  # k1 <- floor(n/k)
-  # ids <- rep(1:k, each=k1)
-  # if( length(ids) < n ) ids <- c(ids, 1:(n%%k))
-  
+  k1 <- floor(n/k)
+  ids <- rep(1:k, each=k1)
+  if( length(ids) < n ) ids <- c(ids, 1:(n%%k))
   # save existing random seed
   # if(exists(".Random.seed", where=.GlobalEnv)) old.seed <- .Random.seed
   # set.seed(seed)
-  ids <- sample( (1:n) %% k + 1 )
+  # ids <- sample( (1:n) %% k + 1 )
+  ids <- sample(ids)
   preds <- rep(NA, n)
   for(j in 1:k) {
     XX <- Xp[ids!=j,]
@@ -370,13 +369,14 @@ backf.l2.cv <- function(k=5, Xp, yp, windows, epsilon,
                         degree, seed=123, max.it=50) {
   # does k-fold CV and returns mean-squared prediction error
   n <- length(yp)
-  # k1 <- floor(n/k)
-  # ids <- rep(1:k, each=k1)
-  # if( length(ids) < n ) ids <- c(ids, 1:(n%%k))
+  k1 <- floor(n/k)
+  ids <- rep(1:k, each=k1)
+  if( length(ids) < n ) ids <- c(ids, 1:(n%%k))
   # save existing random seed
   # if(exists(".Random.seed", where=.GlobalEnv)) old.seed <- .Random.seed
   # set.seed(seed)
-  ids <- sample( (1:n) %% k + 1 )
+  # ids <- sample( (1:n) %% k + 1 )
+  ids <- sample(ids)
   preds <- rep(NA, n)
   for(j in 1:k) {
     XX <- Xp[ids!=j,]
