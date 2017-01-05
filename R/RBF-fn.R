@@ -367,7 +367,7 @@ backf.rob.cv <- function(k=5, Xp, yp, windows, epsilon,
 
 
 backf.l2.cv <- function(k=5, Xp, yp, windows, epsilon, 
-                        degree, type, max.it=50) {
+                        degree, seed=123, max.it=50) {
   # does k-fold CV and returns mean-squared prediction error
   n <- length(yp)
   # k1 <- floor(n/k)
