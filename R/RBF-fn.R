@@ -347,8 +347,8 @@ backf.rob.cv <- function(k=5, Xp, yp, windows, epsilon,
   # if( length(ids) < n ) ids <- c(ids, 1:(n%%k))
   
   # save existing random seed
-  if(exists(".Random.seed", where=.GlobalEnv)) old.seed <- .Random.seed
-  set.seed(seed)
+  # if(exists(".Random.seed", where=.GlobalEnv)) old.seed <- .Random.seed
+  # set.seed(seed)
   ids <- sample( (1:n) %% k + 1 )
   preds <- rep(NA, n)
   for(j in 1:k) {
@@ -361,7 +361,7 @@ backf.rob.cv <- function(k=5, Xp, yp, windows, epsilon,
     }
   }
   # restore seed existing before call
-  if(exists('old.seed')) assign('.Random.seed', old.seed, envir=.GlobalEnv)
+  # if(exists('old.seed')) assign('.Random.seed', old.seed, envir=.GlobalEnv)
   return( mad( (preds-yp), na.rm=TRUE )^2 + median( (preds-yp), na.rm=TRUE )^2 )
 }
 
@@ -374,8 +374,8 @@ backf.l2.cv <- function(k=5, Xp, yp, windows, epsilon,
   # ids <- rep(1:k, each=k1)
   # if( length(ids) < n ) ids <- c(ids, 1:(n%%k))
   # save existing random seed
-  if(exists(".Random.seed", where=.GlobalEnv)) old.seed <- .Random.seed
-  set.seed(seed)
+  # if(exists(".Random.seed", where=.GlobalEnv)) old.seed <- .Random.seed
+  # set.seed(seed)
   ids <- sample( (1:n) %% k + 1 )
   preds <- rep(NA, n)
   for(j in 1:k) {
@@ -388,7 +388,7 @@ backf.l2.cv <- function(k=5, Xp, yp, windows, epsilon,
     }
   }
   # restore seed existing before call
-  if(exists('old.seed')) assign('.Random.seed', old.seed, envir=.GlobalEnv)
+  # if(exists('old.seed')) assign('.Random.seed', old.seed, envir=.GlobalEnv)
   return( mean( (preds-yp)^2, na.rm=TRUE ) )
 }
 
