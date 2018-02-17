@@ -8,7 +8,7 @@ A robust backfitting algorithm
 
 This repository contains an `R` package implementing the robust back-fitting algorithm as proposed by Boente, Martinez and Salibian-Barrera in
 
-> Boente G, Martínez A, Salibian-Barrera M. Robust estimators for additive models using backfitting. Journal of Nonparametric Statistics. Taylor & Francis; 2017;29:744-767. [DOI:10.1080/10485252.2017.1369077](https://doi.org/10.1080/10485252.2017.1369077)
+> Boente G, Martinez A, Salibian-Barrera M. (2017) Robust estimators for additive models using backfitting. Journal of Nonparametric Statistics. Taylor & Francis; 29, 744-767. [DOI: 10.1080/10485252.2017.1369077](https://doi.org/10.1080/10485252.2017.1369077)
 
 The package can be installed from within `R` by using
 
