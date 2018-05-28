@@ -48,13 +48,14 @@ backf.cl <- function(Xp, yp, point=NULL, windows, epsilon=1e-6, degree=0,
   # max.it = max number of iterations
 
   n <- length(yp)
+  Xp <- as.matrix(Xp)
   q <- dim(Xp)[2]
   corte <- 10*epsilon
   corte.bis <- 10*epsilon
 
   # Remove cases with missing responses
   yp <- yp[ tmp <- (!is.na(yp)) ]
-  Xp <- Xp[tmp, ]
+  Xp <- Xp[tmp, , drop=FALSE]
   n.miss <- length(yp)
   if(is.null(prob)){
     prob <- rep(1,n.miss)
@@ -383,7 +384,7 @@ backf.l2.cv <- function(k=5, Xp, yp, windows, epsilon,
   ids <- sample(ids)
   preds <- rep(NA, n)
   for(j in 1:k) {
-    XX <- Xp[ids!=j, drop=FALSE]
+    XX <- Xp[ids!=j, , drop=FALSE]
     yy <- yp[ids!=j]
     tmp <- try( backf.cl(Xp=XX, yp=yy, point=Xp[ids==j,], windows=windows, epsilon=epsilon,
                          degree=degree, max.it=max.it) )
