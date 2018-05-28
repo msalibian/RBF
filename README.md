@@ -1,7 +1,7 @@
 Robust backfitting
 ================
 Matias Salibian
-2018-02-17
+2018-05-28
 
 A robust backfitting algorithm
 ------------------------------
@@ -35,7 +35,7 @@ A scatter plot of the data
 pairs(cbind(y,x), labels=c('Ozone', colnames(x)), pch=19, col='gray30', cex=1.5)
 ```
 
-![](README_files/figure-markdown_github-ascii_identifiers/scatter-1.png)
+![](README_files/figure-markdown_github/scatter-1.png)
 
 The following bandwidths were obtained via a robust leave-one-out cross-validation procedure (described in the paper). Here we just set them to their optimal values:
 
@@ -64,7 +64,7 @@ for(j in 1:3) {
 }
 ```
 
-![](README_files/figure-markdown_github-ascii_identifiers/showfits-1.png)
+![](README_files/figure-markdown_github/showfits-1.png)
 
 We now compute and display the classical backfitting fits, with bandwidths chosen via leave-one-out CV
 
@@ -82,7 +82,7 @@ for(j in 1:3) {
 }
 ```
 
-![](README_files/figure-markdown_github-ascii_identifiers/classicfits-1.png)
+![](README_files/figure-markdown_github/classicfits-1.png)
 
 The following plots are partial residual plots with both the classical and robust fits on them
 
@@ -103,7 +103,7 @@ for(j in 1:3) {
 }
 ```
 
-![](README_files/figure-markdown_github-ascii_identifiers/overlay-1.png)
+![](README_files/figure-markdown_github/overlay-1.png)
 
 We look at the residuals from the robust fit to identify potential outiers
 
@@ -116,7 +116,7 @@ boxplot(re.ro, col='gray80', pch=19, cex=1.5)
 points(rep(1, length(ou.ro)), re.ro[ou.ro], pch=19, cex=2, col='red')
 ```
 
-![](README_files/figure-markdown_github-ascii_identifiers/outliers-1.png)
+![](README_files/figure-markdown_github/outliers-1.png)
 
 We highlight these suspicious observations on the scatter plot
 
@@ -128,7 +128,7 @@ os2 <- c(os[-ou.ro], os[ou.ro])
 pairs(cbind(y,x)[os2,], labels=c('Ozone', colnames(x)), pch=19, col=cs[os2], cex=1.5)
 ```
 
-![](README_files/figure-markdown_github-ascii_identifiers/showouts-1.png)
+![](README_files/figure-markdown_github/showouts-1.png)
 
 and on the partial residuals plots
 
@@ -145,7 +145,7 @@ for(j in 1:3) {
 }
 ```
 
-![](README_files/figure-markdown_github-ascii_identifiers/showouts2-1.png)
+![](README_files/figure-markdown_github/showouts2-1.png)
 
 If we use the classical backfitting algorithm on the data without the potential outliers, we obtain almost identical results
 
@@ -169,4 +169,4 @@ for(j in 1:3) {
 }
 ```
 
-![](README_files/figure-markdown_github-ascii_identifiers/bothonclean-1.png)
+![](README_files/figure-markdown_github/bothonclean-1.png)
