@@ -112,8 +112,10 @@ backf.cl <- function(Xp, yp, point=NULL, windows, epsilon=1e-6, degree=0,
       }
     }
   }
-  return(list(alpha=alpha, g.matrix=g.matriz, prediction=prediccion))
-
+  object <- list(alpha=alpha, g.matrix=g.matriz, prediction=prediccion, Xp=Xp, yp=yp)
+  class(object) <- c("backf.cl", "backf", "list")
+  return(object)
+  # return(list(alpha=alpha, g.matrix=g.matriz, prediction=prediccion))
 }
 
 
@@ -334,7 +336,10 @@ backf.rob <- function(Xp, yp, windows, point=NULL, epsilon=1e-6, degree=0,
       }
     }
   }
-  return(list(alpha=alpha,g.matrix=g.matriz, sigma.hat=sigma.hat, prediction=prediccion))
+  object <- list(alpha=alpha,g.matrix=g.matriz, sigma.hat=sigma.hat, prediction=prediccion, Xp=Xp, yp=yp)
+  class(object) <- c("backf.rob", "backf", "list")
+  return(object)
+  # return(list(alpha=alpha,g.matrix=g.matriz, sigma.hat=sigma.hat, prediction=prediccion))
 }
 
 
@@ -397,4 +402,43 @@ backf.l2.cv <- function(k=5, Xp, yp, windows, epsilon,
   return( mean( (preds-yp)^2, na.rm=TRUE ) )
 }
 
+
+#S3 Methods
+
+residuals.backf <- function(object, ...){
+  return( object$yp - rowSums(object$g.matrix) -object$alpha ) 
+}
+
+predict.backf <- function(object, ...){
+  return( rowSums(object$g.matrix) + object$alpha )
+}
+
+plot.backf <- function(object, ...){
+  Xp <- object$Xp
+  np <- dim(Xp)[2]
+  if( np!= 1){
+    par(ask=TRUE)
+    for(i in 1:np){
+      ord <- order(Xp[,i])
+      x_name <- paste("x",i,sep="")
+      y_name <- bquote(paste(hat('g')[.(i)]))
+      if( !is.null(dim(object$g.matrix[,-i])) ){
+        res <- object$yp - rowSums(object$g.matrix[,-i])-object$alpha
+      } else {
+        res <- object$yp - object$g.matrix[,-i]-object$alpha
+      }
+      lim_cl <- c(min(res), max(res))
+      plot(Xp[ord,i],object$g.matrix[ord,i],type="l",lwd=3,main="",xlab=x_name,ylab=y_name, ylim=lim_cl)
+      points(Xp[,i], res, pch=20,col='gray45')
+    }
+  } else {
+    x_name <- "x"
+    y_name <- bquote(paste(hat('g')))
+    ord <- order(Xp)
+    res <- object$yp-object$alpha
+    lim_cl <- c(min(res), max(res))
+    plot( Xp[ord], object$g.matrix[ord], type='l', lwd=3, ylim=lim_cl, xlab=x_name, ylab=y_name)
+    points(Xp, res, pch=20, col='gray45')
+  }
+}
 
