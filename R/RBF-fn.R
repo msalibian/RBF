@@ -413,7 +413,7 @@ predict.backf <- function(object, ...){
   return( rowSums(object$g.matrix) + object$alpha )
 }
 
-plot.backf <- function(object, which=1, ask=FALSE,...){
+plot.backf <- function(object, which=1:np, ask=FALSE,...){
   Xp <- object$Xp
   np <- dim(Xp)[2]
   opar <- par(ask=ask)
