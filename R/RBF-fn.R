@@ -364,7 +364,7 @@ backf.rob.cv <- function(k=5, Xp, yp, windows, epsilon,
     yy <- yp[ids!=j]
     tmp <- try( backf.rob(Xp=XX, yp=yy, point=Xp[ids==j,], windows=windows, epsilon=epsilon,
                           degree=degree, type=type, max.it=max.it) )
-    if( class(tmp) != 'try-error') {
+    if( class(tmp)[1] != 'try-error') {
       preds[ids==j] <- rowSums(tmp$prediction) + tmp$alpha
     }
   }
@@ -393,7 +393,7 @@ backf.l2.cv <- function(k=5, Xp, yp, windows, epsilon,
     yy <- yp[ids!=j]
     tmp <- try( backf.cl(Xp=XX, yp=yy, point=Xp[ids==j,], windows=windows, epsilon=epsilon,
                          degree=degree, max.it=max.it) )
-    if( class(tmp) != 'try-error') {
+    if( class(tmp)[1] != 'try-error') {
       preds[ids==j] <- rowSums(tmp$prediction) + tmp$alpha
     }
   }
