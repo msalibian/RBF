@@ -413,6 +413,42 @@ predict.backf <- function(object, ...){
   return( rowSums(object$g.matrix) + object$alpha )
 }
 
+# plot.backf <- function(object, which=1:np, ask=FALSE,...){
+#   Xp <- object$Xp
+#   np <- dim(Xp)[2]
+#   opar <- par(ask=ask)
+#   on.exit(par(opar))
+#   these <- rep(FALSE, np)
+#   these[ which ] <- TRUE
+#   if( np!= 1) {
+#     for(i in 1:np) {
+#       if(these[i]) {
+#         ord <- order(Xp[,i])
+#         x_name <- paste("x",i,sep="")
+#         y_name <- bquote(paste(hat('g')[.(i)]))
+#         if( !is.null(dim(object$g.matrix[,-i])) ){
+#           res <- object$yp - rowSums(object$g.matrix[,-i])-object$alpha
+#         } else {
+#           res <- object$yp - object$g.matrix[,-i]-object$alpha
+#         }
+#         lim_cl <- c(min(res), max(res))
+#         plot(Xp[ord,i],object$g.matrix[ord,i],type="l",lwd=3,main="",xlab=x_name,ylab=y_name, ylim=lim_cl)
+#         points(Xp[,i], res, pch=20,col='gray45')
+#       }
+#     }
+#   } else {
+#     x_name <- "x"
+#     y_name <- bquote(paste(hat('g')))
+#     ord <- order(Xp)
+#     res <- object$yp-object$alpha
+#     lim_cl <- c(min(res), max(res))
+#     plot( Xp[ord], object$g.matrix[ord], type='l', lwd=3, ylim=lim_cl, xlab=x_name, ylab=y_name)
+#     points(Xp, res, pch=20, col='gray45')
+#   }
+# }
+
+
+
 plot.backf <- function(object, which=1:np, ask=FALSE,...){
   Xp <- object$Xp
   np <- dim(Xp)[2]
@@ -420,30 +456,16 @@ plot.backf <- function(object, which=1:np, ask=FALSE,...){
   on.exit(par(opar))
   these <- rep(FALSE, np)
   these[ which ] <- TRUE
-  if( np!= 1) {
     for(i in 1:np) {
       if(these[i]) {
         ord <- order(Xp[,i])
         x_name <- paste("x",i,sep="")
         y_name <- bquote(paste(hat('g')[.(i)]))
-        if( !is.null(dim(object$g.matrix[,-i])) ){
-          res <- object$yp - rowSums(object$g.matrix[,-i])-object$alpha
-        } else {
-          res <- object$yp - object$g.matrix[,-i]-object$alpha
-        }
+        res <- object$yp - rowSums(object$g.matrix[,-i, drop=FALSE])-object$alpha
         lim_cl <- c(min(res), max(res))
         plot(Xp[ord,i],object$g.matrix[ord,i],type="l",lwd=3,main="",xlab=x_name,ylab=y_name, ylim=lim_cl)
         points(Xp[,i], res, pch=20,col='gray45')
       }
     }
-  } else {
-    x_name <- "x"
-    y_name <- bquote(paste(hat('g')))
-    ord <- order(Xp)
-    res <- object$yp-object$alpha
-    lim_cl <- c(min(res), max(res))
-    plot( Xp[ord], object$g.matrix[ord], type='l', lwd=3, ylim=lim_cl, xlab=x_name, ylab=y_name)
-    points(Xp, res, pch=20, col='gray45')
-  }
 }
 
