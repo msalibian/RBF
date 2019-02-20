@@ -414,8 +414,8 @@ backf.l2.cv <- function(k=5, Xp, yp, windows, epsilon,
 #' Residuals for objects of class \code{backf}
 #'
 #' This function returns the residuals of the fitted additive model using
-#' the classical or robust backfitting estimators, as computed with \link{\code{backf.cl}} or
-#' \link{\code{backf.rob}}.
+#' the classical or robust backfitting estimators, as computed with \code{\link{backf.cl}} or
+#' \code{\link{backf.rob}}.
 #'
 #' @param object an object of class \code{backf}, a result of a call to \code{\link{backf.cl}} or \code{\link{backf.rob}}.
 #' @param ... additional other arguments. Currently ignored.
@@ -433,8 +433,8 @@ residuals.backf <- function(object, ...){
 #'
 #' This function returns the fitted values given the covariates of
 #' the original sample under an additive model using the classical or
-#' robust backfitting approach computed with \link{\code{backf.cl}} or
-#' \link{\code{backf.rob}}.
+#' robust backfitting approach computed with \code{\link{backf.cl}} or
+#' \code{\link{backf.rob}}.
 #'
 #' @param object an object of class \code{backf}, a result of a call to \code{\link{backf.cl}} or \code{\link{backf.rob}}.
 #' @param ... additional other arguments. Currently ignored.
