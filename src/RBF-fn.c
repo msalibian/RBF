@@ -1,6 +1,6 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <math.h>
+// #include <stdio.h>
+// #include <stdlib.h>
+// #include <math.h>
 #include <R.h>
 #define ZERO 1e-10
 #define TOL_INVERSE ZERO
@@ -24,7 +24,7 @@ if( aux1 < 1.0 ) {
 	sal = (1+aux1) * (1+aux1) * (1-aux1) * (1-aux1);
 };
 return( sal );
-} 
+}
 
 // MAL
 // double psi_tukey_w( double r, double k) {
@@ -92,7 +92,7 @@ double psi_huber_w(double, double);
 double suma_vec(double*, int);
 register int i;
 int n = *nrow, it=0;
-double corte, muhat, muold, khh; 
+double corte, muhat, muold, khh;
 double *pesos, *aux1, *aux2, *res;
 
 pesos = (double *) malloc( n * sizeof(double));
@@ -132,7 +132,7 @@ double psi_tukey_w(double, double);
 double suma_vec(double*, int);
 register int i;
 int n = *nrow, it=0;
-double corte, muhat, muold, ktt; 
+double corte, muhat, muold, ktt;
 double *pesos, *aux1, *aux2, *res;
 
 pesos = (double *) malloc( n * sizeof(double));
@@ -165,7 +165,7 @@ return;
 
 
 
-void kernel_huber_lin(double *punto, double *x, int *nrow, double *y, 
+void kernel_huber_lin(double *punto, double *x, int *nrow, double *y,
  double *z, int *degree, double *beta_initial,
  double *ventanas, double *eps, double *sigmahat, double *prob,
  double *kh, int *maxit, double *salida) {
@@ -186,7 +186,7 @@ double l2dist(double *x, double *y, int n);
 int lu(double **a,int *P, double *x);
 register int i, j;
 int n = *nrow, it=0, q = *degree + 1;
-double corte, khh; // muhat, muold, khh; 
+double corte, khh; // muhat, muold, khh;
 double *pesos, *aux1, *aux2, *res, **zz, *beta, *beta_old;
 double **tmp1, **tmp2, *tmp3, *tmp4, **tmp5;
 
@@ -260,7 +260,7 @@ return;
 }
 
 
-void kernel_tukey_lin(double *punto, double *x, int *nrow, double *y, 
+void kernel_tukey_lin(double *punto, double *x, int *nrow, double *y,
  double *z, int *degree, double *beta_initial,
  double *ventanas, double *eps, double *sigmahat, double *prob,
  double *kt, int *maxit, double *salida) {
@@ -282,7 +282,7 @@ int lu(double **a,int *P, double *x);
 
 register int i, j;
 int n = *nrow, it=0, q = *degree + 1;
-double corte, ktt; // muhat, muold, ktt; 
+double corte, ktt; // muhat, muold, ktt;
 double *pesos, *aux1, *aux2, *res, **zz, *beta, *beta_old;
 double **tmp1, **tmp2, *tmp3, *tmp4, **tmp5;
 
@@ -362,7 +362,7 @@ int i,j, k = *kk;
 double **m1;
 int lu(double **a,int *P, double *x);
 m1 = (double **) malloc( k * sizeof(double *) );
-for(j=0;j<k;j++) 
+for(j=0;j<k;j++)
 	m1[j] = (double *) malloc( (k+1) * sizeof(double) );
 for(i=0;i<k;i++) {
 	for(j=0;j<k;j++)
@@ -435,7 +435,7 @@ void sum_mat(double **a, double **b, double **c, int n, int m)
 {
 register int i,j;
 for(i=0;i<n;i++)
-	for(j=0;j<m;j++) 
+	for(j=0;j<m;j++)
 		c[i][j] = a[i][j] + b[i][j];
 }
 
@@ -485,24 +485,24 @@ for(i=0;i<n;i++) c[i] = a[i] - b[i];
 void dif_mat(double **a, double **b, double **c, int n, int m)
 {
 register int i,j;
-for(i=0;i<n;i++) 
+for(i=0;i<n;i++)
 	for(j=0;j<m;j++) c[i][j] = a[i][j] - b[i][j];
 }
 
 void mat_vec(double **a, double *b, double *c, int n, int m)
 {
-register int i,j; 
-for(i=0;i<n;i++) 
+register int i,j;
+for(i=0;i<n;i++)
 	for(c[i]=0,j=0;j<m;j++) c[i] += a[i][j] * b[j];
 }
 
-void mat_mat(double **a, double **b, double **c, int n, 
+void mat_mat(double **a, double **b, double **c, int n,
 		int m, int l)
 {
-register int i,j,k; 
-for(i=0;i<n;i++) 
+register int i,j,k;
+for(i=0;i<n;i++)
 	for(j=0;j<l;j++) {
-	c[i][j] = 0; 
+	c[i][j] = 0;
 	for(k=0;k<m;k++) c[i][j] += a[i][k] * b[k][j];
 	};
 }
@@ -546,12 +546,12 @@ if( lu(c,&n,e) == 1) {
 	for(i=0;i<n;i++) free(c[i]);
 	free(c);free(e);
 	return(1);
-	};	
+	};
 for(j=0;j<n;j++) b[j][i] = e[j] ;
 };
 for(i=0;i<n;i++) free(c[i]);
 free(c);free(e);
-return(0); 
+return(0);
 }
 
 void reset_mat(double **a, int n, int m)
@@ -569,13 +569,13 @@ for(i=0;i<n;i++) a[i] = 0.0;
 }
 
 
-double median(double *x, int n) 
+double median(double *x, int n)
 {
 double kthplace(double *,int,int);
 double *aux,t;
 register int i;
 if ( (aux = (double *) malloc (n*sizeof(double)) )==NULL)
-	{printf("\nNot enought memory in median\n"); exit(1); }; 
+	{printf("\nNot enought memory in median\n"); exit(1); };
 for(i=0;i<n;i++) aux[i]=x[i];
 if ( (n/2) == (double) n / 2 )
 	t = ( kthplace(aux,n,n/2) + kthplace(aux,n,n/2+1) ) / 2 ;
@@ -638,7 +638,7 @@ double psi_huber_w(double, double);
 double suma_vec(double*, int);
 register int i;
 int n = *nrow, it=0;
-double corte, muhat, muold, khh; 
+double corte, muhat, muold, khh;
 double *aux1, *aux2, *res;
 
 aux1 = (double *) malloc( n * sizeof(double));
@@ -651,7 +651,7 @@ muhat = *muhat_initial;
 while( (corte > (*eps)) && (it< (*maxit)) ){
 	for(i=0;i<n;i++){
 		res[i] = ( y[i] - muhat) / *sigmahat;
-		aux1[i] = psi_huber_w(res[i],khh) * y[i] / prob[i]; 
+		aux1[i] = psi_huber_w(res[i],khh) * y[i] / prob[i];
 		aux2[i] = psi_huber_w(res[i],khh) / prob[i];
 	};
 	muold = muhat;
@@ -672,7 +672,7 @@ double psi_tukey_w(double, double);
 double suma_vec(double*, int);
 register int i;
 int n = *nrow, it=0;
-double corte, muhat, muold, ktt; 
+double corte, muhat, muold, ktt;
 double *aux1, *aux2, *res;
 
 aux1 = (double *) malloc( n * sizeof(double));
@@ -685,7 +685,7 @@ muhat = *muhat_initial;
 while( (corte > (*eps)) && (it< (*maxit)) ){
 	for(i=0;i<n;i++){
 		res[i] = ( y[i] - muhat) / *sigmahat;
-		aux1[i] = psi_tukey_w(res[i],ktt) * y[i] / prob[i]; 
+		aux1[i] = psi_tukey_w(res[i],ktt) * y[i] / prob[i];
 		aux2[i] = psi_tukey_w(res[i],ktt) / prob[i];
 	};
 	muold = muhat;
