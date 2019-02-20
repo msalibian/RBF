@@ -12,12 +12,4 @@ export(k.epan)
 export(psi.huber)
 export(psi.tukey)
 export(psi.w)
-
-useDynLib(RBF,
-kernel_huber_pos,
-kernel_tukey_pos,
-kernel_huber_lin,
-kernel_tukey_lin,
-huber_pos,
-tukey_pos, .registration=TRUE)
-
+useDynLib(RBF, .registration = TRUE)
