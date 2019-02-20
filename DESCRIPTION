@@ -5,6 +5,6 @@ Version: 1.0
 Date: 2019-02-20
 Author: Matias Salibian-Barrera, Alejandra Martinez
 Maintainer: Matias Salibian-Barrera <matias@stat.ubc.ca>
-Description: A robust version of the backfitting algorithm for additive models
+Description: A robust version of the backfitting algorithm for additive models.
 License: GPL (>=3.0)
 RoxygenNote: 6.1.1
