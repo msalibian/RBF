@@ -1,4 +1,4 @@
-#' @useDynLib RBF, .registration = TRUE
+### #' @useDynLib RBF, .registration = TRUE
 # Tukey's Psi
 #' @export
 psi.tukey <- function(r, k=4.685){
