@@ -1,0 +1,8 @@
+useDynLib(RBF,
+kernel_huber_pos,
+kernel_tukey_pos,
+kernel_huber_lin,
+kernel_tukey_lin,
+huber_pos,
+tukey_pos)
+
