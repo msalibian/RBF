@@ -578,7 +578,7 @@ double kthplace(double *,int,int);
 double *aux,t;
 register int i;
 if ( (aux = (double *) malloc (n*sizeof(double)) )==NULL)
-	{Rprintf("\nNot enought memory in median\n"); return(-99); };
+{Rprintf("\nNot enought memory in median\n"); return(-99.0); }; // need "NA" here
 for(i=0;i<n;i++) aux[i]=x[i];
 if ( (n/2) == (double) n / 2 )
 	t = ( kthplace(aux,n,n/2) + kthplace(aux,n,n/2+1) ) / 2 ;
@@ -593,7 +593,7 @@ double kthplace(double *,int,int);
 double *aux,t;
 register int i;
 if ( (aux = (double *) malloc (n*sizeof(double)) )==NULL )
-	{ Rprintf("\nNot enought memory in med_abs\n");return(-99);};
+{ Rprintf("\nNot enought memory in med_abs\n");return(-99.0);}; // need "NA" here
 for(i=0;i<n;i++) aux[i]=fabs(x[i]);
 if ( (n/2) == (double) n / 2 )
 	t = ( kthplace(aux,n,n/2) + kthplace(aux,n,n/2+1) ) / 2 ;
