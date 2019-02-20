@@ -1,3 +1,4 @@
+#' @useDynLib RBF, .registration = TRUE
 # Tukey's Psi
 #' @export
 psi.tukey <- function(r, k=4.685){
@@ -575,4 +576,4 @@ summary.backf.rob <- function(object,...){
   summary(res)
 }
 
-#' @useDynLib RBF, .registration = TRUE
+
