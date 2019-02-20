@@ -1,4 +1,6 @@
+#' @useDynLib RBF, .registration = TRUE
 # Tukey's Psi
+#' @export
 psi.tukey <- function(r, k=4.685){
   u <- abs(r/k)
   w <- r*((1-u)*(1+u))^2
@@ -7,6 +9,7 @@ psi.tukey <- function(r, k=4.685){
 }
 
 #Tukey's weight function "Psi(r)/r"
+#' @export
 psi.w <- function(r, k= 4.685){
   u <- abs(r/k)
   w <- ((1 + u) * (1 - u))^2
@@ -15,6 +18,7 @@ psi.w <- function(r, k= 4.685){
 }
 
 # Huber's Psi
+#' @export
 psi.huber <- function(r, k=1.345)
   pmin(k, pmax(-k, r))
 
@@ -23,6 +27,7 @@ psi.huber.w <- function(r, k=1.345)
   pmin(1, k/abs(r))
 
 #Nucleo de Epanechnikov
+#' @export
 k.epan<-function(x) {
   a <- 0.75*(1-x^2)
   tmp <- a*(abs(x)<=1)
@@ -34,6 +39,7 @@ my.norm.2 <- function(x) sqrt(sum(x^2))
 
 
 ## Classic Backfitting
+#' @export
 backf.cl <- function(Xp, yp, point=NULL, windows, epsilon=1e-6, degree=0,
                      prob=NULL, max.it=100) {
   # Xp = covariance matrix (n x q)
@@ -120,6 +126,7 @@ backf.cl <- function(Xp, yp, point=NULL, windows, epsilon=1e-6, degree=0,
 
 
 # Robust Backfitting
+#' @export
 backf.rob <- function(Xp, yp, windows, point=NULL, epsilon=1e-6, degree=0,
                       sigma.hat=NULL, prob=NULL, max.it=20, k.h=1.345,
                       k.t = 4.685, type='Huber'){
@@ -344,7 +351,7 @@ backf.rob <- function(Xp, yp, windows, point=NULL, epsilon=1e-6, degree=0,
 
 
 # CV functions
-
+#' @export
 backf.rob.cv <- function(k=5, Xp, yp, windows, epsilon,
                          degree, type, seed=123, max.it=50) {
   # does k-fold CV and returns "robust mean-squared prediction error"
@@ -373,7 +380,7 @@ backf.rob.cv <- function(k=5, Xp, yp, windows, epsilon,
   return( mad( (preds-yp), na.rm=TRUE )^2 + median( (preds-yp), na.rm=TRUE )^2 )
 }
 
-
+#' @export
 backf.l2.cv <- function(k=5, Xp, yp, windows, epsilon,
                         degree, seed=123, max.it=50) {
   # does k-fold CV and returns mean-squared prediction error
@@ -403,12 +410,37 @@ backf.l2.cv <- function(k=5, Xp, yp, windows, epsilon,
 }
 
 
-#S3 Methods
-
+#' Residuals for objects of class \code{backf}
+#'
+#' This function returns the residuals of the fitted additive model using
+#' the classical or robust backfitting estimators, as computed with \link{\code{backf.cl}} or
+#' \link{\code{backf.rob}}.
+#'
+#' @param object an object of class \code{backf}, a result of a call to \code{\link{backf.cl}} or \code{\link{backf.rob}}.
+#'
+#' @return A vector of residuals.
+#'
+#' @author Alejandra Mercedes Martinez \email{ale_m_martinez@hotmail.com}
+#'
+#' @export
 residuals.backf <- function(object, ...){
-  return( object$yp - rowSums(object$g.matrix) -object$alpha ) 
+  return( object$yp - rowSums(object$g.matrix) -object$alpha )
 }
 
+#' Fitted values for objects of class \code{backf}.
+#'
+#' This function returns the fitted values given the covariates of
+#' the original sample under an additive model using the classical or
+#' robust backfitting approach computed with \link{\code{backf.cl}} or
+#' \link{\code{backf.rob}}.
+#'
+#' @param object an object of class \code{backf}, a result of a call to \code{\link{backf.cl}} or \code{\link{backf.rob}}.
+#'
+#' @return A vector of fitted values.
+#'
+#' @author Alejandra Mercedes Martinez \email{ale_m_martinez@hotmail.com}
+#'
+#' @export
 predict.backf <- function(object, ...){
   return( rowSums(object$g.matrix) + object$alpha )
 }
@@ -448,24 +480,98 @@ predict.backf <- function(object, ...){
 # }
 
 
+# plot.backf <- function(object, which=1:np, ask=FALSE, ...){
+#   Xp <- object$Xp
+#   np <- dim(Xp)[2]
+#   opar <- par(ask=ask)
+#   on.exit(par(opar))
+#   these <- rep(FALSE, np)
+#   these[ which ] <- TRUE
+#     for(i in 1:np) {
+#       if(these[i]) {
+#         ord <- order(Xp[,i])
+#         x_name <- paste("x",i,sep="")
+#         y_name <- bquote(paste(hat('g')[.(i)]))
+#         res <- object$yp - rowSums(object$g.matrix[,-i, drop=FALSE])-object$alpha
+#         lim_cl <- c(min(res), max(res))
+#         plot(Xp[ord,i], object$g.matrix[ord,i], type="l", lwd=3, main="", xlab=x_name, ylab=y_name, ylim=lim_cl)
+#         points(Xp[,i], res, pch=20, col='gray45')
+#       }
+#     }
+# }
 
-plot.backf <- function(object, which=1:np, ask=FALSE,...){
+#' Diagnostic plots for objects of class \code{backf}
+#'
+#' Plot method for objects of class \code{backf}.
+#'
+#' @param object an object of class \code{backf}, a result of a call to \code{\link{backf.cl}} or \code{\link{backf.rob}}.
+#' @param which vector of indices of explanatory variables for which partial residuals plots will
+#' be generaetd. Defaults to all available explanatory variables.
+#' @param ask logical value. If \code{TRUE}, the graphical device will prompt for confirmation before
+#' going to the next page/screen of output.
+#' @param ... additional other arguments. Currently ignored.
+#'
+#' @author Alejandra Mercedes Martinez \email{ale_m_martinez@hotmail.com}
+#'
+#' @export
+plot.backf <- function(object, which=1:np, ask=FALSE, ...){
   Xp <- object$Xp
   np <- dim(Xp)[2]
   opar <- par(ask=ask)
   on.exit(par(opar))
   these <- rep(FALSE, np)
   these[ which ] <- TRUE
-    for(i in 1:np) {
-      if(these[i]) {
-        ord <- order(Xp[,i])
-        x_name <- paste("x",i,sep="")
-        y_name <- bquote(paste(hat('g')[.(i)]))
-        res <- object$yp - rowSums(object$g.matrix[,-i, drop=FALSE])-object$alpha
-        lim_cl <- c(min(res), max(res))
-        plot(Xp[ord,i],object$g.matrix[ord,i],type="l",lwd=3,main="",xlab=x_name,ylab=y_name, ylim=lim_cl)
-        points(Xp[,i], res, pch=20,col='gray45')
+  for(i in 1:np) {
+    if(these[i]) {
+      ord <- order(Xp[,i])
+      if (is.null(colnames(Xp)) ){
+        x_name <- bquote(paste('x')[.(i)])
+      } else {
+        x_name <- colnames(Xp)[i]
       }
+      y_name <- bquote(paste(hat('g')[.(i)]))
+      res <- object$yp - rowSums(object$g.matrix[,-i, drop=FALSE])-object$alpha
+      lim_cl <- c(min(res), max(res))
+      plot(Xp[ord,i], object$g.matrix[ord,i], type="l", lwd=3, main="", xlab=x_name, ylab=y_name, ylim=lim_cl)
+      points(Xp[,i], res, pch=20, col='gray45')
     }
+  }
 }
+
+#' Summary for additive models fits using backfitting
+#'
+#' Summary method for class \code{backf}.
+#'
+#' This function returns the estimation of the intercept and also the
+#' five-number summary and the mean of the residuals for both classical and
+#' robust estimators. For the robust estimator it also returns the estimate of
+#' the residual standard error.
+#'
+#' @param object an object of class \code{backf}, a result of a call to
+#' \code{\link{backf.cl}} or \code{\link{backf.rob}}.
+#' @param ... additional other arguments. Currently ignored.
+#'
+#' @author Alejandra Mercedes Martinez \email{ale_m_martinez@hotmail.com}
+#'
+#' @export
+#' @aliases summary.backf summary.backf.cl summary.backf.rob
+summary.backf <- function(object,...){
+  NextMethod()
+}
+
+summary.backf.cl <- function(object,...){
+  message("Estimate of the intercept: ", round(object$alpha,5))
+  res <- residuals(object)
+  message("Residuals:")
+  summary(res)
+}
+
+summary.backf.rob <- function(object,...){
+  message("Estimate of the intercept: ", round(object$alpha,5))
+  message("Estimate of the residual standard error: ", round(object$sigma,5))
+  res <- residuals(object)
+  message("Residuals:")
+  summary(res)
+}
+
 
