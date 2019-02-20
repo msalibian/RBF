@@ -1,4 +1,5 @@
 #' @useDynLib RBF, .registration = TRUE
+#' @import stats graphics
 # Tukey's Psi
 #' @export
 psi.tukey <- function(r, k=4.685){
@@ -202,7 +203,7 @@ backf.rob <- function(Xp, yp, windows, point=NULL, epsilon=1e-6, degree=0,
               g.matriz[i,j] <- .C("kernel_huber_pos", as.double(Xp[i,j]), as.double(Xp[,j]), as.integer(n.miss),
                                   as.double(y.tilde.bis), as.double(mu.ini), as.double(windows[j]),
                                   as.double(epsilon), as.double(sigma.hat),
-                                  as.double(prob), as.double(k.h), as.integer(max.it),salida=as.double(0) )$salida
+                                  as.double(prob), as.double(k.h), as.integer(max.it), salida=as.double(0), PACKAGE='RBF')$salida
             } else {
               g.matriz[i,j] <- NA
             }
@@ -213,7 +214,7 @@ backf.rob <- function(Xp, yp, windows, point=NULL, epsilon=1e-6, degree=0,
               g.matriz[i,j] <- .C("kernel_tukey_pos", as.double(Xp[i,j]), as.double(as.matrix(Xp[,j])), as.integer(n.miss),
                                   as.double(y.tilde.bis), as.double(mu.ini), as.double(windows[j]),
                                   as.double(epsilon), as.double(sigma.hat),
-                                  as.double(prob), as.double(k.t), as.integer(max.it),salida=as.double(0) )$salida
+                                  as.double(prob), as.double(k.t), as.integer(max.it), salida=as.double(0), PACKAGE='RBF')$salida
              } else {
               g.matriz[i,j] <- NA
             }
@@ -228,20 +229,20 @@ backf.rob <- function(Xp, yp, windows, point=NULL, epsilon=1e-6, degree=0,
                                 as.double(y.tilde.bis), as.double(tmp), as.integer(degree),
                                 as.double(beta.ini), as.double(windows[j]), as.double(epsilon), as.double(sigma.hat),
                                 as.double(prob), as.double(k.h), as.integer(max.it),
-                                salida=as.double(rep(0, degree+1)) )$salida[1]
+                                salida=as.double(rep(0, degree+1)), PACKAGE='RBF')$salida[1]
           }
           if( type == 'Tukey') {
             beta.ini <- .C("kernel_huber_lin", as.double(Xp[i,j]), as.double(Xp[,j]), as.integer(n.miss),
                            as.double(y.tilde.bis), as.double(tmp), as.integer(degree),
                            as.double(beta.ini), as.double(windows[j]), as.double(epsilon), as.double(sigma.hat),
                            as.double(prob), as.double(k.h), as.integer(max.it),
-                           salida=as.double(rep(0, degree+1)) )$salida
+                           salida=as.double(rep(0, degree+1)), PACKAGE='RBF')$salida
             if(!any(is.na(beta.ini))) {
               g.matriz[i,j] <- .C("kernel_tukey_lin", as.double(Xp[i,j]), as.double(Xp[,j]), as.integer(n.miss),
                                   as.double(y.tilde.bis), as.double(tmp), as.integer(degree),
                                   as.double(beta.ini), as.double(windows[j]), as.double(epsilon), as.double(sigma.hat),
                                   as.double(prob), as.double(k.t), as.integer(max.it),
-                                  salida=as.double(rep(0, degree+1)) )$salida[1]
+                                  salida=as.double(rep(0, degree+1)), PACKAGE='RBF')$salida[1]
             } else {
               g.matriz[i,j] <- NA
             }
@@ -262,7 +263,7 @@ backf.rob <- function(Xp, yp, windows, point=NULL, epsilon=1e-6, degree=0,
                     as.double(y.tilde.bis), as.double(mu.ini),
                     as.double(epsilon), as.double(sigma.hat),
                     as.double(prob), as.double(k.h), as.integer(max.it),
-                    salida=as.double(0) )$salida
+                    salida=as.double(0), PACKAGE='RBF')$salida
       }
       if( type=='Tukey') {
         mu.ini <- median( y.tilde.bis )
@@ -270,12 +271,12 @@ backf.rob <- function(Xp, yp, windows, point=NULL, epsilon=1e-6, degree=0,
                      as.double(y.tilde.bis), as.double(mu.ini),
                      as.double(epsilon), as.double(sigma.hat),
                      as.double(prob), as.double(k.h), as.integer(max.it),
-                     salida=as.double(0) )$salida
+                     salida=as.double(0), PACKAGE='RBF')$salida
         alpha <- .C("tukey_pos", as.integer(n.miss),
                     as.double(y.tilde.bis), as.double(mu.ini),
                     as.double(epsilon), as.double(sigma.hat),
                     as.double(prob), as.double(k.t), as.integer(max.it),
-                    salida=as.double(0) )$salida
+                    salida=as.double(0), PACKAGE='RBF')$salida
       }
     } else { stop('Error computing additive components'); break()
     }
@@ -300,13 +301,13 @@ backf.rob <- function(Xp, yp, windows, point=NULL, epsilon=1e-6, degree=0,
               prediccion[k,j] <- .C("kernel_huber_pos", as.double(mpunto[k,j]), as.double(Xp[,j]), as.integer(n.miss),
                                     as.double(y.tilde.bis), as.double(mu.ini), as.double(windows[j]),
                                     as.double(epsilon), as.double(sigma.hat),
-                                    as.double(prob), as.double(k.h), as.integer(max.it),salida=as.double(0) )$salida
+                                    as.double(prob), as.double(k.h), as.integer(max.it),salida=as.double(0), PACKAGE='RBF')$salida
             }
             if( type=='Tukey') {
               prediccion[k,j] <- .C("kernel_tukey_pos", as.double(mpunto[k,j]), as.double(as.matrix(Xp[,j])), as.integer(n.miss),
                                     as.double(y.tilde.bis), as.double(mu.ini), as.double(windows[j]),
                                     as.double(epsilon), as.double(sigma.hat),
-                                    as.double(prob), as.double(k.t), as.integer(max.it),salida=as.double(0) )$salida
+                                    as.double(prob), as.double(k.t), as.integer(max.it),salida=as.double(0), PACKAGE='RBF')$salida
             }
           } else {
             prediccion[k,j] <- NA
@@ -321,20 +322,20 @@ backf.rob <- function(Xp, yp, windows, point=NULL, epsilon=1e-6, degree=0,
                                   as.double(y.tilde.bis), as.double(tmp), as.integer(degree),
                                   as.double(beta.ini), as.double(windows[j]), as.double(epsilon), as.double(sigma.hat),
                                   as.double(prob), as.double(k.h), as.integer(max.it),
-                                  salida=as.double(rep(0, degree+1)) )$salida[1]
+                                  salida=as.double(rep(0, degree+1)), PACKAGE='RBF')$salida[1]
           }
           if( type == 'Tukey') {
             beta.ini <- .C("kernel_huber_lin", as.double(mpunto[k,j]), as.double(Xp[,j]), as.integer(n.miss),
                            as.double(y.tilde.bis), as.double(tmp), as.integer(degree),
                            as.double(beta.ini), as.double(windows[j]), as.double(epsilon), as.double(sigma.hat),
                            as.double(prob), as.double(k.h), as.integer(max.it),
-                           salida=as.double(rep(0, degree+1)) )$salida
+                           salida=as.double(rep(0, degree+1)), PACKAGE='RBF')$salida
             if(!any(is.na(beta.ini))) {
               prediccion[k,j] <- .C("kernel_tukey_lin", as.double(mpunto[k,j]), as.double(Xp[,j]), as.integer(n.miss),
                                     as.double(y.tilde.bis), as.double(tmp), as.integer(degree),
                                     as.double(beta.ini), as.double(windows[j]), as.double(epsilon), as.double(sigma.hat),
                                     as.double(prob), as.double(k.t), as.integer(max.it),
-                                    salida=as.double(rep(0, degree+1)) )$salida[1]
+                                    salida=as.double(rep(0, degree+1)), PACKAGE='RBF')$salida[1]
             } else {
               prediccion[k,j] <- NA
             }
