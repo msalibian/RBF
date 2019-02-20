@@ -1,7 +1,10 @@
 // #include <stdio.h>
 // #include <stdlib.h>
 // #include <math.h>
+
 #include <R.h>
+#include "RBF.h"
+
 #define ZERO 1e-10
 #define TOL_INVERSE ZERO
 #define min(a,b) ((a)<(b)?(a):(b))
