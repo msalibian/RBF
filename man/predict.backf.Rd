@@ -8,6 +8,8 @@
 }
 \arguments{
 \item{object}{an object of class \code{backf}, a result of a call to \code{\link{backf.cl}} or \code{\link{backf.rob}}.}
+
+\item{...}{additional other arguments. Currently ignored.}
 }
 \value{
 A vector of fitted values.

@@ -389,8 +389,8 @@ register int i,j,k;
 double *kk,s;
 p = *P;
 if ((pp = (int *) malloc(p*sizeof(int)))==NULL)
-	{ printf("\nNot enough memory in LU\n");
-	  exit(1); }
+	{ Rprintf("\nNot enough memory in LU\n");
+	  return(-1); }
 /* pp vector storing the permutations */
 for(j=0;j<p;j++)   /* cols */
 { pp[j]=j;
@@ -578,7 +578,7 @@ double kthplace(double *,int,int);
 double *aux,t;
 register int i;
 if ( (aux = (double *) malloc (n*sizeof(double)) )==NULL)
-	{printf("\nNot enought memory in median\n"); exit(1); };
+	{Rprintf("\nNot enought memory in median\n"); return(-99); };
 for(i=0;i<n;i++) aux[i]=x[i];
 if ( (n/2) == (double) n / 2 )
 	t = ( kthplace(aux,n,n/2) + kthplace(aux,n,n/2+1) ) / 2 ;
@@ -593,7 +593,7 @@ double kthplace(double *,int,int);
 double *aux,t;
 register int i;
 if ( (aux = (double *) malloc (n*sizeof(double)) )==NULL )
-	{ printf("\nNot enought memory in med_abs\n");exit(1);};
+	{ Rprintf("\nNot enought memory in med_abs\n");return(-99);};
 for(i=0;i<n;i++) aux[i]=fabs(x[i]);
 if ( (n/2) == (double) n / 2 )
 	t = ( kthplace(aux,n,n/2) + kthplace(aux,n,n/2+1) ) / 2 ;

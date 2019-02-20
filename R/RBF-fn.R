@@ -417,6 +417,7 @@ backf.l2.cv <- function(k=5, Xp, yp, windows, epsilon,
 #' \link{\code{backf.rob}}.
 #'
 #' @param object an object of class \code{backf}, a result of a call to \code{\link{backf.cl}} or \code{\link{backf.rob}}.
+#' @param ... additional other arguments. Currently ignored.
 #'
 #' @return A vector of residuals.
 #'
@@ -435,6 +436,7 @@ residuals.backf <- function(object, ...){
 #' \link{\code{backf.rob}}.
 #'
 #' @param object an object of class \code{backf}, a result of a call to \code{\link{backf.cl}} or \code{\link{backf.rob}}.
+#' @param ... additional other arguments. Currently ignored.
 #'
 #' @return A vector of fitted values.
 #'
