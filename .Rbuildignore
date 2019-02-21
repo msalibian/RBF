@@ -1,2 +1,9 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
+^LICENSE\.md$
+^README\.md$
+^README\.Rmd$
+^README_files$
+^RBF-examples\.R$
+
+
