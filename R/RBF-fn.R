@@ -535,8 +535,10 @@ plot.backf <- function(object, which=1:np, ask=FALSE, ...){
       y_name <- bquote(paste(hat('g')[.(i)]))
       res <- object$yp - rowSums(object$g.matrix[,-i, drop=FALSE])-object$alpha
       lim_cl <- c(min(res), max(res))
-      plot(Xp[ord,i], object$g.matrix[ord,i], type="l", lwd=3, main="", xlab=x_name, ylab=y_name, ylim=lim_cl)
-      points(Xp[,i], res, pch=20, col='gray45')
+      # plot(Xp[ord,i], object$g.matrix[ord,i], type="l", lwd=3, main="", xlab=x_name, ylab=y_name, ylim=lim_cl)
+      # points(Xp[,i], res, pch=20, col='gray45')
+      plot(Xp[,i], res, pch=20,col='gray45',main="",xlab=x_name,ylab=y_name, ylim=lim_cl,cex.lab=0.8)
+      lines(Xp[ord,i],object$g.matrix[ord,i],lwd=3)
     }
   }
 }
