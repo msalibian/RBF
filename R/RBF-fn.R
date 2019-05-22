@@ -100,7 +100,7 @@ backf.cl <- function(Xp, yp, point=NULL, windows, epsilon=1e-6, degree=0,
 
   if(!is.null(point)){
     if(is.null(dim(point))) {
-      prediccion <- mpunto <- t(as.matrix(point))
+      prediccion <- mpunto <- as.matrix(point) #t(as.matrix(point))
     } else {
       prediccion <- mpunto <- point
     }
@@ -286,7 +286,7 @@ backf.rob <- function(Xp, yp, windows, point=NULL, epsilon=1e-6, degree=0,
 
   if(!is.null(point)){
     if(is.null(dim(point))) {
-      prediccion <- mpunto <- t(as.matrix(point))
+      prediccion <- mpunto <- as.matrix(point) # t(as.matrix(point))
     } else {
       prediccion <- mpunto <- point
     }
