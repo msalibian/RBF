@@ -22,10 +22,4 @@ Matias Salibian-Barrera, Alejandra Martinez
 
 Maintainer: Matias Salibian-Barrera <matias@stat.ubc.ca>
 }
-\references{
-}
 \keyword{ Robust Backfitting }
-\seealso{
-}
-\examples{
-}
