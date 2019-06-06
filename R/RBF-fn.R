@@ -1,7 +1,23 @@
-#' @useDynLib RBF, .registration = TRUE
-#' @import stats graphics
-# Tukey's Psi
+#' Derivative of Tukey's bi-square loss function.
+#'
+#' This function evaluates the first derivative of Tukey's bi-square loss function.
+#'
+#' This function evaluates the first derivative of Tukey's bi-square loss function.
+#'
+#' @param r a vector of real numbers
+#' @param k a positive tuning constant.
+#'
+#' @return A vector of the same length as \code{x}.
+#'
+#' @author Matias Salibian-Barrera, \email{matias@stat.ubc.ca}, Alejandra Martinez
+#'
+#' @examples
+#' x <- seq(-2, 2, length=10)
+#' psi.tukey(r=x, k = 1.5)
+#'
 #' @export
+#' @import stats graphics
+#' @useDynLib RBF, .registration = TRUE
 psi.tukey <- function(r, k=4.685){
   u <- abs(r/k)
   w <- r*((1-u)*(1+u))^2
@@ -9,8 +25,8 @@ psi.tukey <- function(r, k=4.685){
   return(w)
 }
 
-#Tukey's weight function "Psi(r)/r"
-#' @export
+
+# Tukey's weight function "Psi(r)/r"
 psi.w <- function(r, k= 4.685){
   u <- abs(r/k)
   w <- ((1 + u) * (1 - u))^2
@@ -18,7 +34,23 @@ psi.w <- function(r, k= 4.685){
   return(w)
 }
 
-# Huber's Psi
+#' Derivative of Huber's loss function.
+#'
+#' This function evaluates the first derivative of Huber's loss function.
+#'
+#' This function evaluates the first derivative of Huber's loss function.
+#'
+#' @param r a vector of real numbers
+#' @param k a positive tuning constant.
+#'
+#' @return A vector of the same length as \code{x}.
+#'
+#' @author Matias Salibian-Barrera, \email{matias@stat.ubc.ca}, Alejandra Martinez
+#'
+#' @examples
+#' x <- seq(-2, 2, length=10)
+#' psi.huber(r=x, k = 1.5)
+#'
 #' @export
 psi.huber <- function(r, k=1.345)
   pmin(k, pmax(-k, r))
@@ -27,7 +59,23 @@ psi.huber <- function(r, k=1.345)
 psi.huber.w <- function(r, k=1.345)
   pmin(1, k/abs(r))
 
-#Nucleo de Epanechnikov
+#' Epanechnikov kernel
+#'
+#' This function evaluates an Epanechnikov kernel
+#'
+#' This function evaluates an Epanechnikov kernel
+#'
+#' @param x a vector of real numbers
+#'
+#' @return A vector of the same length as \code{x} where each entry is
+#' \code{0.75 * (1 - x^2)} if \code{x < 1} and 0 otherwise.
+#'
+#' @author Matias Salibian-Barrera, \email{matias@stat.ubc.ca}, Alejandra Martinez
+#'
+#' @examples
+#' x <- seq(-2, 2, length=10)
+#' k.epan(x)
+#'
 #' @export
 k.epan<-function(x) {
   a <- 0.75*(1-x^2)
@@ -35,25 +83,48 @@ k.epan<-function(x) {
   return(tmp)
 }
 
-#Norma 2 Euclidea
+# Euclidean norm
 my.norm.2 <- function(x) sqrt(sum(x^2))
 
 
-## Classic Backfitting
+#' Classic Backfitting
+#'
+#' This function computes the standard backfitting algorithm for additive models.
+#'
+#' This function computes the standard backfitting algorithm for additive models,
+#' using a squared loss function and local polynomial smoothers.
+#'
+#' @param Xp a matrix (n x p) containing the explanatory variables
+#' @param yp vector of responses (missing values are allowed)
+#' @param point matrix of points where predictions will be computed and returned.
+#' @param windows vector of bandwidths for the local polynomial smoother,
+#' one per explanatory variable.
+#' @param epsilon convergence criterion. Maximum allowed relative difference between
+#' consecutive estimates
+#' @param degree degree of the local polynomial smoother. Defaults to \code{0} (local constant).
+#' @param prob vector of probabilities of observing each response (length n).
+#' Defaults to \code{NULL} and in that case it is ignored.
+#' @param max.it Maximum number of iterations for the algorithm.
+#'
+#' @return A list with the following components:
+#' \item{alpha}{Estimate for the intercept.}
+#' \item{g.matrix }{Matrix of estimated additive components (n by p).}
+#' \item{prediction }{Matrix of estimated additive components for the points listed in
+#' the argument \code{point}.}
+#'
+#' @author Matias Salibian-Barrera, \email{matias@stat.ubc.ca}, Alejandra Martinez
+#'
+#' @examples
+#' data(airquality)
+#' x <- airquality
+#' x <- x[complete.cases(x), c('Ozone', 'Solar.R', 'Wind', 'Temp')]
+#' y <- as.vector(x$Ozone)
+#' x <- as.matrix(x[, c('Solar.R', 'Wind', 'Temp')])
+#' tmp <- backf.cl(Xp = x, yp=y, windows=c(130, 9, 10), degree=1)
+#'
 #' @export
 backf.cl <- function(Xp, yp, point=NULL, windows, epsilon=1e-6, degree=0,
                      prob=NULL, max.it=100) {
-  # Xp = covariance matrix (n x q)
-  # yp = response vector (NA's are allowed).
-  # point = vector of length q where prediction is computed.
-  #      If missing, predictions are computed for each row of Xp.
-  # windows = vector of length q with kernel windows
-  # epsilon = convergence criterion
-  # degree = degree of the local polynomial smoother
-  #        A value of 0 means locally constant fits.
-  # prob = probabilities of observing each response (n)
-  # max.it = max number of iterations
-
   n <- length(yp)
   Xp <- as.matrix(Xp)
   q <- dim(Xp)[2]
@@ -126,27 +197,51 @@ backf.cl <- function(Xp, yp, point=NULL, windows, epsilon=1e-6, degree=0,
 }
 
 
-# Robust Backfitting
+#' Robust Backfitting
+#'
+#' This function computes a robust backfitting algorithm for additive models
+#'
+#' This function computes a robust backfitting algorithm for additive models
+#' using robust local polynomial smoothers.
+#'
+#' @param Xp a matrix (n x p) containing the explanatory variables
+#' @param yp vector of responses (missing values are allowed)
+#' @param point matrix of points where predictions will be computed and returned.
+#' @param windows vector of bandwidths for the local polynomial smoother,
+#' one per explanatory variable.
+#' @param epsilon convergence criterion. Maximum allowed relative difference between
+#' consecutive estimates
+#' @param degree degree of the local polynomial smoother. Defaults to \code{0} (local constant).
+#' @param prob vector of probabilities of observing each response (length n).
+#' Defaults to \code{NULL} and in that case it is ignored.
+#' @param sigma.hat estimate of the residual standard error. If \code{NULL} (default) we use the
+#' \link{mad} of the residuals obtained with local medians.
+#' @param max.it Maximum number of iterations for the algorithm.
+#' @param k.h tuning constant for a Huber-type loss function.
+#' @param k.t tuning constant for a Tukey-type loss function.
+#' @param type one of either \code{'Tukey'} or \code{'Huber'}.
+#'
+#' @return A list with the following components:
+#' \item{alpha}{Estimate for the intercept.}
+#' \item{g.matrix }{Matrix of estimated additive components (n by p).}
+#' \item{prediction }{Matrix of estimated additive components for the points listed in
+#' the argument \code{point}.}
+#' \item{sigma.hat }{Estimate of the residual standard error.}
+#'
+#' @author Matias Salibian-Barrera, \email{matias@stat.ubc.ca}, Alejandra Martinez
+#'
+#' @examples
+#' data(airquality)
+#' x <- airquality
+#' x <- x[complete.cases(x), c('Ozone', 'Solar.R', 'Wind', 'Temp')]
+#' y <- as.vector(x$Ozone)
+#' x <- as.matrix(x[, c('Solar.R', 'Wind', 'Temp')])
+#' tmp <- backf.rob(Xp = x, yp=y, windows=c(136.7, 8.9, 4.8) , degree=1)
+#'
 #' @export
 backf.rob <- function(Xp, yp, windows, point=NULL, epsilon=1e-6, degree=0,
-                      sigma.hat=NULL, prob=NULL, max.it=20, k.h=1.345,
+                      sigma.hat=NULL, prob=NULL, max.it=50, k.h=1.345,
                       k.t = 4.685, type='Huber'){
-  # Xp = covariance matrix (n x q)
-  # yp = response vector (NA's are allowed).
-  # point = vector of length q where prediction is computed.
-  #      If missing, predictions are computed for each row of Xp.
-  # windows = vector of length q with kernel windows
-  # epsilon = convergence criterion
-  # degree = degree of the local polynomial smoother
-  #        A value of 0 means locally constant fits.
-  # prob = probabilities of observing each response (n)
-  # max.it = max number of iterations
-  # sigma.hat = estimate of the residual standard error. If missing we use the
-  # mad of the residuals obtained with local medians.
-  # k.h = tuning constant for the Huber function
-  # k.t = tuning constant for the Tukey function
-  # type = 'Huber' or 'Tukey'
-
   Xp <- as.matrix(Xp)
   n <- length(yp)
   q <- dim(Xp)[2]
@@ -351,10 +446,45 @@ backf.rob <- function(Xp, yp, windows, point=NULL, epsilon=1e-6, degree=0,
 }
 
 
-# CV functions
+#' Cross-validation for Robust Backfitting
+#'
+#' This function performs one run of K-fold cross-validation using the
+#' robust backfitting algorithm.
+#'
+#' This function performs one run of K-fold cross-validation using the
+#' robust backfitting algorithm and returns a robust measure of the
+#' hold out prediction error.
+#'
+#' @param k a positive integer indicating the number of folds.
+#' @param Xp a matrix (n x p) containing the explanatory variables
+#' @param yp vector of responses (missing values are allowed)
+#' @param windows vector of bandwidths for the local polynomial smoother,
+#' one per explanatory variable.
+#' @param epsilon convergence criterion. Maximum allowed relative difference between
+#' consecutive estimates
+#' @param degree degree of the local polynomial smoother. Defaults to \code{0} (local constant).
+#' @param seed an integer used to set the seed of the pseudo-number generator that
+#' creates the \code{k} folds.
+#' @param max.it Maximum number of iterations for the algorithm.
+#' @param k.h tuning constant for a Huber-type loss function.
+#' @param k.t tuning constant for a Tukey-type loss function.
+#' @param type one of either \code{'Tukey'} or \code{'Huber'}.
+#'
+#' @return A real number with a robust measure of (hold-out) prediction error
+#'
+#' @author Matias Salibian-Barrera, \email{matias@stat.ubc.ca}, Alejandra Martinez
+#'
+#' @examples
+#' data(airquality)
+#' x <- airquality
+#' x <- x[complete.cases(x), c('Ozone', 'Solar.R', 'Wind', 'Temp')]
+#' y <- as.vector(x$Ozone)
+#' x <- as.matrix(x[, c('Solar.R', 'Wind', 'Temp')])
+#' backf.rob.cv(k=5, Xp = x, yp=y, windows=c(136.7, 8.9, 4.8), type='Tukey', degree=1)
+#'
 #' @export
-backf.rob.cv <- function(k=5, Xp, yp, windows, epsilon,
-                         degree, type, seed=123, max.it=50) {
+backf.rob.cv <- function(k=5, Xp, yp, windows, epsilon=1e-6, degree, type='Tukey', k.h=1.345,
+                         k.t = 4.685, seed=123, max.it=50) {
   # does k-fold CV and returns "robust mean-squared prediction error"
   n <- length(yp)
   # k1 <- floor(n/k)
@@ -371,7 +501,7 @@ backf.rob.cv <- function(k=5, Xp, yp, windows, epsilon,
     XX <- Xp[ids!=j, , drop=FALSE]
     yy <- yp[ids!=j]
     tmp <- try( backf.rob(Xp=XX, yp=yy, point=Xp[ids==j,], windows=windows, epsilon=epsilon,
-                          degree=degree, type=type, max.it=max.it) )
+                          degree=degree, type=type, max.it=max.it, k.h=k.h, k.t=k.t) )
     if( class(tmp)[1] != 'try-error') {
       preds[ids==j] <- rowSums(tmp$prediction) + tmp$alpha
     }
@@ -381,8 +511,41 @@ backf.rob.cv <- function(k=5, Xp, yp, windows, epsilon,
   return( mad( (preds-yp), na.rm=TRUE )^2 + median( (preds-yp), na.rm=TRUE )^2 )
 }
 
+#' Cross-validation for the Classical Backfitting algorithm
+#'
+#' This function performs one run of K-fold cross-validation using the
+#' classical backfitting algorithm.
+#'
+#' This function performs one run of K-fold cross-validation using the
+#' classical backfitting algorithm and returns the mean squared
+#' hold out prediction error.
+#'
+#' @param k a positive integer indicating the number of folds.
+#' @param Xp a matrix (n x p) containing the explanatory variables
+#' @param yp vector of responses (missing values are allowed)
+#' @param windows vector of bandwidths for the local polynomial smoother,
+#' one per explanatory variable.
+#' @param epsilon convergence criterion. Maximum allowed relative difference between
+#' consecutive estimates
+#' @param degree degree of the local polynomial smoother. Defaults to \code{0} (local constant).
+#' @param seed an integer used to set the seed of the pseudo-number generator that
+#' creates the \code{k} folds.
+#' @param max.it Maximum number of iterations for the algorithm.
+#'
+#' @return A real number with the mean squared (hold-out) prediction error
+#'
+#' @author Matias Salibian-Barrera, \email{matias@stat.ubc.ca}, Alejandra Martinez
+#'
+#' @examples
+#' data(airquality)
+#' x <- airquality
+#' x <- x[complete.cases(x), c('Ozone', 'Solar.R', 'Wind', 'Temp')]
+#' y <- as.vector(x$Ozone)
+#' x <- as.matrix(x[, c('Solar.R', 'Wind', 'Temp')])
+#' backf.l2.cv(k=5, Xp = x, yp=y, windows=c(130, 9, 10), degree=1)
+#'
 #' @export
-backf.l2.cv <- function(k=5, Xp, yp, windows, epsilon,
+backf.l2.cv <- function(k=5, Xp, yp, windows, epsilon=1e-6,
                         degree, seed=123, max.it=50) {
   # does k-fold CV and returns mean-squared prediction error
   n <- length(yp)
