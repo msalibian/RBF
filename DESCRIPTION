@@ -8,3 +8,4 @@ Maintainer: Matias Salibian-Barrera <matias@stat.ubc.ca>
 Description: A robust version of the backfitting algorithm for additive models.
 License: GPL (>=3.0)
 RoxygenNote: 6.1.1
+Encoding: UTF-8
