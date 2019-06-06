@@ -670,7 +670,7 @@ predict.backf <- function(object, ...){
 #'
 #' Plot method for objects of class \code{backf}.
 #'
-#' @param object an object of class \code{backf}, a result of a call to \code{\link{backf.cl}} or \code{\link{backf.rob}}.
+#' @param x an object of class \code{backf}, a result of a call to \code{\link{backf.cl}} or \code{\link{backf.rob}}.
 #' @param which vector of indices of explanatory variables for which partial residuals plots will
 #' be generaetd. Defaults to all available explanatory variables.
 #' @param ask logical value. If \code{TRUE}, the graphical device will prompt for confirmation before
@@ -680,7 +680,8 @@ predict.backf <- function(object, ...){
 #' @author Alejandra Mercedes Martinez \email{ale_m_martinez@hotmail.com}
 #'
 #' @export
-plot.backf <- function(object, which=1:np, ask=FALSE, ...){
+plot.backf <- function(x, ask=FALSE, which=1:np, ...) {
+  object <- x
   Xp <- object$Xp
   np <- dim(Xp)[2]
   opar <- par(ask=ask)

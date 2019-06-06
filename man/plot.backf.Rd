@@ -4,16 +4,16 @@
 \alias{plot.backf}
 \title{Diagnostic plots for objects of class \code{backf}}
 \usage{
-\method{plot}{backf}(object, which = 1:np, ask = FALSE, ...)
+\method{plot}{backf}(x, ask = FALSE, which = 1:np, ...)
 }
 \arguments{
-\item{object}{an object of class \code{backf}, a result of a call to \code{\link{backf.cl}} or \code{\link{backf.rob}}.}
-
-\item{which}{vector of indices of explanatory variables for which partial residuals plots will
-be generaetd. Defaults to all available explanatory variables.}
+\item{x}{an object of class \code{backf}, a result of a call to \code{\link{backf.cl}} or \code{\link{backf.rob}}.}
 
 \item{ask}{logical value. If \code{TRUE}, the graphical device will prompt for confirmation before
 going to the next page/screen of output.}
+
+\item{which}{vector of indices of explanatory variables for which partial residuals plots will
+be generaetd. Defaults to all available explanatory variables.}
 
 \item{...}{additional other arguments. Currently ignored.}
 }
