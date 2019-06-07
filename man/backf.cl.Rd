@@ -51,7 +51,7 @@ tmp <- backf.cl(Xp = x, yp=y, windows=c(130, 9, 10), degree=1)
 
 }
 \references{
-Hasie, TJ and Tibshirani, RJ. Generalized Additive Models, 1990. Chapman 
+Hasie, TJ and Tibshirani, RJ. Generalized Additive Models, 1990. Chapman
 and Hall, London.
 }
 \author{

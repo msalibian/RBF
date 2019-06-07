@@ -63,7 +63,7 @@ tmp <- backf.rob(Xp = x, yp=y, windows=c(136.7, 8.9, 4.8) , degree=1)
 }
 \references{
 Boente G, Martinez A, Salibian-Barrera M. Robust estimators
-for additive models using backfitting. Journal of Nonparametric Statistics, 
+for additive models using backfitting. Journal of Nonparametric Statistics,
 2017; 29:744-767. https://doi.org/10.1080/10485252.2017.1369077
 }
 \author{
