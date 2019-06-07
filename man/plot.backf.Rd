@@ -20,6 +20,16 @@ be generaetd. Defaults to all available explanatory variables.}
 \description{
 Plot method for objects of class \code{backf}.
 }
+\examples{
+data(airquality)
+x <- airquality
+x <- x[complete.cases(x), c('Ozone', 'Solar.R', 'Wind', 'Temp')]
+y <- as.vector(x$Ozone)
+x <- as.matrix(x[, c('Solar.R', 'Wind', 'Temp')])
+tmp <- backf.rob(Xp = x, yp=y, windows=c(136.7, 8.9, 4.8) , degree=1)
+plot(tmp, which=1:2)
+
+}
 \author{
 Alejandra Mercedes Martinez \email{ale_m_martinez@hotmail.com}
 }
