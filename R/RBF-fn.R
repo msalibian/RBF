@@ -112,6 +112,9 @@ my.norm.2 <- function(x) sqrt(sum(x^2))
 #' \item{prediction }{Matrix of estimated additive components for the points listed in
 #' the argument \code{point}.}
 #'
+#' @references Hasie, TJ and Tibshirani, RJ. Generalized Additive Models, 1990. Chapman 
+#' and Hall, London.
+#' 
 #' @author Matias Salibian-Barrera, \email{matias@stat.ubc.ca}, Alejandra Martinez
 #'
 #' @examples

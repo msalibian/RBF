@@ -50,6 +50,10 @@ x <- as.matrix(x[, c('Solar.R', 'Wind', 'Temp')])
 tmp <- backf.cl(Xp = x, yp=y, windows=c(130, 9, 10), degree=1)
 
 }
+\references{
+Hasie, TJ and Tibshirani, RJ. Generalized Additive Models, 1990. Chapman 
+and Hall, London.
+}
 \author{
 Matias Salibian-Barrera, \email{matias@stat.ubc.ca}, Alejandra Martinez
 }
