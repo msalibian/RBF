@@ -230,6 +230,10 @@ backf.cl <- function(Xp, yp, point=NULL, windows, epsilon=1e-6, degree=0,
 #'
 #' @author Matias Salibian-Barrera, \email{matias@stat.ubc.ca}, Alejandra Martinez
 #'
+#' @references Boente G, Martinez A, Salibian-Barrera M. Robust estimators
+#' for additive models using backfitting. Journal of Nonparametric Statistics, 
+#' 2017; 29:744-767. https://doi.org/10.1080/10485252.2017.1369077
+#' 
 #' @examples
 #' data(airquality)
 #' x <- airquality
