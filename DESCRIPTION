@@ -2,10 +2,12 @@ Package: RBF
 Type: Package
 Title: Robust backfitting 
 Version: 1.0.0
-Date: 2019-06-06
-Author: Matias Salibian-Barrera, Alejandra Martinez
-Maintainer: Matias Salibian-Barrera <matias@stat.ubc.ca>
+Date: 2019-06-07
+Authors@R: c(person("Matias", "Salibian-Barrera", role = c("cre"), email = "matias@stat.ubc.ca"),
+             person("Alejandra", "Martinez", role=c("aut"), email="ale_m_martinez@hotmail.com")
+            )
 Description: A robust version of the backfitting algorithm for additive models.
 License: GPL (>=3.0)
 RoxygenNote: 6.1.1
 Encoding: UTF-8
+Imports: stats, graphics
