@@ -2,7 +2,7 @@ Package: RBF
 Type: Package
 Title: Robust Backfitting 
 Version: 1.0.0
-Date: 2019-06-07
+Date: 2019-06-11
 Authors@R: c(person("Matias", "Salibian-Barrera", role = c("cre"), email = "matias@stat.ubc.ca"),
              person("Alejandra", "Martinez", role=c("aut"), email="ale_m_martinez@hotmail.com")
             )
