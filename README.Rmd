@@ -6,13 +6,13 @@ output: github_document
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = TRUE, warning=FALSE, message=FALSE)
 ```
 
 ## A robust backfitting algorithm
 
-This repository contains an `R` package 
-implementing the robust back-fitting algorithm as proposed by
+The `R` package `RBF` (available on CRAN [here](https://cran.r-project.org/package=RBF)) 
+implements the robust back-fitting algorithm as proposed by
 Boente, Martinez and Salibian-Barrera  in 
 
 > Boente G, Martinez A, Salibian-Barrera M. (2017) Robust estimators for 
@@ -20,13 +20,18 @@ Boente, Martinez and Salibian-Barrera  in
 > & Francis; 29, 744-767.
 > [DOI: 10.1080/10485252.2017.1369077](https://doi.org/10.1080/10485252.2017.1369077)
 
-The package can be installed from within `R` by using
+This repository contains a development version of `RBF`
+which may differ slightly from the one available on CRAN
+(until the CRAN version is updated appropriately). 
+
+The package in this repository can be installed from within `R` by using the following code (assuming the [devtools](https://cran.r-project.org/package=devtools)) package is available:
 ```R
-library(devtools)
-install_github("msalibian/RBF")
+devtools::install_github("msalibian/RBF")
 ```
 
-Here is a (longish) example on how to use the code. 
+### An example
+
+Here is a (longish) example on how `RBF` works. 
 We use the Air Quality data.
 ```{r intro}
 library(RBF)
