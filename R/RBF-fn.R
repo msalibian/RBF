@@ -515,7 +515,7 @@ backf.rob.cv <- function(k=5, Xp, yp, windows, epsilon=1e-6, degree, type='Tukey
   }
   # restore seed existing before call
   if(exists('old.seed')) assign('.Random.seed', old.seed, envir=.GlobalEnv)
-  return( mad( (preds-yp), na.rm=TRUE )^2 + median( (preds-yp), na.rm=TRUE )^2 )
+  return( mad( (preds-yp), na.rm=TRUE )^2 + median( (preds-yp)^2, na.rm=TRUE ) )
 }
 
 #' Cross-validation for the Classical Backfitting algorithm
