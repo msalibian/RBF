@@ -174,7 +174,7 @@ backf.cl <- function(Xp, yp, point=NULL, windows, epsilon=1e-6, degree=0,
 
   if(!is.null(point)){
     if(!is.matrix(point)) { #is.null(dim(point))) {
-      prediccion <- mpunto <- matrix(point, byrow=TRUE, ncol=length(point)) #t(as.matrix(point))
+      prediccion <- mpunto <- as.matrix(point) # matrix(point, byrow=TRUE, ncol=length(point))
     } else {
       prediccion <- mpunto <- point
     }
@@ -388,7 +388,7 @@ backf.rob <- function(Xp, yp, windows, point=NULL, epsilon=1e-6, degree=0,
 
   if(!is.null(point)){
     if(!is.matrix(point)) { #is.null(dim(point))) {
-      prediccion <- mpunto <- matrix(point, byrow=TRUE, ncol=length(point)) # t(as.matrix(point))
+      prediccion <- mpunto <-  as.matrix(point) #matrix(point, byrow=TRUE, ncol=length(point))
     } else {
       prediccion <- mpunto <- point
     }
@@ -507,7 +507,7 @@ backf.rob.cv <- function(k=5, Xp, yp, windows, epsilon=1e-6, degree, type='Tukey
   for(j in 1:k) {
     XX <- Xp[ids!=j, , drop=FALSE]
     yy <- yp[ids!=j]
-    tmp <- try( backf.rob(Xp=XX, yp=yy, point=Xp[ids==j,], windows=windows, epsilon=epsilon,
+    tmp <- try( backf.rob(Xp=XX, yp=yy, point=Xp[ids==j,, drop=FALSE], windows=windows, epsilon=epsilon,
                           degree=degree, type=type, max.it=max.it, k.h=k.h, k.t=k.t) )
     if( class(tmp)[1] != 'try-error') {
       preds[ids==j] <- rowSums(tmp$prediction) + tmp$alpha
@@ -569,7 +569,7 @@ backf.l2.cv <- function(k=5, Xp, yp, windows, epsilon=1e-6,
   for(j in 1:k) {
     XX <- Xp[ids!=j, , drop=FALSE]
     yy <- yp[ids!=j]
-    tmp <- try( backf.cl(Xp=XX, yp=yy, point=Xp[ids==j,], windows=windows, epsilon=epsilon,
+    tmp <- try( backf.cl(Xp=XX, yp=yy, point=Xp[ids==j, , drop=FALSE], windows=windows, epsilon=epsilon,
                          degree=degree, max.it=max.it) )
     if( class(tmp)[1] != 'try-error') {
       preds[ids==j] <- rowSums(tmp$prediction) + tmp$alpha
