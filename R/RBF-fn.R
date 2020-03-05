@@ -694,6 +694,28 @@ predict.backf <- function(object, ...){
   return( rowSums(object$g.matrix) + object$alpha )
 }
 
+#' Fitted values for objects of class \code{backf}
+#'
+#' This function returns the fitted values given the covariates of the original sample under an additive model using a classical or robust marginal integration procedure estimator computed with \code{\link{margint.cl}} or \code{\link{margint.rob}}.
+#'
+#' @param object an object of class \code{backf}, a result of a call to \code{\link{backf.cl}} or \code{\link{backf.rob}}.
+#' @param ... additional other arguments. Currently ignored.
+#'
+#' @return A vector of fitted values.
+#'
+#' @author Alejandra Mercedes Martinez \email{ale_m_martinez@hotmail.com}
+#'
+#' @rawNamespace S3method(fitted.values, margint)
+fitted.values.backf <- function(object,...){
+  UseMethod("fitted")
+}
+
+#' @export
+fitted.backf <- function(object,...){
+  return(predict(object))
+}
+
+
 # plot.backf <- function(object, which=1:np, ask=FALSE,...){
 #   Xp <- object$Xp
 #   np <- dim(Xp)[2]
