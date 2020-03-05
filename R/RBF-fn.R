@@ -838,6 +838,7 @@ summary.backf <- function(object,...){
 
 summary.backf.cl <- function(object,...){
   message("Estimate of the intercept: ", round(object$alpha,5))
+  message("Multiple R-squared: ", round(R2(object),5))
   res <- residuals(object)
   message("Residuals:")
   summary(res)
@@ -846,6 +847,7 @@ summary.backf.cl <- function(object,...){
 summary.backf.rob <- function(object,...){
   message("Estimate of the intercept: ", round(object$alpha,5))
   message("Estimate of the residual standard error: ", round(object$sigma,5))
+  message("Robust multiple R-squared: ", round(R2.rob(object),5))
   res <- residuals(object)
   message("Residuals:")
   summary(res)
