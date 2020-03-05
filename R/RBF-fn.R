@@ -864,7 +864,7 @@ summary.backf <- function(object,...){
 #' @export
 summary.backf.cl <- function(object,...){
   message("Estimate of the intercept: ", round(object$alpha,5))
-  message("Multiple R-squared: ", round(R2(object),5))
+  #message("Multiple R-squared: ", round(R2(object),5))
   res <- residuals(object)
   message("Residuals:")
   summary(res)
@@ -874,7 +874,7 @@ summary.backf.cl <- function(object,...){
 summary.backf.rob <- function(object,...){
   message("Estimate of the intercept: ", round(object$alpha,5))
   message("Estimate of the residual standard error: ", round(object$sigma,5))
-  message("Robust multiple R-squared: ", round(R2.rob(object),5))
+  #message("Robust multiple R-squared: ", round(R2.rob(object),5))
   res <- residuals(object)
   message("Residuals:")
   summary(res)
@@ -895,5 +895,24 @@ summary.backf.rob <- function(object,...){
 #' @export
 formula.backf <- function(x, ...){
   return(x$formula )
+}
+
+
+#' Print a Marginal Integration procedure
+#'
+#' The default print method for a \code{backf} object.
+#'
+#' @param x an object of class \code{backf}, a result of a call to \code{\link{backf.cl}} or \code{\link{backf.rob}}.
+#' @param ... additional other arguments. Currently ignored.
+#'
+#' @return A real number.
+#'
+#' @author Alejandra Mercedes Martinez \email{ale_m_martinez@hotmail.com}
+#'
+#' @export
+print.backf <- function(x, ...){
+  cat("Formula:\n")
+  print(x$formula)
+  #cat("\n")
 }
 
