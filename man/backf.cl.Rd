@@ -4,13 +4,11 @@
 \alias{backf.cl}
 \title{Classic Backfitting}
 \usage{
-backf.cl(Xp, yp, point = NULL, windows, epsilon = 1e-06, degree = 0,
+backf.cl(formula, point = NULL, windows, epsilon = 1e-06, degree = 0,
   prob = NULL, max.it = 100)
 }
 \arguments{
-\item{Xp}{a matrix (n x p) containing the explanatory variables}
-
-\item{yp}{vector of responses (missing values are allowed)}
+\item{formula}{An object of class 'formula'.}
 
 \item{point}{matrix of points where predictions will be computed and returned.}
 

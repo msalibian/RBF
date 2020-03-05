@@ -4,14 +4,12 @@
 \alias{backf.rob}
 \title{Robust Backfitting}
 \usage{
-backf.rob(Xp, yp, windows, point = NULL, epsilon = 1e-06, degree = 0,
-  sigma.hat = NULL, prob = NULL, max.it = 50, k.h = 1.345,
-  k.t = 4.685, type = "Huber")
+backf.rob(formula, windows, point = NULL, epsilon = 1e-06,
+  degree = 0, sigma.hat = NULL, prob = NULL, max.it = 50,
+  k.h = 1.345, k.t = 4.685, type = "Huber")
 }
 \arguments{
-\item{Xp}{a matrix (n x p) containing the explanatory variables}
-
-\item{yp}{vector of responses (missing values are allowed)}
+\item{formula}{An object of class 'formula'.}
 
 \item{windows}{vector of bandwidths for the local polynomial smoother,
 one per explanatory variable.}
