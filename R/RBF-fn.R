@@ -34,6 +34,15 @@ psi.w <- function(r, k= 4.685){
   return(w)
 }
 
+#Tukey's loss function
+rho.tukey <- function(r, k=4.685){
+  if(abs(r)<=k){
+    return( 1-(1-(r/k)^2)^3 )
+  }else{
+    return(1)
+  }
+}
+
 #' Derivative of Huber's loss function.
 #'
 #' This function evaluates the first derivative of Huber's loss function.
@@ -58,6 +67,16 @@ psi.huber <- function(r, k=1.345)
 #Huber's weight function "Psi(r)/r"
 psi.huber.w <- function(r, k=1.345)
   pmin(1, k/abs(r))
+
+
+#Huber's loss function
+rho.huber <- function(r, k=1.345){
+  if(abs(r)<=k){
+    return(r^2)
+  }else{
+    return(2*k*abs(r)-k^2)
+  }
+}
 
 #' Epanechnikov kernel
 #'
@@ -126,8 +145,13 @@ my.norm.2 <- function(x) sqrt(sum(x^2))
 #' tmp <- backf.cl(Xp = x, yp=y, windows=c(130, 9, 10), degree=1)
 #'
 #' @export
-backf.cl <- function(Xp, yp, point=NULL, windows, epsilon=1e-6, degree=0,
+backf.cl <- function(formula, point=NULL, windows, epsilon=1e-6, degree=0,
                      prob=NULL, max.it=100) {
+  
+  AUX <- get_all_vars(formula)
+  yp <- AUX[,1]
+  Xp <- AUX[,-1]
+  
   n <- length(yp)
   Xp <- as.matrix(Xp)
   q <- dim(Xp)[2]
@@ -173,11 +197,23 @@ backf.cl <- function(Xp, yp, point=NULL, windows, epsilon=1e-6, degree=0,
   prediccion <- NULL
 
   if(!is.null(point)){
-    if(!is.matrix(point)) { #is.null(dim(point))) {
-      prediccion <- mpunto <- as.matrix(point) # matrix(point, byrow=TRUE, ncol=length(point))
+    
+    #if(!is.matrix(point)) { #is.null(dim(point))) {
+    #  prediccion <- mpunto <- as.matrix(point) # matrix(point, byrow=TRUE, ncol=length(point))
+    #} else {
+    #  prediccion <- mpunto <- point
+    #}
+    
+    if(is.null(dim(punto))){
+      if(q==1){
+        prediccion <- mpunto <- as.matrix(point)
+      }else{
+        prediccion <- mpunto <- t(as.matrix(point))
+      }
     } else {
       prediccion <- mpunto <- point
     }
+    
     np <- dim(mpunto)[1]
     for(k in 1:np){
       for(j in 1:q){
@@ -193,10 +229,9 @@ backf.cl <- function(Xp, yp, point=NULL, windows, epsilon=1e-6, degree=0,
       }
     }
   }
-  object <- list(alpha=alpha, g.matrix=g.matriz, prediction=prediccion, Xp=Xp, yp=yp)
+  object <- list(alpha=alpha, g.matrix=g.matriz, prediction=prediccion, Xp=Xp, yp=yp, formula=formula)
   class(object) <- c("backf.cl", "backf", "list")
   return(object)
-  # return(list(alpha=alpha, g.matrix=g.matriz, prediction=prediccion))
 }
 
 
@@ -246,9 +281,14 @@ backf.cl <- function(Xp, yp, point=NULL, windows, epsilon=1e-6, degree=0,
 #' tmp <- backf.rob(Xp = x, yp=y, windows=c(136.7, 8.9, 4.8) , degree=1)
 #'
 #' @export
-backf.rob <- function(Xp, yp, windows, point=NULL, epsilon=1e-6, degree=0,
+backf.rob <- function(formula, windows, point=NULL, epsilon=1e-6, degree=0,
                       sigma.hat=NULL, prob=NULL, max.it=50, k.h=1.345,
                       k.t = 4.685, type='Huber'){
+  
+  AUX <- get_all_vars(formula)
+  yp <- AUX[,1]
+  Xp <- AUX[,-1]
+  
   Xp <- as.matrix(Xp)
   n <- length(yp)
   q <- dim(Xp)[2]
@@ -387,11 +427,24 @@ backf.rob <- function(Xp, yp, windows, point=NULL, epsilon=1e-6, degree=0,
   prediccion <- NULL
 
   if(!is.null(point)){
-    if(!is.matrix(point)) { #is.null(dim(point))) {
-      prediccion <- mpunto <-  as.matrix(point) #matrix(point, byrow=TRUE, ncol=length(point))
+    
+    
+    #if(!is.matrix(point)) { #is.null(dim(point))) {
+    #  prediccion <- mpunto <-  as.matrix(point) #matrix(point, byrow=TRUE, ncol=length(point))
+    #} else {
+    #  prediccion <- mpunto <- point
+    #}
+    
+    if(is.null(dim(punto))){
+      if(q==1){
+        prediccion <- mpunto <- as.matrix(point)
+      }else{
+        prediccion <- mpunto <- t(as.matrix(point))
+      }
     } else {
       prediccion <- mpunto <- point
     }
+    
     np <- dim(mpunto)[1]
     for(k in 1:np){
       for(j in 1:q){
@@ -446,7 +499,7 @@ backf.rob <- function(Xp, yp, windows, point=NULL, epsilon=1e-6, degree=0,
       }
     }
   }
-  object <- list(alpha=alpha,g.matrix=g.matriz, sigma.hat=sigma.hat, prediction=prediccion, Xp=Xp, yp=yp)
+  object <- list(alpha=alpha,g.matrix=g.matriz, sigma.hat=sigma.hat, prediction=prediccion, type=type, Xp=Xp, yp=yp, formula=formula)
   class(object) <- c("backf.rob", "backf", "list")
   return(object)
   # return(list(alpha=alpha,g.matrix=g.matriz, sigma.hat=sigma.hat, prediction=prediccion))
@@ -507,8 +560,8 @@ backf.rob.cv <- function(k=5, Xp, yp, windows, epsilon=1e-6, degree, type='Tukey
   for(j in 1:k) {
     XX <- Xp[ids!=j, , drop=FALSE]
     yy <- yp[ids!=j]
-    tmp <- try( backf.rob(Xp=XX, yp=yy, point=Xp[ids==j,, drop=FALSE], windows=windows, epsilon=epsilon,
-                          degree=degree, type=type, max.it=max.it, k.h=k.h, k.t=k.t) )
+    tmp <- try( backf.rob(yy ~ XX, point=Xp[ids==j,, drop=FALSE], windows=windows, epsilon=epsilon, degree=degree, type=type, max.it=max.it, k.h=k.h, k.t=k.t) )
+      #try( backf.rob(Xp=XX, yp=yy, point=Xp[ids==j,, drop=FALSE], windows=windows, epsilon=epsilon, degree=degree, type=type, max.it=max.it, k.h=k.h, k.t=k.t) )
     if( class(tmp)[1] != 'try-error') {
       preds[ids==j] <- rowSums(tmp$prediction) + tmp$alpha
     }
@@ -569,8 +622,8 @@ backf.l2.cv <- function(k=5, Xp, yp, windows, epsilon=1e-6,
   for(j in 1:k) {
     XX <- Xp[ids!=j, , drop=FALSE]
     yy <- yp[ids!=j]
-    tmp <- try( backf.cl(Xp=XX, yp=yy, point=Xp[ids==j, , drop=FALSE], windows=windows, epsilon=epsilon,
-                         degree=degree, max.it=max.it) )
+    tmp <- try( backf.cl(yy ~ XX, point=Xp[ids==j, , drop=FALSE], windows=windows, epsilon=epsilon, degree=degree, max.it=max.it) )
+      #try( backf.cl(Xp=XX, yp=yy, point=Xp[ids==j, , drop=FALSE], windows=windows, epsilon=epsilon, degree=degree, max.it=max.it) )
     if( class(tmp)[1] != 'try-error') {
       preds[ids==j] <- rowSums(tmp$prediction) + tmp$alpha
     }
@@ -759,4 +812,20 @@ summary.backf.rob <- function(object,...){
   summary(res)
 }
 
+
+#' Additive model formula
+#'
+#' Description of the additive model formula extracted from an object of class \code{margint}.
+#'
+#' @param x an object of class \code{backf}, a result of a call to \code{\link{backf.cl}} or \code{\link{backf.rob}}.
+#' @param ... additional other arguments. Currently ignored.
+#'
+#' @return A model formula.
+#'
+#' @author Alejandra Mercedes Martinez \email{ale_m_martinez@hotmail.com}
+#'
+#' @export
+formula.margint <- function(x, ...){
+  return(x$formula )
+}
 
