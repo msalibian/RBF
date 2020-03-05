@@ -113,8 +113,7 @@ my.norm.2 <- function(x) sqrt(sum(x^2))
 #' This function computes the standard backfitting algorithm for additive models,
 #' using a squared loss function and local polynomial smoothers.
 #'
-#' @param Xp a matrix (n x p) containing the explanatory variables
-#' @param yp vector of responses (missing values are allowed)
+#' @param formula An object of class 'formula'. 
 #' @param point matrix of points where predictions will be computed and returned.
 #' @param windows vector of bandwidths for the local polynomial smoother,
 #' one per explanatory variable.
@@ -242,8 +241,7 @@ backf.cl <- function(formula, point=NULL, windows, epsilon=1e-6, degree=0,
 #' This function computes a robust backfitting algorithm for additive models
 #' using robust local polynomial smoothers.
 #'
-#' @param Xp a matrix (n x p) containing the explanatory variables
-#' @param yp vector of responses (missing values are allowed)
+#' @param formula An object of class 'formula'.
 #' @param point matrix of points where predictions will be computed and returned.
 #' @param windows vector of bandwidths for the local polynomial smoother,
 #' one per explanatory variable.
