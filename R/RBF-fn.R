@@ -705,7 +705,7 @@ predict.backf <- function(object, ...){
 #'
 #' @author Alejandra Mercedes Martinez \email{ale_m_martinez@hotmail.com}
 #'
-#' @rawNamespace S3method(fitted.values, margint)
+#' @rawNamespace S3method(fitted.values, backf)
 fitted.values.backf <- function(object,...){
   UseMethod("fitted")
 }
@@ -901,6 +901,52 @@ summary.backf.rob <- function(object,...){
   message("Residuals:")
   summary(res)
 }
+
+#' Deviance for objects of class \code{backf}
+#'
+#' This function returns the deviance of the fitted additive model using one of the three
+#' classical or robust marginal integration estimators, as computed with \code{\link{backf.cl}} or
+#' \code{\link{backf.rob}}.
+#'
+#' @param object an object of class \code{backf}, a result of a call to \code{\link{backf.cl}} or \code{\link{backf.rob}}.
+#' @param ... additional other arguments. Currently ignored.
+#'
+#' @return A real number.
+#'
+#' @author Alejandra Mercedes Martinez \email{ale_m_martinez@hotmail.com}
+#'
+#' @export
+deviance.backf <- function(object, ...){
+  NextMethod()
+}
+
+#' @export
+deviance.backf.cl <- function(object, ...){
+  return( sum( (residuals(object))^2) )
+}
+
+#' @export
+deviance.backf.rob <- function(object, ...){
+  yp <- object$yp
+  y <- yp[ tmp<-!is.na(yp) ]
+  n <- length(y)
+  S2 <- 0
+  res <- residuals(object)
+  sigma.hat <- object$sigma.hat
+  typePhi <- object$type
+  if(typePhi=='Tukey'){
+    for(i in 1:n){
+      S2 <- S2 + rho.tukey(res[i]/sigma.hat)
+    }
+  }
+  if(typePhi=='Huber'){
+    for(i in 1:n){
+      S2 <- S2 + rho.huber(res[i]/sigma.hat)
+    }
+  }
+  return( S2 )
+}
+
 
 
 #' Additive model formula
