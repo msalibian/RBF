@@ -632,6 +632,31 @@ backf.l2.cv <- function(k=5, Xp, yp, windows, epsilon=1e-6,
 }
 
 
+
+pos.estimate <- function(y,ini=NULL,sigma.hat, epsilon=1e-6, iter.max=10,typePhi){
+  yp <- y[ tmp<-!is.na(y) ]
+  if(is.null(ini)){
+    ini <- median(yp)
+  }
+  corte <- 10
+  iter <- 0
+  n <- length(yp)
+  prob <- rep(1,n)
+  k.h <- 1.345
+  k.t <- 4.685
+  if(typePhi=='Huber'){
+    beta <- .C("huber_pos", as.integer(n), as.double(yp), as.double(ini), as.double(epsilon), 
+               as.double(sigma.hat), as.double(prob), as.double(k.h), as.integer(iter.max), salida=as.double(0) )$salida
+  }
+  if(typePhi=='Tukey'){
+    beta <- .C("tukey_pos", as.integer(n), as.double(yp), as.double(ini), as.double(epsilon), 
+               as.double(sigma.hat), as.double(prob), as.double(k.t), as.integer(iter.max), salida=as.double(0) )$salida
+  }
+  return(beta)
+}
+
+
+
 #' Residuals for objects of class \code{backf}
 #'
 #' This function returns the residuals of the fitted additive model using
@@ -836,6 +861,7 @@ summary.backf <- function(object,...){
   NextMethod()
 }
 
+#' @export
 summary.backf.cl <- function(object,...){
   message("Estimate of the intercept: ", round(object$alpha,5))
   message("Multiple R-squared: ", round(R2(object),5))
@@ -844,6 +870,7 @@ summary.backf.cl <- function(object,...){
   summary(res)
 }
 
+#' @export
 summary.backf.rob <- function(object,...){
   message("Estimate of the intercept: ", round(object$alpha,5))
   message("Estimate of the residual standard error: ", round(object$sigma,5))
