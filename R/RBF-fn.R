@@ -774,6 +774,47 @@ plot.backf <- function(x, ask=FALSE, which=1:np, ...) {
   }
 }
 
+
+#Multiple R-squared 
+R2 <- function(object,...){
+  yp <- object$yp
+  y <- yp[ tmp<-!is.na(yp) ]
+  n <- length(y)
+  res <- residuals(object)
+  S02 <- sum((y-mean(y))^2)
+  S2 <- sum(res^2)
+  R2 <- (S02-S2)/S02
+  return(R2)
+}
+
+#Robust multiple R-squared
+R2.rob <- function(object,...){
+  yp <- object$yp
+  y <- yp[ tmp<-!is.na(yp) ]
+  n <- length(y)
+  S02 <- 0
+  S2 <- 0
+  res <- residuals(object)
+  sigma.hat <- object$sigma.hat
+  typePhi <- object$type
+  pos <- pos.estimate(y,ini=NULL,sigma.hat, epsilon=1e-6, iter.max=50,typePhi=typePhi)
+  if(typePhi=='Tukey'){
+    for(i in 1:n){
+      S02 <- S02 + rho.tukey((y[i]-pos)/sigma.hat)
+      S2 <- S2 + rho.tukey(res[i]/sigma.hat)
+    }
+  }
+  if(typePhi=='Huber'){
+    for(i in 1:n){
+      S02 <- S02 + rho.huber((y[i]-pos)/sigma.hat)
+      S2 <- S2 + rho.huber(res[i]/sigma.hat)
+    }
+  }
+  R2.rob <- (S02-S2)/S02
+  return(R2.rob)
+}
+
+
 #' Summary for additive models fits using backfitting
 #'
 #' Summary method for class \code{backf}.
@@ -823,7 +864,7 @@ summary.backf.rob <- function(object,...){
 #' @author Alejandra Mercedes Martinez \email{ale_m_martinez@hotmail.com}
 #'
 #' @export
-formula.margint <- function(x, ...){
+formula.backf <- function(x, ...){
   return(x$formula )
 }
 
