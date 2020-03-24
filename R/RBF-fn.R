@@ -553,7 +553,6 @@ backf.rob.cv <- function(k=5, Xp, yp, windows, epsilon=1e-6, degree, type='Tukey
   set.seed(seed)
   ids <- sample( (1:n) %% k + 1 )
   Xp <- as.matrix(Xp)
-  ids <- sample(ids)
   preds <- rep(NA, n)
   for(j in 1:k) {
     XX <- Xp[ids!=j, , drop=FALSE]
@@ -615,7 +614,6 @@ backf.l2.cv <- function(k=5, Xp, yp, windows, epsilon=1e-6,
   set.seed(seed)
   ids <- sample( (1:n) %% k + 1 )
   Xp <- as.matrix(Xp)
-  ids <- sample(ids)
   preds <- rep(NA, n)
   for(j in 1:k) {
     XX <- Xp[ids!=j, , drop=FALSE]
