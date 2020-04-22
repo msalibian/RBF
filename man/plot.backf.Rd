@@ -21,12 +21,8 @@ be generaetd. Defaults to all available explanatory variables.}
 Plot method for objects of class \code{backf}.
 }
 \examples{
-data(airquality)
-x <- airquality
-x <- x[complete.cases(x), c('Ozone', 'Solar.R', 'Wind', 'Temp')]
-y <- as.vector(x$Ozone)
-x <- as.matrix(x[, c('Solar.R', 'Wind', 'Temp')])
-tmp <- backf.rob(Xp = x, yp=y, windows=c(136.7, 8.9, 4.8) , degree=1)
+tmp <- backf.rob(Ozone ~ Solar.R + Wind + Temp, data=airquality, 
+subset=complete.cases(airquality), windows=c(136.7, 8.9, 4.8), degree=1)
 plot(tmp, which=1:2)
 
 }

@@ -4,11 +4,20 @@
 \alias{backf.cl}
 \title{Classic Backfitting}
 \usage{
-backf.cl(formula, point = NULL, windows, epsilon = 1e-06, degree = 0,
-  prob = NULL, max.it = 100)
+backf.cl(formula, data, subset, point = NULL, windows, epsilon = 1e-06,
+  degree = 0, prob = NULL, max.it = 100)
 }
 \arguments{
-\item{formula}{An object of class 'formula'.}
+\item{formula}{an object of class \code{formula} (or one that can be coerced to 
+that class): a symbolic description of the model to be fitted.}
+
+\item{data}{an optional data frame, list or environment (or object coercible 
+by \link{as.data.frame} to a data frame) containing the variables in the model. 
+If not found in \code{data}, the variables are taken from \code{environment(formula)}, 
+typically the environment from which the function was called.}
+
+\item{subset}{an optional vector specifying a subset of observations to be used in 
+the fitting process.}
 
 \item{point}{matrix of points where predictions will be computed and returned.}
 
@@ -41,11 +50,8 @@ using a squared loss function and local polynomial smoothers.
 }
 \examples{
 data(airquality)
-x <- airquality
-x <- x[complete.cases(x), c('Ozone', 'Solar.R', 'Wind', 'Temp')]
-y <- as.vector(x$Ozone)
-x <- as.matrix(x[, c('Solar.R', 'Wind', 'Temp')])
-tmp <- backf.cl(Xp = x, yp=y, windows=c(130, 9, 10), degree=1)
+tmp <- backf.cl(Ozone ~ Solar.R + Wind + Temp, data=airquality, 
+subset=complete.cases(airquality), windows=c(130, 9, 10), degree=1)
 
 }
 \references{

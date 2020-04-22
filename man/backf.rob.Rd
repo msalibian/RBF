@@ -4,12 +4,21 @@
 \alias{backf.rob}
 \title{Robust Backfitting}
 \usage{
-backf.rob(formula, windows, point = NULL, epsilon = 1e-06,
-  degree = 0, sigma.hat = NULL, prob = NULL, max.it = 50,
-  k.h = 1.345, k.t = 4.685, type = "Huber")
+backf.rob(formula, data, subset, windows, point = NULL,
+  epsilon = 1e-06, degree = 0, sigma.hat = NULL, prob = NULL,
+  max.it = 50, k.h = 1.345, k.t = 4.685, type = "Huber")
 }
 \arguments{
-\item{formula}{An object of class 'formula'.}
+\item{formula}{an object of class \code{formula} (or one that can be coerced to 
+that class): a symbolic description of the model to be fitted.}
+
+\item{data}{an optional data frame, list or environment (or object coercible 
+by \link{as.data.frame} to a data frame) containing the variables in the model. 
+If not found in \code{data}, the variables are taken from \code{environment(formula)}, 
+typically the environment from which the function was called.}
+
+\item{subset}{an optional vector specifying a subset of observations to be used in 
+the fitting process.}
 
 \item{windows}{vector of bandwidths for the local polynomial smoother,
 one per explanatory variable.}
@@ -52,11 +61,8 @@ using robust local polynomial smoothers.
 }
 \examples{
 data(airquality)
-x <- airquality
-x <- x[complete.cases(x), c('Ozone', 'Solar.R', 'Wind', 'Temp')]
-y <- as.vector(x$Ozone)
-x <- as.matrix(x[, c('Solar.R', 'Wind', 'Temp')])
-tmp <- backf.rob(Xp = x, yp=y, windows=c(136.7, 8.9, 4.8) , degree=1)
+tmp <- backf.rob(Ozone ~ Solar.R + Wind + Temp, data=airquality, 
+subset=complete.cases(airquality), windows=c(136.7, 8.9, 4.8), degree=1)
 
 }
 \references{
