@@ -113,7 +113,14 @@ my.norm.2 <- function(x) sqrt(sum(x^2))
 #' This function computes the standard backfitting algorithm for additive models,
 #' using a squared loss function and local polynomial smoothers.
 #'
-#' @param formula An object of class 'formula'. 
+#' @param formula an object of class \code{formula} (or one that can be coerced to 
+#' that class): a symbolic description of the model to be fitted. 
+#' @param data an optional data frame, list or environment (or object coercible 
+#' by \link{as.data.frame} to a data frame) containing the variables in the model. 
+#' If not found in \code{data}, the variables are taken from \code{environment(formula)}, 
+#' typically the environment from which the function was called.
+#' @param subset an optional vector specifying a subset of observations to be used in 
+#' the fitting process.
 #' @param point matrix of points where predictions will be computed and returned.
 #' @param windows vector of bandwidths for the local polynomial smoother,
 #' one per explanatory variable.
@@ -137,19 +144,32 @@ my.norm.2 <- function(x) sqrt(sum(x^2))
 #'
 #' @examples
 #' data(airquality)
-#' x <- airquality
-#' x <- x[complete.cases(x), c('Ozone', 'Solar.R', 'Wind', 'Temp')]
-#' y <- as.vector(x$Ozone)
-#' x <- as.matrix(x[, c('Solar.R', 'Wind', 'Temp')])
-#' tmp <- backf.cl(Xp = x, yp=y, windows=c(130, 9, 10), degree=1)
+#' tmp <- backf.cl(Ozone ~ Solar.R + Wind + Temp, data=airquality, 
+#' subset=complete.cases(airquality), windows=c(130, 9, 10), degree=1)
 #'
 #' @export
-backf.cl <- function(formula, point=NULL, windows, epsilon=1e-6, degree=0,
+backf.cl <- function(formula, data, subset, point=NULL, windows, epsilon=1e-6, degree=0,
                      prob=NULL, max.it=100) {
   
-  AUX <- get_all_vars(formula)
-  yp <- AUX[,1]
-  Xp <- AUX[,-1]
+  cl <- match.call()
+  mf <- match.call(expand.dots = FALSE)
+  m <- match(c("formula", "data", "subset"), names(mf), 0)
+  mf <- mf[c(1, m)]
+  mf$drop.unused.levels <- TRUE
+  mf[[1]] <- as.name("model.frame")
+  mf <- eval(mf, parent.frame())
+  mt <- attr(mf, "terms") # allow model.frame to update it
+  yp <- model.response(mf, "numeric")
+  Xp <- model.matrix(mt, mf, NULL) 
+  # above line typically is "model.matrix(mt, mf, contrasts)" and contrasts equals NULL
+
+  # remove the default intercept, it is estimated separately  
+  if( all( Xp[, 1] == 1 ) ) Xp <- Xp[, -1]
+  
+
+  # AUX <- get_all_vars(formula)
+  # yp <- AUX[,1]
+  # Xp <- AUX[,-1]
   
   n <- length(yp)
   Xp <- as.matrix(Xp)
@@ -241,7 +261,14 @@ backf.cl <- function(formula, point=NULL, windows, epsilon=1e-6, degree=0,
 #' This function computes a robust backfitting algorithm for additive models
 #' using robust local polynomial smoothers.
 #'
-#' @param formula An object of class 'formula'.
+#' @param formula an object of class \code{formula} (or one that can be coerced to 
+#' that class): a symbolic description of the model to be fitted. 
+#' @param data an optional data frame, list or environment (or object coercible 
+#' by \link{as.data.frame} to a data frame) containing the variables in the model. 
+#' If not found in \code{data}, the variables are taken from \code{environment(formula)}, 
+#' typically the environment from which the function was called.
+#' @param subset an optional vector specifying a subset of observations to be used in 
+#' the fitting process.
 #' @param point matrix of points where predictions will be computed and returned.
 #' @param windows vector of bandwidths for the local polynomial smoother,
 #' one per explanatory variable.
@@ -272,20 +299,31 @@ backf.cl <- function(formula, point=NULL, windows, epsilon=1e-6, degree=0,
 #'
 #' @examples
 #' data(airquality)
-#' x <- airquality
-#' x <- x[complete.cases(x), c('Ozone', 'Solar.R', 'Wind', 'Temp')]
-#' y <- as.vector(x$Ozone)
-#' x <- as.matrix(x[, c('Solar.R', 'Wind', 'Temp')])
-#' tmp <- backf.rob(Xp = x, yp=y, windows=c(136.7, 8.9, 4.8) , degree=1)
+#' tmp <- backf.rob(Ozone ~ Solar.R + Wind + Temp, data=airquality, 
+#' subset=complete.cases(airquality), windows=c(136.7, 8.9, 4.8), degree=1)
 #'
 #' @export
-backf.rob <- function(formula, windows, point=NULL, epsilon=1e-6, degree=0,
+backf.rob <- function(formula, data, subset, windows, point=NULL, epsilon=1e-6, degree=0,
                       sigma.hat=NULL, prob=NULL, max.it=50, k.h=1.345,
                       k.t = 4.685, type='Huber'){
+  cl <- match.call()
+  mf <- match.call(expand.dots = FALSE)
+  m <- match(c("formula", "data", "subset"), names(mf), 0)
+  mf <- mf[c(1, m)]
+  mf$drop.unused.levels <- TRUE
+  mf[[1]] <- as.name("model.frame")
+  mf <- eval(mf, parent.frame())
+  mt <- attr(mf, "terms") # allow model.frame to update it
+  yp <- model.response(mf, "numeric")
+  Xp <- model.matrix(mt, mf, NULL) 
+  # above line typically is "model.matrix(mt, mf, contrasts)" and contrasts equals NULL
   
-  AUX <- get_all_vars(formula)
-  yp <- AUX[,1]
-  Xp <- AUX[,-1]
+  # remove the default intercept, it is estimated separately  
+  if( all( Xp[, 1] == 1 ) ) Xp <- Xp[, -1]
+  
+  # AUX <- get_all_vars(formula)
+  # yp <- AUX[,1]
+  # Xp <- AUX[,-1]
   
   Xp <- as.matrix(Xp)
   n <- length(yp)
@@ -694,7 +732,7 @@ predict.backf <- function(object, ...){
 
 #' Fitted values for objects of class \code{backf}
 #'
-#' This function returns the fitted values given the covariates of the original sample under an additive model using a classical or robust marginal integration procedure estimator computed with \code{\link{margint.cl}} or \code{\link{margint.rob}}.
+#' This function returns the fitted values given the covariates of the original sample under an additive model using a classical or robust marginal integration procedure estimator computed with \code{margint.cl} or \code{margint.rob}.
 #'
 #' @param object an object of class \code{backf}, a result of a call to \code{\link{backf.cl}} or \code{\link{backf.rob}}.
 #' @param ... additional other arguments. Currently ignored.
@@ -783,12 +821,8 @@ fitted.backf <- function(object,...){
 #' @author Alejandra Mercedes Martinez \email{ale_m_martinez@hotmail.com}
 #'
 #' @examples
-#' data(airquality)
-#' x <- airquality
-#' x <- x[complete.cases(x), c('Ozone', 'Solar.R', 'Wind', 'Temp')]
-#' y <- as.vector(x$Ozone)
-#' x <- as.matrix(x[, c('Solar.R', 'Wind', 'Temp')])
-#' tmp <- backf.rob(Xp = x, yp=y, windows=c(136.7, 8.9, 4.8) , degree=1)
+#' tmp <- backf.rob(Ozone ~ Solar.R + Wind + Temp, data=airquality, 
+#' subset=complete.cases(airquality), windows=c(136.7, 8.9, 4.8), degree=1)
 #' plot(tmp, which=1:2)
 #'
 #' @export
