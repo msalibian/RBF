@@ -223,7 +223,7 @@ backf.cl <- function(formula, data, subset, point=NULL, windows, epsilon=1e-6, d
     #  prediccion <- mpunto <- point
     #}
     
-    if(is.null(dim(punto))){
+    if(is.null(dim(point))){
       if(q==1){
         prediccion <- mpunto <- as.matrix(point)
       }else{
@@ -471,7 +471,7 @@ backf.rob <- function(formula, data, subset, windows, point=NULL, epsilon=1e-6, 
     #  prediccion <- mpunto <- point
     #}
     
-    if(is.null(dim(punto))){
+    if(is.null(dim(point))){
       if(q==1){
         prediccion <- mpunto <- as.matrix(point)
       }else{
@@ -732,7 +732,7 @@ predict.backf <- function(object, ...){
 
 #' Fitted values for objects of class \code{backf}
 #'
-#' This function returns the fitted values given the covariates of the original sample under an additive model using a classical or robust marginal integration procedure estimator computed with \code{margint.cl} or \code{margint.rob}.
+#' This function returns the fitted values given the covariates of the original sample under an additive model using a classical or robust marginal integration procedure estimator computed with \code{backf.cl} or \code{backf.rob}.
 #'
 #' @param object an object of class \code{backf}, a result of a call to \code{\link{backf.cl}} or \code{\link{backf.rob}}.
 #' @param ... additional other arguments. Currently ignored.
@@ -983,7 +983,7 @@ deviance.backf.rob <- function(object, ...){
 
 #' Additive model formula
 #'
-#' Description of the additive model formula extracted from an object of class \code{margint}.
+#' Description of the additive model formula extracted from an object of class \code{backf}.
 #'
 #' @param x an object of class \code{backf}, a result of a call to \code{\link{backf.cl}} or \code{\link{backf.rob}}.
 #' @param ... additional other arguments. Currently ignored.
