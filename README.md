@@ -1,7 +1,7 @@
 Robust backfitting
 ================
 Matias Salibian
-2020-07-03
+2020-07-04
 
 ## A robust backfitting algorithm
 
@@ -91,8 +91,8 @@ plot(fit.full, which=1:3)
 ```
 
 We now compute and display the classical backfitting fits, with
-bandwidths chosen via leave-one-out CV, and plots partial residuals with
-both the classical and robust fits on them:
+bandwidths chosen via leave-one-out CV. Below are plots of partial
+residuals with the classical and robust fits overlaid:
 
 ``` r
 aircomplete <- airquality[ complete.cases(airquality), ]
@@ -103,7 +103,7 @@ fit.gam <- gam(Ozone ~ lo(Solar.R, span=.7) + lo(Wind, span=.7)+
 x <- as.matrix( aircomplete[ , c('Solar.R', 'Wind', 'Temp')] )
 y <- as.vector( aircomplete[ , 'Ozone'] )
 fits <- predict(fit.gam, type='terms')
-alpha.gam <- attr(fits, 'constant')
+# alpha.gam <- attr(fits, 'constant')
 for(j in 1:3) {
   re <- fit.full$yp - fit.full$alpha - rowSums(fit.full$g.matrix[,-j])
   plot(re ~ x[,j], type='p', pch=20, col='gray45', xlab=colnames(x)[j], ylab='')
@@ -115,18 +115,13 @@ for(j in 1:3) {
 
 <img src="README_files/figure-gfm/classicfits-1.png" width="33%" /><img src="README_files/figure-gfm/classicfits-2.png" width="33%" /><img src="README_files/figure-gfm/classicfits-3.png" width="33%" />
 
-We look at the residuals from the robust fit to identify potential
-outiers
+To identify potential outiers we look at the residuals from the robust
+fit, and use the function `boxplot`:
 
 ``` r
 re.ro <- residuals(fit.full)
-# use the function boxplot() to plot and identify 
-# potential outliers
 ou.ro <- boxplot(re.ro, col='gray80')$out
-# determine their indices
 in.ro <- (1:length(re.ro))[ re.ro %in% ou.ro ]
-# highlight potential outliers on the residual
-# boxplot with red circles
 points(rep(1, length(in.ro)), re.ro[in.ro], pch=20, cex=1.5, col='red')
 ```
 
@@ -160,8 +155,11 @@ for(j in 1:3) {
 
 <img src="README_files/figure-gfm/showouts2-1.png" width="33%" /><img src="README_files/figure-gfm/showouts2-2.png" width="33%" /><img src="README_files/figure-gfm/showouts2-3.png" width="33%" />
 
-If we use the classical backfitting algorithm on the data without the
-potential outliers, we obtain almost identical results:
+We now compute the classical backfitting algorithm on the data without
+the potential outliers identified by the robust fit (the optimal
+smoothing parameters were computed using leave-one-out
+cross-validation). Note that now both fits (robust and non-robust) are  
+almost identical.
 
 ``` r
 # Run the classical backfitting algorithm without outliers
@@ -169,7 +167,7 @@ airclean <- aircomplete[-in.ro, ]
 fit.gam2 <- gam(Ozone ~ lo(Solar.R, span=.7) + lo(Wind, span=.8)+
                   lo(Temp, span=.3), data=airclean)
 fits2 <- predict(fit.gam2, type='terms')
-alpha.gam2 <- attr(fits2, 'constant')
+# alpha.gam2 <- attr(fits2, 'constant')
 dd2 <- aircomplete[-in.ro, c('Solar.R', 'Wind', 'Temp')]
 for(j in 1:3) {
   re <- fit.full$yp - fit.full$alpha - rowSums(fit.full$g.matrix[,-j])
@@ -186,7 +184,10 @@ for(j in 1:3) {
 
 Finally, we compare the prediction accuracy obtained with each of the
 fits. Because we are not interested in predicting well any possible
-outliers in the data, we use a 5%-trimmed mean squared prediction error:
+outliers in the data, we evaluate the quality of the predictions using a
+5%-trimmed mean squared prediction error (effectively measuring the
+prediction accuracy on 95% of the data). We use this alpha-trimmed mean
+squared function:
 
 ``` r
 tms <- function(a, alpha=.1) {
@@ -230,7 +231,7 @@ for(runs in 1:M) {
 }
 ```
 
-These are the boxplots. Note that the robust fit consistently fits the
+These are the boxplots. We see that the robust fit consistently fits the
 vast majority (95%) of the data better than the classical one.
 
 ``` r
