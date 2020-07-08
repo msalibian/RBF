@@ -272,7 +272,8 @@ tms <- function(a, alpha=.1) {
 ```
 
 We use 100 runs of 5-fold CV to compare the 5%-trimmed mean squared
-prediction error of the robust fit and the classical one.
+prediction error of the robust fit and the classical one. Note that the
+bandwidths are kept fixed at their optimal value estimated above.
 
 ``` r
 dd <- airquality
@@ -299,8 +300,8 @@ for(runs in 1:M) {
                      lo(Temp, span=.5), data=dd[ii!=j, ])
     tmpgam[ ii == j ] <- predict(fit.gam, newdata=dd[ii==j, ], type='response')
   }
-  tmspe.ro[runs] <- tms( dd$Ozone - tmpro, alpha=.1)
-  tmspe.gam[runs] <- tms( dd$Ozone - tmpgam, alpha=.1)
+  tmspe.ro[runs] <- tms( dd$Ozone - tmpro, alpha=0.05)
+  tmspe.gam[runs] <- tms( dd$Ozone - tmpgam, alpha=0.05)
 }
 ```
 
@@ -317,9 +318,9 @@ boxplot(tmspe.ro, tmspe.gam, names=c('Robust', 'Classical'),
 As a sanity check, we compare the prediction accuracy of the robust and
 non-robust fits using only the “clean” data set. We re-compute the
 optimal bandwidths for the robust fit using leave-one-out cross
-validation as above. Again, we use 100 runs of 5-fold cross-validation,
-and compute both the trimmed and the regular mean squared prediction
-errors of each fit.
+validation as above, and as above, note that these bandwidths are kept
+fixed. We use 100 runs of 5-fold cross-validation, and compute both the
+trimmed and the regular mean squared prediction errors of each fit.
 
 ``` r
 aq <- airquality
@@ -344,28 +345,30 @@ for(runs in 1:M) {
       tmpro[ ii == j ] <- rowSums(fit.full$prediction) + fit.full$alpha
     }
     fit.gam <- gam(Ozone ~ lo(Solar.R, span=.7) + lo(Wind, span=.8)+
-                     lo(Temp, span=.3), data=airclean,
-                   subset = (ii!=j) )
+                     lo(Temp, span=.3), data=airclean, subset = (ii!=j) )
     tmpgam[ ii == j ] <- predict(fit.gam, newdata=airclean[ii==j, ], 
                                  type='response')
   }
-  tmspe.ro[runs] <- tms( airclean$Ozone - tmpro, alpha=.1)
+  tmspe.ro[runs] <- tms( airclean$Ozone - tmpro, alpha=0.05)
   mspe.ro[runs] <- mean( ( airclean$Ozone - tmpro)^2, na.rm=TRUE)
-  tmspe.gam[runs] <- tms( airclean$Ozone - tmpgam, alpha=.1)
+  tmspe.gam[runs] <- tms( airclean$Ozone - tmpgam, alpha=0.05)
   mspe.gam[runs] <- mean( ( airclean$Ozone - tmpgam)^2, na.rm=TRUE)
 }
 ```
 
-The boxplots of the mean squared prediction errors over the 100
-cross-validation runs are below. We see that for the majority of the
-runs both estimators provide very similar prediction errors. Note that
-the we expect a robust method to perform slightly worse than the
-classical one when no model deviations occur. The boxplots below show
-that this loss in prediction accuracy is very small.
+The boxplots of the trimmed and regular mean squared prediction errors
+over the 100 cross-validation runs are below. We see that for the
+majority of the runs both estimators provide very similar prediction
+errors. Note that we naturally expect a robust method to perform
+slightly worse than the classical one when no model deviations occur.
+The boxplots below show that for this robust backfitting estimator, this
+loss in prediction accuracy is in fact very small.
 
 ``` r
-boxplot(mspe.ro, mspe.gam, names=c('Robust', 'Classical'), #ylim=c(100, 300),
-        col=rep(c('tomato3', 'gray80'), 2), main='MSPE On "clean" data')
+boxplot(tmspe.ro, tmspe.gam, names=c('Robust', 'Classical'), 
+        col=rep(c('tomato3', 'gray80'), 2), main='Trimmed MSPE On "clean" data')
+boxplot(mspe.ro, mspe.gam, names=c('Robust', 'Classical'), 
+        col=rep(c('tomato3', 'gray80'), 2), main='Non-Trimmed MSPE On "clean" data')
 ```
 
-![](README_files/figure-gfm/boxplot.clean.predictions-1.png)<!-- -->
+<img src="README_files/figure-gfm/boxplot.clean.predictions-1.png" width="33%" /><img src="README_files/figure-gfm/boxplot.clean.predictions-2.png" width="33%" />
