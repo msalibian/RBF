@@ -15,7 +15,7 @@
 A model formula.
 }
 \description{
-Description of the additive model formula extracted from an object of class \code{margint}.
+Description of the additive model formula extracted from an object of class \code{backf}.
 }
 \author{
 Alejandra Mercedes Martinez \email{ale_m_martinez@hotmail.com}

@@ -15,7 +15,7 @@ fitted.values.backf(object, ...)
 A vector of fitted values.
 }
 \description{
-This function returns the fitted values given the covariates of the original sample under an additive model using a classical or robust marginal integration procedure estimator computed with \code{margint.cl} or \code{margint.rob}.
+This function returns the fitted values given the covariates of the original sample under an additive model using a classical or robust marginal integration procedure estimator computed with \code{backf.cl} or \code{backf.rob}.
 }
 \author{
 Alejandra Mercedes Martinez \email{ale_m_martinez@hotmail.com}
