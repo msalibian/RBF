@@ -3,7 +3,7 @@ Type: Package
 Title: Robust Backfitting 
 Version: 2.0.1
 Date: 2020-07-14
-Authors@R: c(person("Matias", "Salibian-Barrera", role = c("cre"), email = "matias@stat.ubc.ca"),
+Authors@R: c(person("Matias", "Salibian-Barrera", role = c("aut", "cre"), email = "matias@stat.ubc.ca"),
              person("Alejandra", "Martinez", role=c("aut"), email="ale_m_martinez@hotmail.com")
             )
 Description: A robust backfitting algorithm for additive models based on (robust) local polynomial 
