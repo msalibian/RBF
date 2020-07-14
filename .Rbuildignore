@@ -4,6 +4,7 @@
 ^README\.md$
 ^README\.Rmd$
 ^README_files$
+^README_cache$
 ^RBF-examples\.R$
 
 
