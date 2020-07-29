@@ -1,7 +1,7 @@
 Robust backfitting
 ================
 Matias Salibian
-2020-07-08
+2020-07-29
 
 ## A robust backfitting algorithm
 
@@ -55,39 +55,34 @@ respectively. The code is copied below:
 # This takes a long time to compute (approx 380 minutes running
 # R 3.6.1 on an Intel(R) Core(TM) i7-4790 CPU @ 3.60GHz)
 ccs <- complete.cases(airquality)
-x <- as.matrix( airquality[ccs, c('Solar.R', 'Wind', 'Temp')] )
-y <- as.vector( airquality[ccs, 'Ozone'] )
+aircomplete <- airquality[ccs, c('Ozone', 'Solar.R', 'Wind', 'Temp')]
 a <- c(1/2, 1, 1.5, 2, 2.5, 3)
-h1 <- a * sd(x[,1])
-h2 <- a * sd(x[,2])
-h3 <- a * sd(x[,3])
+h1 <- a * sd(aircomplete[,2])
+h2 <- a * sd(aircomplete[,3])
+h3 <- a * sd(aircomplete[,4])
 hh <- expand.grid(h1, h2, h3)
 nh <- nrow(hh)
 rmspe <- rep(NA, nh)
 jbest <- 0
 cvbest <- +Inf
-# leave-one-out
-n <- nrow(x)
+n <- nrow(aircomplete)
 for(i in 1:nh) {
   # leave-one-out CV loop
   preds <- rep(NA, n)
   for(j in 1:n) {
-    tmp <- try( backf.rob(y ~ x, point = x[j, ],
-                          windows = hh[i, ], epsilon = 1e-6,
+    tmp <- try( backf.rob(Ozone ~ Solar.R + Wind + Temp, point = aircomplete[j, -1],
+                          windows = hh[i, ], epsilon = 1e-6, data=aircomplete,
                           degree = 1, type = 'Tukey', subset = c(-j) ))
     if (class(tmp)[1] != "try-error") {
       preds[j] <- rowSums(tmp$prediction) + tmp$alpha
     }
   }
-  pred.res <- preds - y
-  tmp.re <- RobStatTM::locScaleM(pred.res, na.rm=TRUE)
+  tmp.re <- RobStatTM::locScaleM(preds - aircomplete$Ozone, na.rm=TRUE)
   rmspe[i] <- tmp.re$mu^2 + tmp.re$disper^2
   if( rmspe[i] < cvbest ) {
     jbest <- i
     cvbest <- rmspe[i]
-    print('Record')
   }
-  print(c(i, rmspe[i]))
 }
 bandw <- hh[jbest,]
 ```
@@ -104,8 +99,9 @@ function is 4.685). We remove cases with missing entries.
 
 ``` r
 ccs <- complete.cases(airquality)
-fit.full <- backf.rob(Ozone ~ Solar.R + Wind + Temp, data=airquality,
-                subset=ccs, windows=bandw, degree=1, type='Tukey')
+fit.full <- backf.rob(Ozone ~ Solar.R + Wind + Temp, windows=bandw, 
+                      epsilon=1e-6, degree=1, type='Tukey', 
+                      subset = ccs, data=airquality)
 ```
 
 We display the 3 fits (one per additive component), being careful with
@@ -231,8 +227,7 @@ We now compute the classical backfitting algorithm on the data without
 the potential outliers identified by the robust fit (the optimal
 smoothing parameters for the non-robust fit were re-computed using
 leave-one-out cross-validation on the “clean” data set). Note that now
-both fits (robust and non-robust) are  
-almost identical.
+both fits (robust and non-robust) are almost identical.
 
 ``` r
 # Run the classical backfitting algorithm without outliers
