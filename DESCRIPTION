@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 Package: RBF
 Type: Package
 Title: Robust Backfitting 
@@ -15,3 +16,22 @@ License: GPL (>=3.0)
 RoxygenNote: 6.1.1
 Encoding: UTF-8
 Imports: stats, graphics
+=======
+Package: RBF
+Type: Package
+Title: Robust Backfitting 
+Version: 2.0.1
+Date: 2020-07-29
+Authors@R: c(person("Matias", "Salibian-Barrera", role = c("aut", "cre"), email = "matias@stat.ubc.ca"),
+             person("Alejandra", "Martinez", role=c("aut"), email="ale_m_martinez@hotmail.com")
+            )
+Description: A robust backfitting algorithm for additive models based on (robust) local polynomial 
+             kernel smoothers. It includes both bounded and re-descending (kernel) M-estimators, and
+             it computes predictions for points outside the training set if desired. See
+             Boente, Martinez and Salibian-Barrera (2017) <doi:10.1080/10485252.2017.1369077> for
+             details. 
+License: GPL (>=3.0)
+RoxygenNote: 6.1.1
+Encoding: UTF-8
+Imports: stats, graphics
+>>>>>>> e0045ab1923c8baab7339a9b31b3e79534a828ff
