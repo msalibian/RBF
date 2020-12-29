@@ -74,7 +74,7 @@ have a convergence rate of $\sqrt{n \, h_n^d}$, where $h_n \to 0$ is the bandwid
 smoothing parameter used for obtaining the estimator.  
 -->
 
-Additve models offer a non-parametric generalization of linear models
+Additive models offer a non-parametric generalization of linear models
 (@HastieTibshirani1990). They are flexible, interpretable and avoid the
 *curse of dimensionality* which means that, as the number of explanatory
 variables increases, neighbourhoods rapidly become sparse, and much fewer
