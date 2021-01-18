@@ -1,4 +1,4 @@
-### Robust backfitting
+## Robust backfitting
 
 Matias Salibian
 2021-01-18
