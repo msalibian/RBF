@@ -1,6 +1,5 @@
-<<<<<<< HEAD
 Robust backfitting
-================
+
 Matias Salibian
 2020-07-08
 
@@ -743,4 +742,3 @@ boxplot(mspe.ro, mspe.gam, names=c('Robust', 'Classical'),
 ```
 
 <img src="README_files/figure-gfm/boxplot.clean.predictions-1.png" width="33%" /><img src="README_files/figure-gfm/boxplot.clean.predictions-2.png" width="33%" />
->>>>>>> e0045ab1923c8baab7339a9b31b3e79534a828ff
