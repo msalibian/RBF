@@ -237,7 +237,7 @@ backf.cl <- function(formula, data, subset, point=NULL, windows, epsilon=1e-6, d
     for(k in 1:np){
       for(j in 1:q){
         y.tilde.bis <- yp - alpha - rowSums(g.matriz[,-j,drop=FALSE]) #- aux1
-        we <- k.epan( (Xp[,j] - mpunto[k,j]) / windows[j] )
+        we <- k.epan( (Xp[,j] - mpunto[k,j]) / as.numeric(windows[j]) )
         if(degree == 0)
           prediccion[k,j] <- sum( we * y.tilde.bis ) / sum( we )
         if(degree > 0) {
