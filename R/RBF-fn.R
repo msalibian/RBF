@@ -197,7 +197,7 @@ backf.cl <- function(formula, data, subset, point=NULL, windows, epsilon=1e-6, d
     for(j in 1:q) {
       y.tilde.bis <- yp - alpha - rowSums(g.matriz[,-j,drop=FALSE])
       for(i in 1:n.miss) {
-        we <- k.epan( (Xp[,j] - Xp[i,j]) / windows[j] )
+        we <- k.epan( (Xp[,j] - Xp[i,j]) / as.numeric(windows[j]) )
         if(degree == 0)
           g.matriz[i,j] <- sum( we * y.tilde.bis ) / sum( we )
         if(degree > 0) {
