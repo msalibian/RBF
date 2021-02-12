@@ -4,9 +4,21 @@
 \alias{backf.rob}
 \title{Robust Backfitting}
 \usage{
-backf.rob(formula, data, subset, windows, point = NULL,
-  epsilon = 1e-06, degree = 0, sigma.hat = NULL, prob = NULL,
-  max.it = 50, k.h = 1.345, k.t = 4.685, type = "Huber")
+backf.rob(
+  formula,
+  data,
+  subset,
+  windows,
+  point = NULL,
+  epsilon = 1e-06,
+  degree = 0,
+  sigma.hat = NULL,
+  prob = NULL,
+  max.it = 50,
+  k.h = 1.345,
+  k.t = 4.685,
+  type = "Huber"
+)
 }
 \arguments{
 \item{formula}{an object of class \code{formula} (or one that can be coerced to 

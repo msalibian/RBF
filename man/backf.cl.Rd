@@ -4,8 +4,17 @@
 \alias{backf.cl}
 \title{Classic Backfitting}
 \usage{
-backf.cl(formula, data, subset, point = NULL, windows, epsilon = 1e-06,
-  degree = 0, prob = NULL, max.it = 100)
+backf.cl(
+  formula,
+  data,
+  subset,
+  point = NULL,
+  windows,
+  epsilon = 1e-06,
+  degree = 0,
+  prob = NULL,
+  max.it = 100
+)
 }
 \arguments{
 \item{formula}{an object of class \code{formula} (or one that can be coerced to 
