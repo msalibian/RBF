@@ -235,7 +235,11 @@ The following bandwidths were obtained via a robust
 leave-one-out cross-validation procedure (described in the paper).
 As a robust prediction error measure we use `mu^2 + sigma^2` where
 `mu` and `sigma` are M-estimators of location and scale of
-the prediction errors, respectively. The code is copied below:
+the prediction errors, respectively. The code can be found in the
+README file in the GitHub repository.
+
+<!---
+The code is copied below:
 ```{r robust.leaveoneout, eval=FALSE}
 # Bandwidth selection with leave-one-out cross-validation
 ## Without outliers
@@ -278,6 +282,9 @@ for(i in 1:nh) {
 }
 bandw <- hh[jbest,]
 ```
+
+--->
+
 Here we just set them to their optimal values:
 ```{r bandw}
 bandw <- c(136.7285, 10.67314, 4.764985)
@@ -313,6 +320,7 @@ NOTE: These plots could also be obtained using the `plot` method:
 plot(fit.full, which=1:3)
 ```
 
+<!---
 We now compute and display the 
 classical backfitting fits, with 
 bandwidths chosen via leave-one-out CV:
@@ -341,8 +349,11 @@ for(i in 1:nh) {
 }
 (hh[jbest,])
 ```
+--->
+
 The optimal bandwidths are `0.7`, `0.7` and `0.5` for `Solar.R`, 
-`Wind` and `Temp`, respectively.
+`Wind` and `Temp`, respectively. The code to compute the leave-one-out
+cross-validation is available in the README file in the GitHub repository.
 Below are plots of  partial residuals with
 the classical and robust fits overlaid:
 ```{r classicfits, fig.show="hold", out.width="33%"}
@@ -422,6 +433,8 @@ for(j in 1:3) {
   lines(x[oo,j], fit.full$g.matrix[oo,j], lwd=5, col='blue')
 }
 ```
+
+<!---
 
 Finally, we compare the prediction accuracy obtained with each
 of the fits. Because we are not interested in predicting well any
@@ -535,3 +548,4 @@ boxplot(tmspe.ro, tmspe.gam, names=c('Robust', 'Classical'),
 boxplot(mspe.ro, mspe.gam, names=c('Robust', 'Classical'), 
         col=rep(c('tomato3', 'gray80'), 2), main='Non-Trimmed MSPE On "clean" data')
 ```
+--->
