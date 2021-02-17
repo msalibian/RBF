@@ -1,5 +1,5 @@
 ---
-title: '{RBF}: An {R} package to compute a robust backfitting estimator
+title: 'RBF: An R package to compute a robust backfitting estimator
   for additive models'
 tags:
 - R
@@ -36,7 +36,7 @@ more flexible than linear models, not affected by the curse of
 dimensionality, and also allow the exploration of individual covariate
 effects. Standard algorithms to fit these models can be highly susceptible to
 the presence of a few atypical or outlying observations in the data.
-The ``RBF`` [@RBF] package for {R} implements the robust estimator for additive
+The ``RBF`` [@RBF] package for R implements the robust estimator for additive
 models of @BoenteMartinezSalibian2017, which can resist the damaging effect
 of outliers in the training set.
 
@@ -48,7 +48,7 @@ the presence of potential outliers.
 
 # Implementation Goals
 
-``RBF`` implements a user interface similar to that of the {R} package ``gam``
+``RBF`` implements a user interface similar to that of the R package ``gam``
 [@gam], which computes the standard non-robust kernel-based fit for additive
 models using the backfitting algorithm. The ``RBF`` package also includes
 several modeling tools, including functions to produce diagnostic plots,
@@ -199,7 +199,7 @@ between consecutive estimates $\hat{g}_j$) and \code{max.it} (maximum number of
 iterations). 
 -->
 
-To compare the robust and classical estimators we use the {R} package ``gam``. 
+To compare the robust and classical estimators we use the R package ``gam``. 
 Optimal bandwidths were estimated using leave-one-out
 cross-validation as before.
 ```
@@ -340,7 +340,7 @@ Red points correspond to the potential outliers.
 
 # Availability
 
-The software is available at the Comprehensive {R} Archive Network [CRAN](https://CRAN.R-project.org/) 
+The software is available at the Comprehensive R Archive Network [CRAN](https://CRAN.R-project.org/) 
 and also at the  GitHub repository
 [https://github.com/msalibian/RBF](https://github.com/msalibian/RBF). The GitHub repository also 
 contains detailed scripts reproducing the data analysis above.
