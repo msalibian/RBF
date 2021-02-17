@@ -1,0 +1,22 @@
+{
+    "args": [
+        "-I/usr/lib/llvm-10/lib/clang/10.0.0/include",
+        "-I/usr/include/c++/9",
+        "-I/usr/include/x86_64-linux-gnu/c++/9",
+        "-I/usr/include/c++/9/backward",
+        "-I/usr/lib/gcc/x86_64-linux-gnu/9/include",
+        "-I/usr/local/include",
+        "-I/usr/include/x86_64-linux-gnu",
+        "-I/usr/include",
+        "-std=gnu99",
+        "-I/usr/share/R/include",
+        "-DNDEBUG",
+        "-fpic",
+        "-fdebug-prefix-map=/build/r-base-jbaK_j/r-base-3.6.3=.",
+        "-fstack-protector-strong",
+        "-D_FORTIFY_SOURCE=2"
+    ],
+    "pch": "",
+    "is_cpp": false,
+    "hash": "1613565426"
+}

@@ -1,0 +1,44 @@
+# CV function
+
+backf.rob.cv <- function(k=5, Xp, yp, windows, epsilon, 
+                         degree, type) {
+  # does k-fold CV and returns "robust root mean-squared prediction error"
+  n <- length(yp)
+  k1 <- floor(n/k)
+  ids <- rep(1:k, each=k1)
+  if( length(ids) < n ) ids <- c(ids, 1:(n%%k))
+  ids <- sample(ids)
+  preds <- rep(NA, n)
+  for(j in 1:k) {
+    XX <- Xp[ids!=j,]
+    yy <- yp[ids!=j]
+    tmp <- try( backf.rob(Xp=XX, yp=yy, point=Xp[ids==j,], windows=windows, epsilon=epsilon,
+                          degree=degree, type=type) )
+    if( class(tmp) != 'try-error') {
+      preds[ids==j] <- rowSums(tmp$prediction) + tmp$alpha
+    }
+  }
+  return( mad( (preds-yp), na.rm=TRUE )^2 + median( (preds-yp), na.rm=TRUE )^2 )
+}
+
+
+backf.l2.cv <- function(k=5, Xp, yp, windows, epsilon, 
+                         degree, type) {
+  # does k-fold CV and returns mean-squared prediction error
+  n <- length(yp)
+  k1 <- floor(n/k)
+  ids <- rep(1:k, each=k1)
+  if( length(ids) < n ) ids <- c(ids, 1:(n%%k))
+  ids <- sample(ids)
+  preds <- rep(NA, n)
+  for(j in 1:k) {
+    XX <- Xp[ids!=j,]
+    yy <- yp[ids!=j]
+    tmp <- try( backf.cl(Xp=XX, yp=yy, point=Xp[ids==j,], windows=windows, epsilon=epsilon,
+                          degree=degree) )
+    if( class(tmp) != 'try-error') {
+      preds[ids==j] <- rowSums(tmp$prediction) + tmp$alpha
+    }
+  }
+  return( mean( (preds-yp)^2, na.rm=TRUE ) )
+}

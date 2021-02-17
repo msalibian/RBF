@@ -1,0 +1,173 @@
+
+
+
+library(RBF)
+source('backf-cv-fn.R')
+
+# Sample size
+n <- 100
+
+# No. of covariates
+d <- 2
+
+# CV folds?
+k.cv <- 5
+
+# ##Funciones
+# funcion.g <- function(x1,x2){
+#   4+24*(x1-1/2)^2+2*pi*sin(pi*x2)
+# }
+
+funcion.g1 <- function(x1){
+  24*(x1-1/2)^2-2
+}
+
+funcion.g2 <- function(x2){
+  2*pi*sin(pi*x2)-4
+}
+
+g1 <- seq(0.02, 0.98, length=50)
+grilla <- cbind(g1, g1)
+
+g1.malla <- funcion.g1(g1)
+g2.malla <- funcion.g2(g1)
+
+
+
+# sigma for errors
+desvio.epsilon <- 0.5
+
+# Convergence criterion
+epsilon <- 1e-10
+
+# bandwidth
+ventanas <- seq(0.10, 0.30, by=0.025)
+ventanas <- as.matrix(expand.grid( ventanas, ventanas))
+nv <- nrow(ventanas)
+
+# contamination type
+tipo.cont <- 1
+
+# missing?
+missing <- FALSE
+
+# degree of local polynomial 
+grado.pol <- 1
+
+# number of samples
+NITER <- 125
+
+# last results in output file
+anterior <- 0
+
+
+seed <- 12345
+
+ecm.b.back <- rep(0,NITER)
+ecm.b.back.comp1 <- rep(0,NITER)
+ecm.b.back.comp2 <- rep(0,NITER)
+
+ecm.b.malla <- rep(0,NITER)
+ecm.b.malla.comp1 <- rep(0,NITER)
+ecm.b.malla.comp2 <- rep(0,NITER)
+
+
+inicio <- anterior+1
+final <- anterior+NITER
+
+# output files
+nombreECMback <- paste("ECM_Tukey_muestra_d", d, "_cv_C",tipo.cont,"_desde_",inicio,"_hasta_",final,"_grado",grado.pol,".txt",sep="")
+nombreECMmalla <- paste("ECM_Tukey_malla_d", d, "_cv_C",tipo.cont,"_desde_",inicio,"_hasta_",final,"_grado",grado.pol,".txt",sep="")
+
+
+tiempo1 <- proc.time()
+for(it in inicio:final) {
+  
+  print(it)
+  set.seed(seed + 17*it)
+  
+  x1 <- runif(n)
+  x2 <- runif(n)
+  
+  eps <- rnorm(n, mean=0, sd=desvio.epsilon)
+  
+  regresion <- funcion.g1(x1) + funcion.g2(x2)
+  
+  yp <- regresion + eps
+  
+  Xp <- cbind(x1,x2)
+  
+  verdaderos <- cbind(funcion.g1(x1),funcion.g2(x2))
+  m.verdadera <- rowSums(verdaderos)
+  
+  if(tipo.cont==0) {
+    yp.cont <- yp
+  }
+  
+  if(tipo.cont==1){ 
+    
+    #Por si tenemos datos faltantes:
+    tmp <- !is.na(yp)
+    nn <- sum(tmp)
+    ou <- rbinom(nn, size=1, prob=0.15) 
+    error.aux <- eps[tmp]
+    error.aux[ ou == 1 ] <- rnorm(sum(ou),mean=15, sd=sqrt(0.01))
+    
+    yp.cont <- yp
+    yp.cont[tmp] <- regresion[tmp]+ error.aux
+  }
+  
+  # CV 
+  rmpe <- rep(NA, nv)
+  for(kk in 1:nv) {
+    rmpe[kk] <- backf.rob.cv(k=k.cv, Xp=Xp, yp=yp.cont, windows=as.vector(ventanas[kk,]), epsilon=epsilon, 
+                             degree=grado.pol, type='Tukey') 
+  }
+  
+  kk0 <- which.min(rmpe)
+  win.cv <- as.vector(ventanas[kk0,])
+  
+  sal.b <- try( backf.rob(Xp=Xp, yp=yp.cont, point=grilla, windows=win.cv, epsilon=epsilon, 
+                          degree=grado.pol, type='Tukey') )
+  
+  if( class(sal.b) != 'try-error') {
+    
+    tmp <- !is.na(yp.cont)
+    
+    #---- En la malla -----#
+    
+    salida.malla <- mean((rowSums(as.matrix(expand.grid(g1.malla-sal.b$prediction[,1],g2.malla-sal.b$prediction[,2]-sal.b$alpha)))^2),na.rm=TRUE)
+    
+    ecm.b.malla[it] <- salida.malla
+    
+    #MISE de las componentes aditivas
+    
+    ecm.b.malla.comp1[it] <- mean((sal.b$prediction[,1] - g1.malla)^2,na.rm=TRUE)
+    ecm.b.malla.comp2[it] <- mean((sal.b$prediction[,2] - g2.malla)^2,na.rm=TRUE)
+    
+    mseymalla <- c(it,sal.b$alpha,ecm.b.malla[it],ecm.b.malla.comp1[it],ecm.b.malla.comp2[it],sal.b$sigma.hat, win.cv) 
+    
+    write(t(mseymalla), file=nombreECMmalla, ncol=8, append=TRUE)
+    
+    
+    #---- En los puntos de la muestra -----#
+    
+    #Estimador robusto
+    est.b.back <- rowSums(sal.b$g.matrix)+sal.b$alpha
+    ecm.b.back[it] <- mean((est.b.back -m.verdadera[tmp])^2,na.rm=TRUE)
+    
+    ecm.b.back.comp1[it] <- mean((sal.b$g.matrix[,1] - funcion.g1(x1)[tmp])^2,na.rm=TRUE)
+    ecm.b.back.comp2[it] <- mean((sal.b$g.matrix[,2] - funcion.g2(x2)[tmp])^2,na.rm=TRUE)
+    
+    mseyback<-c(it,sal.b$alpha,ecm.b.back[it],ecm.b.back.comp1[it],ecm.b.back.comp2[it],sal.b$sigma.hat, win.cv) 
+    
+    write(t(mseyback), file=nombreECMback, ncol=8, append=TRUE)
+    
+  }
+  
+}
+
+tiempo2 <- proc.time()
+
+tiempo2-tiempo1
+

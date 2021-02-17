@@ -1,0 +1,298 @@
+[
+    {
+        "file": "/home/alejandra/Dropbox/Paper de paquetes en R/ConRStudio/RBF/src/RBF-fn.c",
+        "file_last_write": 1612991607.0,
+        "definitions": [
+            {
+                "usr": "c:@F@psi_huber_w",
+                "kind": 6,
+                "parent_name": "",
+                "name": "psi_huber_w(double, double)",
+                "file": "/home/alejandra/Dropbox/Paper de paquetes en R/ConRStudio/RBF/src/RBF-fn.c",
+                "line": 12,
+                "column": 8
+            },
+            {
+                "usr": "c:@F@psi_tukey_w",
+                "kind": 6,
+                "parent_name": "",
+                "name": "psi_tukey_w(double, double)",
+                "file": "/home/alejandra/Dropbox/Paper de paquetes en R/ConRStudio/RBF/src/RBF-fn.c",
+                "line": 23,
+                "column": 8
+            },
+            {
+                "usr": "c:@F@kepan",
+                "kind": 6,
+                "parent_name": "",
+                "name": "kepan(double)",
+                "file": "/home/alejandra/Dropbox/Paper de paquetes en R/ConRStudio/RBF/src/RBF-fn.c",
+                "line": 48,
+                "column": 8
+            },
+            {
+                "usr": "c:@F@suma_vec",
+                "kind": 6,
+                "parent_name": "",
+                "name": "suma_vec(double *, int)",
+                "file": "/home/alejandra/Dropbox/Paper de paquetes en R/ConRStudio/RBF/src/RBF-fn.c",
+                "line": 59,
+                "column": 8
+            },
+            {
+                "usr": "c:@F@norma_dos",
+                "kind": 6,
+                "parent_name": "",
+                "name": "norma_dos(double *, int)",
+                "file": "/home/alejandra/Dropbox/Paper de paquetes en R/ConRStudio/RBF/src/RBF-fn.c",
+                "line": 68,
+                "column": 8
+            },
+            {
+                "usr": "c:@F@l2dist",
+                "kind": 6,
+                "parent_name": "",
+                "name": "l2dist(double *, double *, int)",
+                "file": "/home/alejandra/Dropbox/Paper de paquetes en R/ConRStudio/RBF/src/RBF-fn.c",
+                "line": 77,
+                "column": 8
+            },
+            {
+                "usr": "c:@F@kernel_huber_pos",
+                "kind": 6,
+                "parent_name": "",
+                "name": "kernel_huber_pos(double *, double *, int *, double *, double *, double *, double *, double *, double *, double *, int *, double *)",
+                "file": "/home/alejandra/Dropbox/Paper de paquetes en R/ConRStudio/RBF/src/RBF-fn.c",
+                "line": 89,
+                "column": 6
+            },
+            {
+                "usr": "c:@F@kernel_tukey_pos",
+                "kind": 6,
+                "parent_name": "",
+                "name": "kernel_tukey_pos(double *, double *, int *, double *, double *, double *, double *, double *, double *, double *, int *, double *)",
+                "file": "/home/alejandra/Dropbox/Paper de paquetes en R/ConRStudio/RBF/src/RBF-fn.c",
+                "line": 129,
+                "column": 6
+            },
+            {
+                "usr": "c:@F@kernel_huber_lin",
+                "kind": 6,
+                "parent_name": "",
+                "name": "kernel_huber_lin(double *, double *, int *, double *, double *, int *, double *, double *, double *, double *, double *, double *, int *, double *)",
+                "file": "/home/alejandra/Dropbox/Paper de paquetes en R/ConRStudio/RBF/src/RBF-fn.c",
+                "line": 171,
+                "column": 6
+            },
+            {
+                "usr": "c:@F@kernel_tukey_lin",
+                "kind": 6,
+                "parent_name": "",
+                "name": "kernel_tukey_lin(double *, double *, int *, double *, double *, int *, double *, double *, double *, double *, double *, double *, int *, double *)",
+                "file": "/home/alejandra/Dropbox/Paper de paquetes en R/ConRStudio/RBF/src/RBF-fn.c",
+                "line": 266,
+                "column": 6
+            },
+            {
+                "usr": "c:@F@lu_R",
+                "kind": 6,
+                "parent_name": "",
+                "name": "lu_R(double *, double *, int *, double *)",
+                "file": "/home/alejandra/Dropbox/Paper de paquetes en R/ConRStudio/RBF/src/RBF-fn.c",
+                "line": 363,
+                "column": 6
+            },
+            {
+                "usr": "c:@F@lu",
+                "kind": 6,
+                "parent_name": "",
+                "name": "lu(double **, int *, double *)",
+                "file": "/home/alejandra/Dropbox/Paper de paquetes en R/ConRStudio/RBF/src/RBF-fn.c",
+                "line": 385,
+                "column": 5
+            },
+            {
+                "usr": "c:@F@sum_mat",
+                "kind": 6,
+                "parent_name": "",
+                "name": "sum_mat(double **, double **, double **, int, int)",
+                "file": "/home/alejandra/Dropbox/Paper de paquetes en R/ConRStudio/RBF/src/RBF-fn.c",
+                "line": 437,
+                "column": 6
+            },
+            {
+                "usr": "c:@F@vec_vecprime",
+                "kind": 6,
+                "parent_name": "",
+                "name": "vec_vecprime(double **, double *, double *, int)",
+                "file": "/home/alejandra/Dropbox/Paper de paquetes en R/ConRStudio/RBF/src/RBF-fn.c",
+                "line": 445,
+                "column": 6
+            },
+            {
+                "usr": "c:@F@scalar_mat",
+                "kind": 6,
+                "parent_name": "",
+                "name": "scalar_mat(double **, double, double **, int, int)",
+                "file": "/home/alejandra/Dropbox/Paper de paquetes en R/ConRStudio/RBF/src/RBF-fn.c",
+                "line": 453,
+                "column": 6
+            },
+            {
+                "usr": "c:@F@scalar_vec",
+                "kind": 6,
+                "parent_name": "",
+                "name": "scalar_vec(double *, double, double *, int)",
+                "file": "/home/alejandra/Dropbox/Paper de paquetes en R/ConRStudio/RBF/src/RBF-fn.c",
+                "line": 461,
+                "column": 6
+            },
+            {
+                "usr": "c:@F@vecprime_vec",
+                "kind": 6,
+                "parent_name": "",
+                "name": "vecprime_vec(double *, double *, int)",
+                "file": "/home/alejandra/Dropbox/Paper de paquetes en R/ConRStudio/RBF/src/RBF-fn.c",
+                "line": 468,
+                "column": 8
+            },
+            {
+                "usr": "c:@F@sum_vec",
+                "kind": 6,
+                "parent_name": "",
+                "name": "sum_vec(double *, double *, double *, int)",
+                "file": "/home/alejandra/Dropbox/Paper de paquetes en R/ConRStudio/RBF/src/RBF-fn.c",
+                "line": 476,
+                "column": 6
+            },
+            {
+                "usr": "c:@F@dif_vec",
+                "kind": 6,
+                "parent_name": "",
+                "name": "dif_vec(double *, double *, double *, int)",
+                "file": "/home/alejandra/Dropbox/Paper de paquetes en R/ConRStudio/RBF/src/RBF-fn.c",
+                "line": 482,
+                "column": 6
+            },
+            {
+                "usr": "c:@F@dif_mat",
+                "kind": 6,
+                "parent_name": "",
+                "name": "dif_mat(double **, double **, double **, int, int)",
+                "file": "/home/alejandra/Dropbox/Paper de paquetes en R/ConRStudio/RBF/src/RBF-fn.c",
+                "line": 488,
+                "column": 6
+            },
+            {
+                "usr": "c:@F@mat_vec",
+                "kind": 6,
+                "parent_name": "",
+                "name": "mat_vec(double **, double *, double *, int, int)",
+                "file": "/home/alejandra/Dropbox/Paper de paquetes en R/ConRStudio/RBF/src/RBF-fn.c",
+                "line": 495,
+                "column": 6
+            },
+            {
+                "usr": "c:@F@mat_mat",
+                "kind": 6,
+                "parent_name": "",
+                "name": "mat_mat(double **, double **, double **, int, int, int)",
+                "file": "/home/alejandra/Dropbox/Paper de paquetes en R/ConRStudio/RBF/src/RBF-fn.c",
+                "line": 502,
+                "column": 6
+            },
+            {
+                "usr": "c:@F@inverse",
+                "kind": 6,
+                "parent_name": "",
+                "name": "inverse(double **, double **, int)",
+                "file": "/home/alejandra/Dropbox/Paper de paquetes en R/ConRStudio/RBF/src/RBF-fn.c",
+                "line": 532,
+                "column": 5
+            },
+            {
+                "usr": "c:@F@reset_mat",
+                "kind": 6,
+                "parent_name": "",
+                "name": "reset_mat(double **, int, int)",
+                "file": "/home/alejandra/Dropbox/Paper de paquetes en R/ConRStudio/RBF/src/RBF-fn.c",
+                "line": 560,
+                "column": 6
+            },
+            {
+                "usr": "c:@F@reset_vec",
+                "kind": 6,
+                "parent_name": "",
+                "name": "reset_vec(double *, int)",
+                "file": "/home/alejandra/Dropbox/Paper de paquetes en R/ConRStudio/RBF/src/RBF-fn.c",
+                "line": 568,
+                "column": 6
+            },
+            {
+                "usr": "c:@F@median",
+                "kind": 6,
+                "parent_name": "",
+                "name": "median(double *, int)",
+                "file": "/home/alejandra/Dropbox/Paper de paquetes en R/ConRStudio/RBF/src/RBF-fn.c",
+                "line": 575,
+                "column": 8
+            },
+            {
+                "usr": "c:@F@median_abs",
+                "kind": 6,
+                "parent_name": "",
+                "name": "median_abs(double *, int)",
+                "file": "/home/alejandra/Dropbox/Paper de paquetes en R/ConRStudio/RBF/src/RBF-fn.c",
+                "line": 590,
+                "column": 8
+            },
+            {
+                "usr": "c:@F@kthplace",
+                "kind": 6,
+                "parent_name": "",
+                "name": "kthplace(double *, int, int)",
+                "file": "/home/alejandra/Dropbox/Paper de paquetes en R/ConRStudio/RBF/src/RBF-fn.c",
+                "line": 606,
+                "column": 8
+            },
+            {
+                "usr": "c:@F@huber_pos",
+                "kind": 6,
+                "parent_name": "",
+                "name": "huber_pos(int *, double *, double *, double *, double *, double *, double *, int *, double *)",
+                "file": "/home/alejandra/Dropbox/Paper de paquetes en R/ConRStudio/RBF/src/RBF-fn.c",
+                "line": 636,
+                "column": 6
+            },
+            {
+                "usr": "c:@F@tukey_pos",
+                "kind": 6,
+                "parent_name": "",
+                "name": "tukey_pos(int *, double *, double *, double *, double *, double *, double *, int *, double *)",
+                "file": "/home/alejandra/Dropbox/Paper de paquetes en R/ConRStudio/RBF/src/RBF-fn.c",
+                "line": 670,
+                "column": 6
+            }
+        ]
+    },
+    {
+        "file": "/home/alejandra/Dropbox/Paper de paquetes en R/ConRStudio/RBF/src/RBF.h",
+        "file_last_write": 1612991607.0,
+        "definitions": []
+    },
+    {
+        "file": "/home/alejandra/Dropbox/Paper de paquetes en R/ConRStudio/RBF/src/init.c",
+        "file_last_write": 1612991607.0,
+        "definitions": [
+            {
+                "usr": "c:@F@R_init_RBF",
+                "kind": 6,
+                "parent_name": "",
+                "name": "R_init_RBF(DllInfo *)",
+                "file": "/home/alejandra/Dropbox/Paper de paquetes en R/ConRStudio/RBF/src/init.c",
+                "line": 55,
+                "column": 6
+            }
+        ]
+    }
+]

@@ -1,0 +1,299 @@
+[
+    {
+        "definitions" : [
+            {
+                "column" : 8,
+                "file" : "C:/Users/Alejandra/Dropbox/Paper de paquetes en R/ConRStudio/RBF/src/RBF-fn.c",
+                "kind" : 6,
+                "line" : 12,
+                "name" : "psi_huber_w(double, double)",
+                "parent_name" : "",
+                "usr" : "c:@F@psi_huber_w"
+            },
+            {
+                "column" : 8,
+                "file" : "C:/Users/Alejandra/Dropbox/Paper de paquetes en R/ConRStudio/RBF/src/RBF-fn.c",
+                "kind" : 6,
+                "line" : 23,
+                "name" : "psi_tukey_w(double, double)",
+                "parent_name" : "",
+                "usr" : "c:@F@psi_tukey_w"
+            },
+            {
+                "column" : 8,
+                "file" : "C:/Users/Alejandra/Dropbox/Paper de paquetes en R/ConRStudio/RBF/src/RBF-fn.c",
+                "kind" : 6,
+                "line" : 48,
+                "name" : "kepan(double)",
+                "parent_name" : "",
+                "usr" : "c:@F@kepan"
+            },
+            {
+                "column" : 8,
+                "file" : "C:/Users/Alejandra/Dropbox/Paper de paquetes en R/ConRStudio/RBF/src/RBF-fn.c",
+                "kind" : 6,
+                "line" : 59,
+                "name" : "suma_vec(double *, int)",
+                "parent_name" : "",
+                "usr" : "c:@F@suma_vec"
+            },
+            {
+                "column" : 8,
+                "file" : "C:/Users/Alejandra/Dropbox/Paper de paquetes en R/ConRStudio/RBF/src/RBF-fn.c",
+                "kind" : 6,
+                "line" : 68,
+                "name" : "norma_dos(double *, int)",
+                "parent_name" : "",
+                "usr" : "c:@F@norma_dos"
+            },
+            {
+                "column" : 8,
+                "file" : "C:/Users/Alejandra/Dropbox/Paper de paquetes en R/ConRStudio/RBF/src/RBF-fn.c",
+                "kind" : 6,
+                "line" : 77,
+                "name" : "l2dist(double *, double *, int)",
+                "parent_name" : "",
+                "usr" : "c:@F@l2dist"
+            },
+            {
+                "column" : 6,
+                "file" : "C:/Users/Alejandra/Dropbox/Paper de paquetes en R/ConRStudio/RBF/src/RBF-fn.c",
+                "kind" : 6,
+                "line" : 89,
+                "name" : "kernel_huber_pos(double *, double *, int *, double *, double *, double *, double *, double *, double *, double *, int *, double *)",
+                "parent_name" : "",
+                "usr" : "c:@F@kernel_huber_pos"
+            },
+            {
+                "column" : 6,
+                "file" : "C:/Users/Alejandra/Dropbox/Paper de paquetes en R/ConRStudio/RBF/src/RBF-fn.c",
+                "kind" : 6,
+                "line" : 129,
+                "name" : "kernel_tukey_pos(double *, double *, int *, double *, double *, double *, double *, double *, double *, double *, int *, double *)",
+                "parent_name" : "",
+                "usr" : "c:@F@kernel_tukey_pos"
+            },
+            {
+                "column" : 6,
+                "file" : "C:/Users/Alejandra/Dropbox/Paper de paquetes en R/ConRStudio/RBF/src/RBF-fn.c",
+                "kind" : 6,
+                "line" : 171,
+                "name" : "kernel_huber_lin(double *, double *, int *, double *, double *, int *, double *, double *, double *, double *, double *, double *, int *, double *)",
+                "parent_name" : "",
+                "usr" : "c:@F@kernel_huber_lin"
+            },
+            {
+                "column" : 6,
+                "file" : "C:/Users/Alejandra/Dropbox/Paper de paquetes en R/ConRStudio/RBF/src/RBF-fn.c",
+                "kind" : 6,
+                "line" : 266,
+                "name" : "kernel_tukey_lin(double *, double *, int *, double *, double *, int *, double *, double *, double *, double *, double *, double *, int *, double *)",
+                "parent_name" : "",
+                "usr" : "c:@F@kernel_tukey_lin"
+            },
+            {
+                "column" : 6,
+                "file" : "C:/Users/Alejandra/Dropbox/Paper de paquetes en R/ConRStudio/RBF/src/RBF-fn.c",
+                "kind" : 6,
+                "line" : 363,
+                "name" : "lu_R(double *, double *, int *, double *)",
+                "parent_name" : "",
+                "usr" : "c:@F@lu_R"
+            },
+            {
+                "column" : 5,
+                "file" : "C:/Users/Alejandra/Dropbox/Paper de paquetes en R/ConRStudio/RBF/src/RBF-fn.c",
+                "kind" : 6,
+                "line" : 385,
+                "name" : "lu(double **, int *, double *)",
+                "parent_name" : "",
+                "usr" : "c:@F@lu"
+            },
+            {
+                "column" : 6,
+                "file" : "C:/Users/Alejandra/Dropbox/Paper de paquetes en R/ConRStudio/RBF/src/RBF-fn.c",
+                "kind" : 6,
+                "line" : 437,
+                "name" : "sum_mat(double **, double **, double **, int, int)",
+                "parent_name" : "",
+                "usr" : "c:@F@sum_mat"
+            },
+            {
+                "column" : 6,
+                "file" : "C:/Users/Alejandra/Dropbox/Paper de paquetes en R/ConRStudio/RBF/src/RBF-fn.c",
+                "kind" : 6,
+                "line" : 445,
+                "name" : "vec_vecprime(double **, double *, double *, int)",
+                "parent_name" : "",
+                "usr" : "c:@F@vec_vecprime"
+            },
+            {
+                "column" : 6,
+                "file" : "C:/Users/Alejandra/Dropbox/Paper de paquetes en R/ConRStudio/RBF/src/RBF-fn.c",
+                "kind" : 6,
+                "line" : 453,
+                "name" : "scalar_mat(double **, double, double **, int, int)",
+                "parent_name" : "",
+                "usr" : "c:@F@scalar_mat"
+            },
+            {
+                "column" : 6,
+                "file" : "C:/Users/Alejandra/Dropbox/Paper de paquetes en R/ConRStudio/RBF/src/RBF-fn.c",
+                "kind" : 6,
+                "line" : 461,
+                "name" : "scalar_vec(double *, double, double *, int)",
+                "parent_name" : "",
+                "usr" : "c:@F@scalar_vec"
+            },
+            {
+                "column" : 8,
+                "file" : "C:/Users/Alejandra/Dropbox/Paper de paquetes en R/ConRStudio/RBF/src/RBF-fn.c",
+                "kind" : 6,
+                "line" : 468,
+                "name" : "vecprime_vec(double *, double *, int)",
+                "parent_name" : "",
+                "usr" : "c:@F@vecprime_vec"
+            },
+            {
+                "column" : 6,
+                "file" : "C:/Users/Alejandra/Dropbox/Paper de paquetes en R/ConRStudio/RBF/src/RBF-fn.c",
+                "kind" : 6,
+                "line" : 476,
+                "name" : "sum_vec(double *, double *, double *, int)",
+                "parent_name" : "",
+                "usr" : "c:@F@sum_vec"
+            },
+            {
+                "column" : 6,
+                "file" : "C:/Users/Alejandra/Dropbox/Paper de paquetes en R/ConRStudio/RBF/src/RBF-fn.c",
+                "kind" : 6,
+                "line" : 482,
+                "name" : "dif_vec(double *, double *, double *, int)",
+                "parent_name" : "",
+                "usr" : "c:@F@dif_vec"
+            },
+            {
+                "column" : 6,
+                "file" : "C:/Users/Alejandra/Dropbox/Paper de paquetes en R/ConRStudio/RBF/src/RBF-fn.c",
+                "kind" : 6,
+                "line" : 488,
+                "name" : "dif_mat(double **, double **, double **, int, int)",
+                "parent_name" : "",
+                "usr" : "c:@F@dif_mat"
+            },
+            {
+                "column" : 6,
+                "file" : "C:/Users/Alejandra/Dropbox/Paper de paquetes en R/ConRStudio/RBF/src/RBF-fn.c",
+                "kind" : 6,
+                "line" : 495,
+                "name" : "mat_vec(double **, double *, double *, int, int)",
+                "parent_name" : "",
+                "usr" : "c:@F@mat_vec"
+            },
+            {
+                "column" : 6,
+                "file" : "C:/Users/Alejandra/Dropbox/Paper de paquetes en R/ConRStudio/RBF/src/RBF-fn.c",
+                "kind" : 6,
+                "line" : 502,
+                "name" : "mat_mat(double **, double **, double **, int, int, int)",
+                "parent_name" : "",
+                "usr" : "c:@F@mat_mat"
+            },
+            {
+                "column" : 5,
+                "file" : "C:/Users/Alejandra/Dropbox/Paper de paquetes en R/ConRStudio/RBF/src/RBF-fn.c",
+                "kind" : 6,
+                "line" : 532,
+                "name" : "inverse(double **, double **, int)",
+                "parent_name" : "",
+                "usr" : "c:@F@inverse"
+            },
+            {
+                "column" : 6,
+                "file" : "C:/Users/Alejandra/Dropbox/Paper de paquetes en R/ConRStudio/RBF/src/RBF-fn.c",
+                "kind" : 6,
+                "line" : 560,
+                "name" : "reset_mat(double **, int, int)",
+                "parent_name" : "",
+                "usr" : "c:@F@reset_mat"
+            },
+            {
+                "column" : 6,
+                "file" : "C:/Users/Alejandra/Dropbox/Paper de paquetes en R/ConRStudio/RBF/src/RBF-fn.c",
+                "kind" : 6,
+                "line" : 568,
+                "name" : "reset_vec(double *, int)",
+                "parent_name" : "",
+                "usr" : "c:@F@reset_vec"
+            },
+            {
+                "column" : 8,
+                "file" : "C:/Users/Alejandra/Dropbox/Paper de paquetes en R/ConRStudio/RBF/src/RBF-fn.c",
+                "kind" : 6,
+                "line" : 575,
+                "name" : "median(double *, int)",
+                "parent_name" : "",
+                "usr" : "c:@F@median"
+            },
+            {
+                "column" : 8,
+                "file" : "C:/Users/Alejandra/Dropbox/Paper de paquetes en R/ConRStudio/RBF/src/RBF-fn.c",
+                "kind" : 6,
+                "line" : 590,
+                "name" : "median_abs(double *, int)",
+                "parent_name" : "",
+                "usr" : "c:@F@median_abs"
+            },
+            {
+                "column" : 8,
+                "file" : "C:/Users/Alejandra/Dropbox/Paper de paquetes en R/ConRStudio/RBF/src/RBF-fn.c",
+                "kind" : 6,
+                "line" : 606,
+                "name" : "kthplace(double *, int, int)",
+                "parent_name" : "",
+                "usr" : "c:@F@kthplace"
+            },
+            {
+                "column" : 6,
+                "file" : "C:/Users/Alejandra/Dropbox/Paper de paquetes en R/ConRStudio/RBF/src/RBF-fn.c",
+                "kind" : 6,
+                "line" : 636,
+                "name" : "huber_pos(int *, double *, double *, double *, double *, double *, double *, int *, double *)",
+                "parent_name" : "",
+                "usr" : "c:@F@huber_pos"
+            },
+            {
+                "column" : 6,
+                "file" : "C:/Users/Alejandra/Dropbox/Paper de paquetes en R/ConRStudio/RBF/src/RBF-fn.c",
+                "kind" : 6,
+                "line" : 670,
+                "name" : "tukey_pos(int *, double *, double *, double *, double *, double *, double *, int *, double *)",
+                "parent_name" : "",
+                "usr" : "c:@F@tukey_pos"
+            }
+        ],
+        "file" : "C:/Users/Alejandra/Dropbox/Paper de paquetes en R/ConRStudio/RBF/src/RBF-fn.c",
+        "file_last_write" : 1582035201
+    },
+    {
+        "definitions" : [
+        ],
+        "file" : "C:/Users/Alejandra/Dropbox/Paper de paquetes en R/ConRStudio/RBF/src/RBF.h",
+        "file_last_write" : 1582035201
+    },
+    {
+        "definitions" : [
+            {
+                "column" : 6,
+                "file" : "C:/Users/Alejandra/Dropbox/Paper de paquetes en R/ConRStudio/RBF/src/init.c",
+                "kind" : 6,
+                "line" : 55,
+                "name" : "R_init_RBF(DllInfo *)",
+                "parent_name" : "",
+                "usr" : "c:@F@R_init_RBF"
+            }
+        ],
+        "file" : "C:/Users/Alejandra/Dropbox/Paper de paquetes en R/ConRStudio/RBF/src/init.c",
+        "file_last_write" : 1582035201
+    }
+]

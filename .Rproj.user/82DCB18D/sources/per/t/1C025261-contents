@@ -1,0 +1,123 @@
+# Upload the data
+datos <- read.csv("/home/alejandra/Dropbox/Paper de paquetes en R/JOSS/pisasci2006.csv", header=TRUE)
+str(datos)
+
+# Complete cases
+ccs <- complete.cases(datos)
+X <- as.matrix( datos[ccs, c('Income', 'Edu')] )
+y <- as.vector( datos[ccs, 'Overall'] )
+
+#Load packages
+library(RobStatTM)
+
+library(devtools)
+install_github("msalibian/RBF", force=TRUE)
+library(RBF)
+
+# Scatter plot
+pairs(cbind(y, X))
+
+# Robust fit
+# Bandwidth selection with robust leave-one-out cross-validation
+a <- c(0.5, 1, 1.5, 2)
+h1 <- a * sd(X[,1])
+h2 <- a * sd(X[,2])
+hh <- expand.grid(h1, h2)
+nh <- nrow(hh)
+rmspe <- rep(NA, nh)
+jbest <- 0
+cvbest <- +Inf
+# leave-one-out
+n <- nrow(X)
+system.time({
+for(i in 1:nh) {
+  # leave-one-out CV loop
+  print(hh[i,])
+  preds <- rep(NA, n)
+  for(j in 1:n) {
+    print(j)
+    tmp <- try( backf.rob(y ~ X, point = X[j, ],
+                          windows = hh[i, ], epsilon = 1e-6,
+                          degree = 1, type = 'Tukey', subset = c(-j) ))
+    if (class(tmp)[1] != "try-error") {
+      preds[j] <- rowSums(tmp$prediction) + tmp$alpha
+    }
+  }
+  pred.res <- preds - y
+  if(sum(!is.na(pred.res))>0){
+    tmp.re <- RobStatTM::locScaleM(pred.res, na.rm=TRUE)
+    rmspe[i] <- tmp.re$mu^2 + tmp.re$disper^2
+    if( rmspe[i] < cvbest ) {
+      jbest <- i
+      cvbest <- rmspe[i]
+      print('Record')
+    }
+  }
+  print(c(i, rmspe[i]))
+}
+})
+bandw <- hh[jbest,]
+
+# Fit
+rfit <- backf.rob(y ~ X, windows = bandw, degree = 1)
+summary(rfit)
+plot(rfit)
+
+# Classical fit
+# Bandwidth selection with leave-one-out cross-validation
+a <- c(0.5, 1, 1.5, 2)
+h1 <- a * sd(X[,1])
+h2 <- a * sd(X[,2])
+hh <- expand.grid(h1, h2)
+nh <- nrow(hh)
+rmspe <- rep(NA, nh)
+jbest <- 0
+cvbest <- +Inf
+# leave-one-out
+n <- nrow(X)
+system.time({
+  for(i in 1:nh) {
+    # leave-one-out CV loop
+    print(hh[i,])
+    preds <- rep(NA, n)
+    for(j in 1:n) {
+      print(j)
+      tmp <- try( backf.cl(y ~ X, point = X[j, ],
+                            windows = hh[i, ], epsilon = 1e-06, max.it = 100,
+                            subset = c(-j) ))
+      if (class(tmp)[1] != "try-error") {
+        preds[j] <- rowSums(tmp$prediction) + tmp$alpha
+      }
+    }
+    pred.res <- preds - y
+    print(sum(is.na(pred.res)))
+    
+    if(sum(!is.na(pred.res))>0){
+      rmspe[i] <- mean(pred.res^2, na.rm=TRUE)
+      if( rmspe[i] < cvbest ) {
+        jbest <- i
+        cvbest <- rmspe[i]
+        print('Record')
+      }
+    }
+    print(c(i, rmspe[i]))
+  }
+})
+bandw <- hh[jbest,]
+
+# Fit
+cfit <- backf.cl(y ~ X, windows = bandw, degree = 1)
+summary(cfit)
+plot(cfit)
+
+# Comparison between the classical (in red) and robust (in blue) fits and the partial
+# residuals obtained by the robust fit
+for(i in 1:(dim(X)[2])) {
+  ord <- order(X[,i])
+  x_name <- bquote(paste('x')[.(i)])
+  y_name <- bquote(paste(hat('g')[.(i)]))
+  res <- rfit$yp - rowSums(rfit$g.matrix[,-i, drop=FALSE])-rfit$alpha
+  plot(X[,i], res, pch=20,col='gray45', main="", xlab=x_name, ylab=y_name, cex.lab=0.8)
+  lines(X[ord,i], rfit$g.matrix[ord,i], lwd=3, col="blue")
+  lines(X[ord,i], cfit$g.matrix[ord,i], lwd=3, col="red")
+}

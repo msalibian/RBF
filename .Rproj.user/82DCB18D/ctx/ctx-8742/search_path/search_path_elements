@@ -1,0 +1,15 @@
+.GlobalEnv
+package:devtools
+package:usethis
+package:RobStatTM
+package:fit.models
+package:RBF
+tools:rstudio
+package:stats
+package:graphics
+package:grDevices
+package:utils
+package:datasets
+package:methods
+Autoloads
+package:base

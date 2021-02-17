@@ -1,0 +1,512 @@
+#         points(Xp[,i], res, pch=20, col='gray45')
+#       }
+#     }
+# }
+#' Diagnostic plots for objects of class \code{backf}
+#'
+#' Plot method for objects of class \code{backf}.
+#'
+#' @param x an object of class \code{backf}, a result of a call to \code{\link{backf.cl}} or \code{\link{backf.rob}}.
+#' @param which vector of indices of explanatory variables for which partial residuals plots will
+#' be generaetd. Defaults to all available explanatory variables.
+#' @param ask logical value. If \code{TRUE}, the graphical device will prompt for confirmation before
+#' going to the next page/screen of output.
+#' @param ... additional other arguments. Currently ignored.
+#'
+#' @author Alejandra Mercedes Martinez \email{ale_m_martinez@hotmail.com}
+#'
+#' @examples
+#' tmp <- backf.rob(Ozone ~ Solar.R + Wind + Temp, data=airquality,
+#' subset=complete.cases(airquality), windows=c(136.7, 8.9, 4.8), degree=1)
+#' plot(tmp, which=1:2)
+#'
+#' @export
+plot.backf <- function(x, ask=FALSE, which=1:np, ...) {
+object <- x
+Xp <- object$Xp
+np <- dim(Xp)[2]
+opar <- par(ask=ask)
+on.exit(par(opar))
+these <- rep(FALSE, np)
+these[ which ] <- TRUE
+for(i in 1:np) {
+if(these[i]) {
+ord <- order(Xp[,i])
+if (is.null(colnames(Xp)) ){
+x_name <- bquote(paste('x')[.(i)])
+} else {
+x_name <- colnames(Xp)[i]
+}
+y_name <- bquote(paste(hat('g')[.(i)]))
+res <- object$yp - rowSums(object$g.matrix[,-i, drop=FALSE])-object$alpha
+lim_cl <- c(min(res), max(res))
+# plot(Xp[ord,i], object$g.matrix[ord,i], type="l", lwd=3, main="", xlab=x_name, ylab=y_name, ylim=lim_cl)
+# points(Xp[,i], res, pch=20, col='gray45')
+plot(Xp[,i], res, pch=20,col='gray45',main="",xlab=x_name,ylab=y_name, ylim=lim_cl,cex.lab=0.8)
+lines(Xp[ord,i],object$g.matrix[ord,i],lwd=3)
+}
+}
+}
+#Multiple R-squared
+R2 <- function(object,...){
+yp <- object$yp
+y <- yp[ tmp<-!is.na(yp) ]
+n <- length(y)
+res <- residuals(object)
+S02 <- sum((y-mean(y))^2)
+S2 <- sum(res^2)
+R2 <- (S02-S2)/S02
+return(R2)
+}
+#Robust multiple R-squared
+R2.rob <- function(object,...){
+yp <- object$yp
+y <- yp[ tmp<-!is.na(yp) ]
+n <- length(y)
+S02 <- 0
+S2 <- 0
+res <- residuals(object)
+sigma.hat <- object$sigma.hat
+typePhi <- object$type
+pos <- pos.est(y, sigma.hat, typePhi=typePhi, ini=NULL, epsilon=1e-6, iter.max=50)
+if(typePhi=='Tukey'){
+for(i in 1:n){
+S02 <- S02 + rho.tukey((y[i]-pos)/sigma.hat)
+S2 <- S2 + rho.tukey(res[i]/sigma.hat)
+}
+}
+if(typePhi=='Huber'){
+for(i in 1:n){
+S02 <- S02 + rho.huber((y[i]-pos)/sigma.hat)
+S2 <- S2 + rho.huber(res[i]/sigma.hat)
+}
+}
+R2.rob <- (S02-S2)/S02
+return(R2.rob)
+}
+#' Summary for additive models fits using backfitting
+#'
+#' Summary method for class \code{backf}.
+#'
+#' This function returns the estimation of the intercept and also the
+#' five-number summary and the mean of the residuals for both classical and
+#' robust estimators. For the robust estimator it also returns the estimate of
+#' the residual standard error.
+#'
+#' @param object an object of class \code{backf}, a result of a call to
+#' \code{\link{backf.cl}} or \code{\link{backf.rob}}.
+#' @param ... additional other arguments. Currently ignored.
+#'
+#' @author Alejandra Mercedes Martinez \email{ale_m_martinez@hotmail.com}
+#'
+#' @export
+#' @aliases summary.backf summary.backf.cl summary.backf.rob
+summary.backf <- function(object,...){
+NextMethod()
+}
+#' @export
+summary.backf.cl <- function(object,...){
+message("Estimate of the intercept: ", round(object$alpha,5))
+message("Multiple R-squared: ", round(R2(object),5))
+res <- residuals(object)
+message("Residuals:")
+summary(res)
+}
+#' @export
+summary.backf.rob <- function(object,...){
+message("Estimate of the intercept: ", round(object$alpha,5))
+message("Estimate of the residual standard error: ", round(object$sigma,5))
+message("Robust multiple R-squared: ", round(R2.rob(object),5))
+res <- residuals(object)
+message("Residuals:")
+summary(res)
+}
+#' Deviance for objects of class \code{backf}
+#'
+#' This function returns the deviance of the fitted additive model using one of the three
+#' classical or robust marginal integration estimators, as computed with \code{\link{backf.cl}} or
+#' \code{\link{backf.rob}}.
+#'
+#' @param object an object of class \code{backf}, a result of a call to \code{\link{backf.cl}} or \code{\link{backf.rob}}.
+#' @param ... additional other arguments. Currently ignored.
+#'
+#' @return A real number.
+#'
+#' @author Alejandra Mercedes Martinez \email{ale_m_martinez@hotmail.com}
+#'
+#' @export
+deviance.backf <- function(object, ...){
+NextMethod()
+}
+#' @export
+deviance.backf.cl <- function(object, ...){
+return( sum( (residuals(object))^2) )
+}
+#' @export
+deviance.backf.rob <- function(object, ...){
+yp <- object$yp
+y <- yp[ tmp<-!is.na(yp) ]
+n <- length(y)
+S2 <- 0
+res <- residuals(object)
+sigma.hat <- object$sigma.hat
+typePhi <- object$type
+if(typePhi=='Tukey'){
+for(i in 1:n){
+S2 <- S2 + rho.tukey(res[i]/sigma.hat)
+}
+}
+if(typePhi=='Huber'){
+for(i in 1:n){
+S2 <- S2 + rho.huber(res[i]/sigma.hat)
+}
+}
+return( S2 )
+}
+#' Additive model formula
+#'
+#' Description of the additive model formula extracted from an object of class \code{backf}.
+#'
+#' @param x an object of class \code{backf}, a result of a call to \code{\link{backf.cl}} or \code{\link{backf.rob}}.
+#' @param ... additional other arguments. Currently ignored.
+#'
+#' @return A model formula.
+#'
+#' @author Alejandra Mercedes Martinez \email{ale_m_martinez@hotmail.com}
+#'
+#' @export
+formula.backf <- function(x, ...){
+return(x$formula )
+}
+#' Print a Marginal Integration procedure
+#'
+#' The default print method for a \code{backf} object.
+#'
+#' @param x an object of class \code{backf}, a result of a call to \code{\link{backf.cl}} or \code{\link{backf.rob}}.
+#' @param ... additional other arguments. Currently ignored.
+#'
+#' @return A real number.
+#'
+#' @author Alejandra Mercedes Martinez \email{ale_m_martinez@hotmail.com}
+#'
+#' @export
+print.backf <- function(x, ...){
+cat("Formula:\n")
+print(x$formula)
+#cat("\n")
+}
+# Upload the data
+datos <- read.csv("/home/alejandra/Dropbox/Paper de paquetes en R/JOSS/pisasci2006.csv", header=TRUE)
+str(datos)
+# Complete cases
+ccs <- complete.cases(datos)
+X <- as.matrix( datos[ccs, c('Income', 'Edu')] )
+y <- as.vector( datos[ccs, 'Overall'] )
+#Load packages
+library(RBF)
+library(RobStatTM)
+# Scatter plot
+pairs(cbind(y, X))
+# Classical fit
+# Bandwidth selection with leave-one-out cross-validation
+a <- c(0.5, 1, 1.5, 2)
+h1 <- a * sd(X[,1])
+h2 <- a * sd(X[,2])
+hh <- expand.grid(h1, h2)
+nh <- nrow(hh)
+rmspe <- rep(NA, nh)
+jbest <- 0
+cvbest <- +Inf
+# leave-one-out
+n <- nrow(X)
+system.time({
+for(i in 1:nh) {
+# leave-one-out CV loop
+print(hh[i,])
+preds <- rep(NA, n)
+for(j in 1:n) {
+print(j)
+tmp <- try( backf.cl(y ~ X, point = X[j, ],
+windows = hh[i, ], epsilon = 1e-06, max.it = 100,
+subset = c(-j) ))
+if (class(tmp)[1] != "try-error") {
+preds[j] <- rowSums(tmp$prediction) + tmp$alpha
+}
+}
+pred.res <- preds - y
+print(sum(is.na(pred.res)))
+if(sum(!is.na(pred.res))>0){
+rmspe[i] <- mean(pred.res^2)
+if( rmspe[i] < cvbest ) {
+jbest <- i
+cvbest <- rmspe[i]
+print('Record')
+}
+}
+print(c(i, rmspe[i]))
+}
+})
+bandw <- hh[jbest,]
+rmspe[i]
+# Classical fit
+# Bandwidth selection with leave-one-out cross-validation
+a <- c(0.5, 1, 1.5, 2)
+h1 <- a * sd(X[,1])
+h2 <- a * sd(X[,2])
+hh <- expand.grid(h1, h2)
+nh <- nrow(hh)
+rmspe <- rep(NA, nh)
+jbest <- 0
+cvbest <- +Inf
+# leave-one-out
+n <- nrow(X)
+system.time({
+for(i in 1:nh) {
+# leave-one-out CV loop
+print(hh[i,])
+preds <- rep(NA, n)
+for(j in 1:n) {
+print(j)
+tmp <- try( backf.cl(y ~ X, point = X[j, ],
+windows = hh[i, ], epsilon = 1e-06, max.it = 100,
+subset = c(-j) ))
+if (class(tmp)[1] != "try-error") {
+preds[j] <- rowSums(tmp$prediction) + tmp$alpha
+}
+}
+pred.res <- preds - y
+print(sum(is.na(pred.res)))
+if(sum(!is.na(pred.res))>0){
+rmspe[i] <- mean(pred.res^2, na.rm=TRUE)
+if( rmspe[i] < cvbest ) {
+jbest <- i
+cvbest <- rmspe[i]
+print('Record')
+}
+}
+print(c(i, rmspe[i]))
+}
+})
+bandw <- hh[jbest,]
+bandw
+# Fit
+cfit <- backf.cl(y ~ X, windows = bandw, degree = 1)
+Xp <- X
+yp <- y
+n <- length(yp)
+Xp <- as.matrix(Xp)
+q <- dim(Xp)[2]
+corte <- 10*epsilon
+corte.bis <- 10*epsilon
+# Remove cases with missing responses
+yp <- yp[ tmp <- (!is.na(yp)) ]
+Xp <- Xp[tmp, , drop=FALSE]
+n.miss <- length(yp)
+if(is.null(prob)){
+prob <- rep(1,n.miss)
+} else {
+prob <- prob[tmp]
+}
+alpha <- mean(yp)
+# Start the backfitting algorithm.
+g.matriz <- matrix(0,n.miss,q)
+it <- 0
+while( (corte > epsilon) & (it < max.it)) {
+g.matriz.aux <- g.matriz
+for(j in 1:q) {
+y.tilde.bis <- yp - alpha - rowSums(g.matriz[,-j,drop=FALSE])
+for(i in 1:n.miss) {
+we <- k.epan( (Xp[,j] - Xp[i,j]) / as.numeric(windows[j]) )
+if(degree == 0)
+g.matriz[i,j] <- sum( we * y.tilde.bis ) / sum( we )
+if(degree > 0) {
+tmp <- outer( as.vector( Xp[,j] - Xp[i,j]) , 1:degree, "^" )
+tmp <- cbind(rep(1,n.miss), tmp)
+g.matriz[i,j] <- solve( t(tmp * we) %*% tmp, t(tmp) %*% (we * y.tilde.bis))[1]
+}
+}
+}
+aux1 <- sum( colMeans(g.matriz) )
+g.matriz <- scale(g.matriz,center=TRUE,scale=FALSE)
+corte <- my.norm.2(rowSums(g.matriz.aux)-rowSums(g.matriz))
+it <- it + 1
+}
+prediccion <- NULL
+if(!is.null(point)){
+#if(!is.matrix(point)) { #is.null(dim(point))) {
+#  prediccion <- mpunto <- as.matrix(point) # matrix(point, byrow=TRUE, ncol=length(point))
+#} else {
+#  prediccion <- mpunto <- point
+#}
+if(is.null(dim(point))){
+if(q==1){
+prediccion <- mpunto <- as.matrix(point)
+}else{
+prediccion <- mpunto <- t(as.matrix(point))
+}
+} else {
+prediccion <- mpunto <- point
+}
+np <- dim(mpunto)[1]
+for(k in 1:np){
+for(j in 1:q){
+y.tilde.bis <- yp - alpha - rowSums(g.matriz[,-j,drop=FALSE]) #- aux1
+we <- k.epan( (Xp[,j] - mpunto[k,j]) / windows[j] )
+if(degree == 0)
+prediccion[k,j] <- sum( we * y.tilde.bis ) / sum( we )
+if(degree > 0) {
+tmp <- outer( as.vector( Xp[,j] - mpunto[k,j]) , 1:degree, "^" )
+tmp <- cbind(rep(1,n.miss), tmp)
+prediccion[k,j] <- solve( t(tmp * we) %*% tmp, t(tmp) %*% (we * y.tilde.bis))[1]
+}
+}
+}
+}
+object <- list(alpha=alpha, g.matrix=g.matriz, prediction=prediccion, Xp=Xp, yp=yp, formula=formula)
+class(object) <- c("backf.cl", "backf", "list")
+return(object)
+# Fit
+cfit <- backf.cl(y ~ X, windows = bandw, degree = 1)
+g.matriz.aux <- g.matriz
+for(j in 1:q) {
+y.tilde.bis <- yp - alpha - rowSums(g.matriz[,-j,drop=FALSE])
+for(i in 1:n.miss) {
+we <- k.epan( (Xp[,j] - Xp[i,j]) / as.numeric(windows[j]) )
+if(degree == 0)
+g.matriz[i,j] <- sum( we * y.tilde.bis ) / sum( we )
+if(degree > 0) {
+tmp <- outer( as.vector( Xp[,j] - Xp[i,j]) , 1:degree, "^" )
+tmp <- cbind(rep(1,n.miss), tmp)
+g.matriz[i,j] <- solve( t(tmp * we) %*% tmp, t(tmp) %*% (we * y.tilde.bis))[1]
+}
+}
+}
+library(devtools)
+install_github("msalibian/RBF", force=TRUE)
+library(RBF)
+# Upload the data
+datos <- read.csv("/home/alejandra/Dropbox/Paper de paquetes en R/JOSS/pisasci2006.csv", header=TRUE)
+str(datos)
+# Complete cases
+ccs <- complete.cases(datos)
+X <- as.matrix( datos[ccs, c('Income', 'Edu')] )
+y <- as.vector( datos[ccs, 'Overall'] )
+#Load packages
+library(RobStatTM)
+library(RBF)
+# Scatter plot
+pairs(cbind(y, X))
+# Classical fit
+# Bandwidth selection with leave-one-out cross-validation
+a <- c(0.5, 1, 1.5, 2)
+h1 <- a * sd(X[,1])
+h2 <- a * sd(X[,2])
+hh <- expand.grid(h1, h2)
+nh <- nrow(hh)
+rmspe <- rep(NA, nh)
+jbest <- 0
+cvbest <- +Inf
+# leave-one-out
+n <- nrow(X)
+system.time({
+for(i in 1:nh) {
+# leave-one-out CV loop
+print(hh[i,])
+preds <- rep(NA, n)
+for(j in 1:n) {
+print(j)
+tmp <- try( backf.cl(y ~ X, point = X[j, ],
+windows = hh[i, ], epsilon = 1e-06, max.it = 100,
+subset = c(-j) ))
+if (class(tmp)[1] != "try-error") {
+preds[j] <- rowSums(tmp$prediction) + tmp$alpha
+}
+}
+pred.res <- preds - y
+print(sum(is.na(pred.res)))
+if(sum(!is.na(pred.res))>0){
+rmspe[i] <- mean(pred.res^2, na.rm=TRUE)
+if( rmspe[i] < cvbest ) {
+jbest <- i
+cvbest <- rmspe[i]
+print('Record')
+}
+}
+print(c(i, rmspe[i]))
+}
+})
+jbest
+jbest
+# Upload the data
+datos <- read.csv("/home/alejandra/Dropbox/Paper de paquetes en R/JOSS/pisasci2006.csv", header=TRUE)
+str(datos)
+# Complete cases
+ccs <- complete.cases(datos)
+X <- as.matrix( datos[ccs, c('Income', 'Edu')] )
+y <- as.vector( datos[ccs, 'Overall'] )
+#Load packages
+library(RobStatTM)
+install_github("msalibian/RBF", force=TRUE)
+library(RBF)
+backf.rob()
+backf.rob
+backf.cl
+# Upload the data
+datos <- read.csv("/home/alejandra/Dropbox/Paper de paquetes en R/JOSS/pisasci2006.csv", header=TRUE)
+str(datos)
+# Complete cases
+ccs <- complete.cases(datos)
+X <- as.matrix( datos[ccs, c('Income', 'Edu')] )
+y <- as.vector( datos[ccs, 'Overall'] )
+#Load packages
+library(RobStatTM)
+install_github("msalibian/RBF", force=TRUE)
+library(RBF)
+# Scatter plot
+pairs(cbind(y, X))
+# Robust fit
+# Bandwidth selection with robust leave-one-out cross-validation
+a <- c(0.5, 1, 1.5, 2)
+h1 <- a * sd(X[,1])
+# Classical fit
+# Bandwidth selection with leave-one-out cross-validation
+a <- c(0.5, 1, 1.5, 2)
+h1 <- a * sd(X[,1])
+h2 <- a * sd(X[,2])
+hh <- expand.grid(h1, h2)
+nh <- nrow(hh)
+rmspe <- rep(NA, nh)
+jbest <- 0
+cvbest <- +Inf
+# leave-one-out
+n <- nrow(X)
+system.time({
+for(i in 1:nh) {
+# leave-one-out CV loop
+print(hh[i,])
+preds <- rep(NA, n)
+for(j in 1:n) {
+print(j)
+tmp <- try( backf.cl(y ~ X, point = X[j, ],
+windows = hh[i, ], epsilon = 1e-06, max.it = 100,
+subset = c(-j) ))
+if (class(tmp)[1] != "try-error") {
+preds[j] <- rowSums(tmp$prediction) + tmp$alpha
+}
+}
+pred.res <- preds - y
+print(sum(is.na(pred.res)))
+if(sum(!is.na(pred.res))>0){
+rmspe[i] <- mean(pred.res^2, na.rm=TRUE)
+if( rmspe[i] < cvbest ) {
+jbest <- i
+cvbest <- rmspe[i]
+print('Record')
+}
+}
+print(c(i, rmspe[i]))
+}
+})
+backf.
+backf.ck
+backf.cl
