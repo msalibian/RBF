@@ -946,26 +946,26 @@ summary.backf.rob <- function(object,...){
 
 #' @export
 #' @aliases print.summary.backf print.summary.backf.cl print.summary.backf.rob
-print.summary.backf <- function(object,...){
+print.summary.backf <- function(x,...){
   NextMethod()
 }
 
 #' @export
-print.summary.backf.cl <- function(object,...){
-  cat("Estimate of the intercept:\n", object$intercept)
-  cat("Multiple R-squared:\n", object$R2)
+print.summary.backf.cl <- function(x,...){
+  cat("Estimate of the intercept: ", x$intercept, "\n")
+  cat("Multiple R-squared: ", x$R2, "\n")
   #res <- residuals(object)
-  cat("Residuals:\n", object$residuals)
+  cat("Residuals:\n", x$residuals, "\n")
   #summary(res)
 }
 
 #' @export
-print.summary.backf.rob <- function(object,...){
-  cat("Estimate of the intercept:\n", object$intercept)
-  cat("Estimate of the residual standard error:\n", object$rse)
-  cat("Robust multiple R-squared:\n", object$R2)
+print.summary.backf.rob <- function(x,...){
+  cat("Estimate of the intercept: ", x$intercept, "\n")
+  cat("Estimate of the residual standard error: ", x$rse, "\n")
+  cat("Robust multiple R-squared: ", x$R2, "\n")
   #res <- residuals(object)
-  cat("Residuals:\n", object$residuals)
+  cat("Residuals:\n", x$residuals, "\n")
   #summary(res)
 }
 
