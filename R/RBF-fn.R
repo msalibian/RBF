@@ -955,7 +955,7 @@ print.summary.backf.cl <- function(x,...){
   cat("Estimate of the intercept: ", x$intercept, "\n")
   cat("Multiple R-squared: ", x$R2, "\n")
   #res <- residuals(object)
-  cat("Residuals:\n", x$residuals, "\n")
+  cat("Residuals:\n", names(x$residuals), "\n", x$residuals, "\n")
   #summary(res)
 }
 
@@ -965,7 +965,7 @@ print.summary.backf.rob <- function(x,...){
   cat("Estimate of the residual standard error: ", x$rse, "\n")
   cat("Robust multiple R-squared: ", x$R2, "\n")
   #res <- residuals(object)
-  cat("Residuals:\n", x$residuals, "\n")
+  cat("Residuals:\n", names(x$residuals), "\n", x$residuals, "\n")
   #summary(res)
 }
 
