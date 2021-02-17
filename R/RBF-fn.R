@@ -899,12 +899,14 @@ R2.rob <- function(object,...){
 #'
 #' This function returns the estimation of the intercept and also the
 #' five-number summary and the mean of the residuals for both classical and
-#' robust estimators. For the robust estimator it also returns the estimate of
-#' the residual standard error.
+#' robust estimators. For the classical estimator, it also returns the R-squared.
+#' For the robust estimator it returns a robust version of the R-squared and 
+#' the estimate of the residual standard error.
 #'
 #' @param object an object of class \code{backf}, a result of a call to
 #' \code{\link{backf.cl}} or \code{\link{backf.rob}}.
 #' @param ... additional other arguments. Currently ignored.
+#' 
 #'
 #' @author Alejandra Mercedes Martinez \email{ale_m_martinez@hotmail.com}
 #'
@@ -916,21 +918,55 @@ summary.backf <- function(object,...){
 
 #' @export
 summary.backf.cl <- function(object,...){
-  message("Estimate of the intercept: ", round(object$alpha,5))
-  message("Multiple R-squared: ", round(R2(object),5))
-  res <- residuals(object)
-  message("Residuals:")
-  summary(res)
+  #message("Estimate of the intercept: ", round(object$alpha,5))
+  #message("Multiple R-squared: ", round(R2(object),5))
+  #res <- residuals(object)
+  #message("Residuals:")
+  #summary(res)
+  sal <- list(
+    intercept=round(object$alpha,5),
+    R2=round(R2(object),5),
+    residuals=summary(residuals(object))
+  )
+  class(sal) <- c("summary.backf", "summary.backf.cl")
+  return(sal)
 }
 
 #' @export
 summary.backf.rob <- function(object,...){
-  message("Estimate of the intercept: ", round(object$alpha,5))
-  message("Estimate of the residual standard error: ", round(object$sigma,5))
-  message("Robust multiple R-squared: ", round(R2.rob(object),5))
-  res <- residuals(object)
-  message("Residuals:")
-  summary(res)
+  sal <- list(
+    intercept=round(object$alpha,5),
+    rse=round(object$sigma,5),
+    R2=round(R2.rob(object),5),
+    residuals=summary(residuals(object))
+  )
+  class(sal) <- c("summary.backf", "summary.backf.rob")
+  return(sal)
+}
+
+#' @export
+#' @aliases print.summary.backf print.summary.backf.cl print.summary.backf.rob
+print.summary.backf <- function(object,...){
+  NextMethod()
+}
+
+#' @export
+print.summary.backf.cl <- function(object,...){
+  cat("Estimate of the intercept:\n", object$intercept)
+  cat("Multiple R-squared:\n", object$R2)
+  #res <- residuals(object)
+  cat("Residuals:\n", object$residuals)
+  #summary(res)
+}
+
+#' @export
+print.summary.backf.rob <- function(object,...){
+  cat("Estimate of the intercept:\n", object$intercept)
+  cat("Estimate of the residual standard error:\n", object$rse)
+  cat("Robust multiple R-squared:\n", object$R2)
+  #res <- residuals(object)
+  cat("Residuals:\n", object$residuals)
+  #summary(res)
 }
 
 #' Deviance for objects of class \code{backf}
@@ -1010,8 +1046,7 @@ formula.backf <- function(x, ...){
 #'
 #' @export
 print.backf <- function(x, ...){
-  cat("Formula:\n")
-  print(x$formula)
+  cat("Formula:\n", x$formula)
   #cat("\n")
 }
 
