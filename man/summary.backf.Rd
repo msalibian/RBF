@@ -20,8 +20,9 @@ Summary method for class \code{backf}.
 \details{
 This function returns the estimation of the intercept and also the
 five-number summary and the mean of the residuals for both classical and
-robust estimators. For the robust estimator it also returns the estimate of
-the residual standard error.
+robust estimators. For the classical estimator, it also returns the R-squared.
+For the robust estimator it returns a robust version of the R-squared and 
+the estimate of the residual standard error.
 }
 \author{
 Alejandra Mercedes Martinez \email{ale_m_martinez@hotmail.com}
