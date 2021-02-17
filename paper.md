@@ -1,5 +1,5 @@
 ---
-title: 'RBF: An R package to compute a robust backfitting estimator
+title: '{RBF}: An {R} package to compute a robust backfitting estimator
   for additive models'
 tags:
 - R
@@ -36,7 +36,7 @@ more flexible than linear models, not affected by the curse of
 dimensionality, and also allow the exploration of individual covariate
 effects. Standard algorithms to fit these models can be highly susceptible to
 the presence of a few atypical or outlying observations in the data.
-The ``RBF`` [@RBF] package for R implements the robust estimator for additive
+The ``RBF`` [@RBF] package for {R} implements the robust estimator for additive
 models of @BoenteMartinezSalibian2017, which can resist the damaging effect
 of outliers in the training set.
 
@@ -48,7 +48,7 @@ the presence of potential outliers.
 
 # Implementation Goals
 
-``RBF`` implements a user interface similar to that of the R package ``gam``
+``RBF`` implements a user interface similar to that of the {R} package ``gam``
 [@gam], which computes the standard non-robust kernel-based fit for additive
 models using the backfitting algorithm. The ``RBF`` package also includes
 several modeling tools, including functions to produce diagnostic plots,
@@ -75,7 +75,7 @@ smoothing parameter used for obtaining the estimator.
 -->
 
 Additive models offer a non-parametric generalization of linear models
-(@HastieTibshirani1990). They are flexible, interpretable and avoid the
+[@HastieTibshirani1990]. They are flexible, interpretable and avoid the
 *curse of dimensionality* which means that, as the number of explanatory
 variables increases, neighbourhoods rapidly become sparse, and much fewer
 training observations are available to estimate the regression function at
@@ -96,7 +96,7 @@ standard linear regression model.
 of the $j$-th covariate on the expected value of the response when all
 other explanatory variables remain fixed.-->
 
-The backfitting algorithm (@FriedmanStuetzle1981) can be used to fit the
+The backfitting algorithm [@FriedmanStuetzle1981] can be used to fit the
 model in \autoref{eq:model} with kernel regression estimators for the smooth
 components $g_j$. It is based on the following observation: under
 \autoref{eq:model} the additive components satisfy $g_j(x) = E [ Y - \mu -
@@ -108,7 +108,7 @@ proportion of atypical observations in the training set.
 @BoenteMartinezSalibian2017 proposed a robust version of backfitting, which
 is implemented in the ``RBF`` package. Intuitively, the idea is to use the
 backfitting algorithm with robust smoothers, such as kernel-based M-estimators
-(@BoenteFraiman1989). 
+[@BoenteFraiman1989]. 
 <!--This approach corresponds to iteratively compute estimators of the additive functions satisfying the system of equations given by $E \left[\left. \rho\left(\frac{Y - \mu - \sum_{\ell \ne j} g_\ell(X_\ell)-g_j(x)}{\sigma}\right) \right| X_j = x \right]$
 -->
 These robust estimators solve:
@@ -128,14 +128,14 @@ non-decreasing and non-negative, and $\sigma$ is the residual
 scale. Different choices of the loss function $\rho$ yield fits with
 varying robustness properties. 
 Typical choices for $\rho$ are Tukey's bisquare family
-and Huber's loss (@maronna2018robust).  Note that when $\rho(t) =
+and Huber's loss [@maronna2018robust].  Note that when $\rho(t) =
 t^2$, this approach reduces to the standard backfitting.  
 
 # Illustration
 
 The ``airquality`` data set contains 153 daily air quality measurements in
 the New York region between May and September, 1973
-(@ChambersClevelandKleinerTukey1983). The interest is in modeling the mean
+[@ChambersClevelandKleinerTukey1983]. The interest is in modeling the mean
 Ozone (\lq\lq $\mbox{O}_3$\rq\rq) concentration as a function of 3 potential
 explanatory variables: solar radiance in the frequency band
 4000-7700 (\lq\lq Solar.R\rq\rq), wind speed (\lq\lq Wind\rq\rq) and
@@ -164,8 +164,7 @@ to a linear regression estimator with 95\% efficiency when errors are Gaussian.
 This choice provides a good balance between robustness and efficiency. -->
 The model is specified with the standard formula notation in R. The argument
 ``windows`` is a vector with the bandwidths to be used with each kernel
-smoother. To estimate optimal values we used a robust leave-one-out cross
-alidation approach (@BoenteMartinezSalibian2017) which resulted in the
+smoother. To estimate optimal values we used a robust leave-one-out cross-validation approach [@BoenteMartinezSalibian2017] which resulted in the
 following bandwidths:
 
 <!--
@@ -200,7 +199,7 @@ between consecutive estimates $\hat{g}_j$) and \code{max.it} (maximum number of
 iterations). 
 -->
 
-To compare the robust and classical estimators we use the R package ``gam``. 
+To compare the robust and classical estimators we use the {R} package ``gam``. 
 Optimal bandwidths were estimated using leave-one-out
 cross-validation as before.
 ```
@@ -341,7 +340,7 @@ Red points correspond to the potential outliers.
 
 # Availability
 
-The software is available at the Comprehensive R Archive Network [CRAN](https://CRAN.R-project.org/) 
+The software is available at the Comprehensive {R} Archive Network [CRAN](https://CRAN.R-project.org/) 
 and also at the  GitHub repository
 [https://github.com/msalibian/RBF](https://github.com/msalibian/RBF). The GitHub repository also 
 contains detailed scripts reproducing the data analysis above.
