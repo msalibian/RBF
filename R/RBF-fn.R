@@ -1046,7 +1046,8 @@ formula.backf <- function(x, ...){
 #'
 #' @export
 print.backf <- function(x, ...){
-  cat("Formula:\n", x$formula)
-  #cat("\n")
+  cat("Formula:\n")
+  print(x$formula) #Can't use cat with a formula type object
+  cat("\n")
 }
 
