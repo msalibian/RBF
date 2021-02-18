@@ -133,6 +133,14 @@ t^2$, this approach reduces to the standard backfitting.
 
 # Illustration
 
+<span style="color:red">With a real data set we will illustrate how can be used
+and it performs the robust backfitting estimate and how it behaves differently from
+a classical approach. Additional simulated examples with two and four covariates under different contamination settings can be found in
+@BoenteMartinezSalibian2017. It also contains a comparison between the robust
+estimates when using the Huber's loss function (``type='Huber'``) and the Tukey's loss function (``type='Tukey'``) and when considering local constant (``degree=0``) or local linear (``degree=1``) smoothers. </span> <span style="color:blue"> Aunque no se si me convence que aparezcan los argumentos antes de que mencionemos
+exactamente que son. Tal vez esta ultima oracion pueda ir mas abajo.</span>
+
+
 The ``airquality`` data set contains 153 daily air quality measurements in
 the New York region between May and September, 1973
 [@ChambersClevelandKleinerTukey1983]. The interest is in modeling the mean
@@ -141,6 +149,8 @@ explanatory variables: solar radiance in the frequency band
 4000-7700 (\lq\lq Solar.R\rq\rq), wind speed (\lq\lq Wind\rq\rq) and
 temperature (\lq\lq Temp\rq\rq). We focus on the 111 complete entries in the
 data set.
+
+
 
 Since the plot in \autoref{fig:scatterplot} suggests that the
 relationship between ozone and the other variables is not linear, we propose
