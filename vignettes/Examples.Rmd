@@ -231,6 +231,7 @@ pairs(airquality[, c('Ozone', 'Solar.R', 'Wind', 'Temp')],
       pch=19, col='gray30', cex=1.5)
 ```
 
+<!---
 The following bandwidths were obtained via a robust 
 leave-one-out cross-validation procedure (described in the paper).
 As a robust prediction error measure we use `mu^2 + sigma^2` where
@@ -281,6 +282,7 @@ for(i in 1:nh) {
 }
 bandw <- hh[jbest,]
 ```
+--->
 
 Here we just set them to their optimal values:
 ```{r bandw}
