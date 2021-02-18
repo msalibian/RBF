@@ -238,7 +238,6 @@ As a robust prediction error measure we use `mu^2 + sigma^2` where
 the prediction errors, respectively. The code can be found in the
 README file in the GitHub repository.
 
-<!---
 The code is copied below:
 ```{r robust.leaveoneout, eval=FALSE}
 # Bandwidth selection with leave-one-out cross-validation
@@ -282,8 +281,6 @@ for(i in 1:nh) {
 }
 bandw <- hh[jbest,]
 ```
-
---->
 
 Here we just set them to their optimal values:
 ```{r bandw}
