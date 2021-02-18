@@ -8,3 +8,5 @@
 ^RBF-examples\.R$
 
 
+^doc$
+^Meta$
