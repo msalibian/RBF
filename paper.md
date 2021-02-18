@@ -135,9 +135,9 @@ t^2$, this approach reduces to the standard backfitting.
 
 <span style="color:red">With a real data set we will illustrate how can be used
 and it performs the robust backfitting estimate and how it behaves differently from
-a classical approach. Additional simulated examples with two and four covariates under different contamination settings can be found in
-@BoenteMartinezSalibian2017. It also contains a comparison between the robust
-estimates when using the Huber's loss function (``type='Huber'``) and the Tukey's loss function (``type='Tukey'``) and when considering local constant (``degree=0``) or local linear (``degree=1``) smoothers. </span> <span style="color:blue"> Aunque no se si me convence que aparezcan los argumentos antes de que mencionemos
+the classical approach in the presence of atypical observations. Additional simulated examples with $d=2$ and $d=4$ covariates under different contamination settings can be found in
+@BoenteMartinezSalibian2017. That work also contains a comparison between the robust
+estimates when using the Huber's (``type='Huber'``) and the Tukey's (``type='Tukey'``) loss function and when considering local constant (``degree=0``) or local linear (``degree=1``) smoothers. </span> <span style="color:blue"> Aunque no se si me convence que aparezcan los argumentos antes de que mencionemos
 exactamente que son. Tal vez esta ultima oracion pueda ir mas abajo.</span>
 
 
