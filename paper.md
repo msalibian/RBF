@@ -373,12 +373,16 @@ Red points correspond to the potential outliers.
 \end{figure}
 -->
 
-# Availability
+# Availability and Community Guidelines
 
 The software is available at the Comprehensive R Archive Network [CRAN](https://CRAN.R-project.org/) 
 and also at the  GitHub repository
 [https://github.com/msalibian/RBF](https://github.com/msalibian/RBF). The GitHub repository also 
 contains detailed scripts reproducing the data analysis above.
+
+Contributions to this project can be submitted via pull requests on the GitHub repository. 
+Similarly, GitHub issues are the prefered venue to report suggestions and
+problems with the current version of the software and seek support. 
 
 # Acknowledgements
 
