@@ -248,7 +248,8 @@ backf.cl <- function(formula, data, subset, point=NULL, windows, epsilon=1e-6, d
       }
     }
   }
-  object <- list(alpha=alpha, g.matrix=g.matriz, prediction=prediccion, Xp=Xp, yp=yp, formula=formula)
+  object <- list(alpha=alpha, g.matrix=g.matriz, prediction=prediccion, 
+                 Xp=Xp, yp=yp, formula=formula, call=cl)
   class(object) <- c("backf.cl", "backf", "list")
   return(object)
 }
@@ -535,7 +536,8 @@ backf.rob <- function(formula, data, subset, windows, point=NULL, epsilon=1e-6, 
       }
     }
   }
-  object <- list(alpha=alpha,g.matrix=g.matriz, sigma.hat=sigma.hat, prediction=prediccion, type=type, Xp=Xp, yp=yp, formula=formula)
+  object <- list(alpha=alpha, g.matrix=g.matriz, sigma.hat=sigma.hat, prediction=prediccion, 
+                 type=type, Xp=Xp, yp=yp, formula=formula, call=cl)
   class(object) <- c("backf.rob", "backf", "list")
   return(object)
   # return(list(alpha=alpha,g.matrix=g.matriz, sigma.hat=sigma.hat, prediction=prediccion))
@@ -926,7 +928,8 @@ summary.backf.cl <- function(object,...){
   sal <- list(
     intercept=round(object$alpha,5),
     R2=round(R2(object),5),
-    residuals=summary(residuals(object))
+    residuals=summary(residuals(object)),
+    call = object$call
   )
   class(sal) <- c("summary.backf", "summary.backf.cl")
   return(sal)
@@ -938,7 +941,8 @@ summary.backf.rob <- function(object,...){
     intercept=round(object$alpha,5),
     rse=round(object$sigma,5),
     R2=round(R2.rob(object),5),
-    residuals=summary(residuals(object))
+    residuals=summary(residuals(object)),
+    call = object$call
   )
   class(sal) <- c("summary.backf", "summary.backf.rob")
   return(sal)
@@ -961,6 +965,8 @@ print.summary.backf.cl <- function(x,...){
 
 #' @export
 print.summary.backf.rob <- function(x,...){
+  cat("\nCall:\n", paste(deparse(x$call), sep = "\n", 
+                         collapse = "\n"), "\n\n", sep = "")
   cat("Estimate of the intercept: ", x$intercept, "\n")
   cat("Estimate of the residual standard error: ", x$rse, "\n")
   cat("Robust multiple R-squared: ", x$R2, "\n")
@@ -1046,8 +1052,9 @@ formula.backf <- function(x, ...){
 #'
 #' @export
 print.backf <- function(x, ...){
-  cat("Formula:\n")
-  print(x$formula) #Can't use cat with a formula type object
+  cat("\nCall:\n", paste(deparse(x$call), sep = "\n", 
+                         collapse = "\n"), "\n\n", sep = "")
   cat("\n")
+  invisible(x)
 }
 
