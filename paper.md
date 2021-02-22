@@ -6,7 +6,7 @@ tags:
 - Backfitting
 - Additive models
 - Robustness
-date: "17 November 2020"
+date: "22 February 2021"
 output:
   pdf_document: default
   word_document: default
@@ -21,7 +21,7 @@ authors:
   affiliation: 2
 bibliography: refs.bib
 affiliations:
-- name: Departamento de Ciencias Básicas, Universidad Nacional de Luj&aacute;n, Argentina
+- name: Departamento de Ciencias B&aacute;sicas, Universidad Nacional de Luj&aacute;n, Argentina
   index: 1
 - name: Department of Statistics, University of British Columbia, Canada
   index: 2
@@ -131,15 +131,19 @@ Typical choices for $\rho$ are Tukey's bisquare family
 and Huber's loss [@maronna2018robust].  Note that when $\rho(t) =
 t^2$, this approach reduces to the standard backfitting.  
 
+Simulation experiments reported in @BoenteMartinezSalibian2017 show that the
+robust backfitting algorithm provides more reliable estimators than the
+classical approach when the training set includes outliers in different
+proportions and settings. Those experiments also confirm that the
+robust backfitting estimators are very similar to the standard ones when the
+data do not contain atypical observations.
+
+In the next Section we illustrate the use of the robust backfitting algorithm
+as implemented in the ``RBF'' package by applying it to a real data set. We
+also compare the results with those obtained with the standard backfitting
+approach.
+
 # Illustration
-
-\textcolor{red}{With a real data set we will illustrate how can be used
-and it performs the robust backfitting estimate and how it behaves differently from
-the classical approach in the presence of atypical observations. Additional simulated examples with $d=2$ and $d=4$ covariates under different contamination settings can be found in
-@BoenteMartinezSalibian2017. That work also contains a comparison between the robust
-estimates when using the Huber's (``type='Huber'``) and the Tukey's (``type='Tukey'``) loss function and when considering local constant (``degree=0``) or local linear (``degree=1``) smoothers.} \textcolor{blue}{Aunque no se si me convence que aparezcan los argumentos antes de que mencionemos
-exactamente que son. Tal vez esta ultima oracion pueda ir mas abajo.}
-
 
 The ``airquality`` data set contains 153 daily air quality measurements in
 the New York region between May and September, 1973
@@ -209,8 +213,29 @@ between consecutive estimates $\hat{g}_j$) and \code{max.it} (maximum number of
 iterations). 
 -->
 
-To compare the robust and classical estimators we use the R package ``gam``. 
-Optimal bandwidths were estimated using leave-one-out
+A different kernel M-estimator can be used in the robust backfitting
+algorithm by setting ``type='Huber'`` in the call above. Unlike Tukey's
+re-descending score function, Huber's function is monotone, and numerical
+experiments show that the resulting estimator typically has larger bias. 
+However, the corresponding objective function is convex and thus standard
+algorithms can be used to find the global minimum. Our algorithm takes advantage of
+this to construct a robust initial value to compute the more robust
+fit based on Tukey's loss function. For more details we refer the reader to
+@BoenteMartinezSalibian2017. 
+
+The argument ``degree`` is an integer indicating
+the desired degree of the local polynomial used in the kernel M-estimator.
+Its default value is ``0`` (which corresponds to a local constant fit). Other
+arguments for ``backf.rob`` include convergence controls (``epsilon``: the
+maximum allowed relative difference between consecutive estimates, and
+``max.it``: the maximum number of iterations), and tuning parameters for
+the chosen loss function (``k.h`` for Huber's loss, and ``k.t`` for Tukey's).
+The default values for the latter two are those used to construct robust
+estimators for linear regression that are 95% efficient compared with the
+least squares ones.
+
+To compare the robust and classical additive model estimators we use the R
+package ``gam``. Optimal bandwidths were estimated using leave-one-out
 cross-validation as before.
 ```
 R> library(gam)
