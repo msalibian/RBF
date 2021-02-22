@@ -381,7 +381,7 @@ and also at the  GitHub repository
 contains detailed scripts reproducing the data analysis above.
 
 Contributions to this project can be submitted via pull requests on the GitHub repository. 
-Similarly, GitHub issues are the prefered venue to report suggestions and
+Similarly, GitHub issues are the preferred venue to report suggestions and
 problems with the current version of the software, and seek support. 
 
 # Acknowledgements
