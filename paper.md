@@ -139,7 +139,7 @@ robust backfitting estimators are very similar to the standard ones when the
 data do not contain atypical observations.
 
 In the next Section we illustrate the use of the robust backfitting algorithm
-as implemented in the ``RBF'' package by applying it to a real data set. We
+as implemented in the ``RBF`` package by applying it to a real data set. We
 also compare the results with those obtained with the standard backfitting
 approach.
 
