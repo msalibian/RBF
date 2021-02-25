@@ -17,7 +17,7 @@ knitr::opts_chunk$set(
 ```
 ## About this vignette
 
-In this vignette, we will show with a toy example and a real data example how a robust backfitting procedure can be easily implemented.
+In this vignette, we will show with a real data example and some contaminated responses how a robust backfitting procedure can be easily implemented.
 
 The `R` package `RBF` (available on CRAN [here](https://cran.r-project.org/package=RBF)) 
 implements the robust back-fitting algorithm as proposed by
@@ -36,381 +36,77 @@ The package in this repository can be installed from within `R` by using the fol
 ```R
 devtools::install_github("msalibian/RBF")
 ```
-
+and charged in the `R` session by the following command
+```{r library}
+library("RBF")
+```
 Now that the `R` package is downloaded, we can now start to see how this procedure works.
 
-## Let's play with a toy example
+We consider the Boston house price data of Harrinson and Rubinfeld (1978). This dataset was used as an example to model an additive model by Härdle et a. (2004). File `housing.csv` available in this GitHub repository contains $n=506$ observations for the census districts of the Boston metropolitan area. As in this book, we selected the following ten explanatory variables
 
-The following example corresponds to a 2-dimensional simulated samples with 5% of contaminated responses.
+$X_1$: per capita crime rate by town,
 
-Let begin by defining the additive functions and then generating the simulated sample.
+$X_2$: proportion of non-retail business acres per town,
 
-```{r generating data}
-function.g1 <- function(x1) 24*(x1-1/2)^2-2
-function.g2 <- function(x2) 2*pi*sin(pi*x2)-4
-set.seed(140)
-n <- 500
-x1 <- runif(n)
-x2 <- runif(n)
-X <- cbind(x1, x2)
-eps <- rnorm(n,0,sd=0.15)
-regression <- function.g1(x1)+function.g2(x2)
-y <- regression + eps
+$X_3$: nitric oxides concentration (parts per 10 million),
+
+$X_4$: avarage number of rooms per dwelling,
+
+$X_5$: proportion of owner-occupied units built prior to 1940,
+
+$X_6$: weighted distances to five Boston employment centers,
+
+$X_7$: full-value property tax rate per $10,000,
+
+$X_8$: pupil-teacher ratio by town,
+
+$X_9$: $1,000(Bk-0.63)^2$ where $Bk$ is the proportion of people of Afrom American descent by town,
+
+$X_{10}$: percent lower status of population,
+
+and the $Y$ response variable is the median value of the owner-occupied homes in 1,000 USD. Then, the additive model assumed is
+$Y= \mu+ \sum_{j=1}^{10} g_j(\log(X_j))+ \epsilon.$
+
+
+```{r read the dataset}
+datos <- read.csv("housing.csv", header = FALSE, sep="")
+x1 <- datos$V1
+x2 <- datos$V3
+x3 <- datos$V5
+x4 <- datos$V6
+x5 <- datos$V7
+x6 <- datos$V8
+x7 <- datos$V10
+x8 <- datos$V11
+x9 <- datos$V12
+x10 <- datos$V13
+X <- log(cbind(x1,x2,x3,x4,x5,x6,x7,x8,x9,x10))
+colnames(X) <- NULL
+y <- datos$V14
 ```
 
-The following bandwidths were obtained via a robust K-fold cross-validation procedure. In order to not to lose the focus of what it really matters, that is, the robust estimation of the additive components, here we just set them to their optimal values but the code to obtain this values is a separate section.
-
-```{r bandw1}
-bandw <- c(0.05, 0.075)
+Recall that bandwidth selection is an important issue when considering any kernel-based method. As in Härdle et al. (2004), bandwidths a $h_j$, for $1 \leq j \leq 10$ are chosen proportional to its standard deviation ($h_j=0.5 \hat{\sigma}_j$).
+```{r bandwidths}
+bandw <- 1/2*apply(X,2,sd)
+bandw
 ```
 
-Now we will use the robust backfitting procedure to fit an additive model using the Tukey loss function (with default tuning constant c=1.345) and a linear fit (degree=1) for the estimation procedure at each additive component. In addition, a specific point will be predicted.
-
+We will now compute the robust backfitting estimator in a similar way to how it's done in other well-known packages: using a `formula`. This argument and algo the `windows` argument are the only two arguments needed to obtain the robust fit since the other arguments have a default value. Then, we can just obtain our robust fit by doing
 ```{r robust fit}
-library(RBF)
-point <- c(0.7, 0.6)
-robust.fit <- backf.rob(y ~ X, point=point, windows=bandw, type = 'Tukey', degree=1)
+robust.fit <- backf.rob( y~X, windows=bandw)
 ```
+Covariates can be included as a matrix as before but also separated with `+`, that is `y~x1+x2+x3+x4+x5+x6+x7+x8+x9+x10`.
 
-The prediction and true values of the additive functions are:
+Another important argument is the `type` argument which calls to the loss function used in the robust procedure. It's default value is the Huber's loss function (`type='Huber'`). The other option is to use the Tukey's bisquared loss function (`type='Tukey'`).
 
-```{r prediction}
-robust.fit$prediction
-c(function.g1(point[1]), function.g2(point[2]))
+Now, we can see how the robust fit performed using the `summary` method:
+```{r summary}
+summary(robust.fit)
 ```
-
-The following figures plot the partial residuals, the estimated curve (in blue) and the true function (in black) for each additive function:
-
-```{r plots-simu, fig.show="hold", out.width="33%"}
-lim.rob <- matrix(0, 2, 2)
-functions.g <- cbind(function.g1(X[,1]), function.g2(X[,2]))
-for(j in 1:2) {
-  res <- y - robust.fit$alpha - robust.fit$g.matrix[,-j]
-  lim.rob[,j] <- range(res)
-  plot(X[,j], res, type='p', pch=19, col='gray45', xlab=colnames(X)[j], ylab='', 
-       cex=1, ylim=lim.rob[,j])
-  ord <- order(X[,j])
-  lines(X[ord,j], robust.fit$g.matrix[ord,j], lwd=3, col='blue')
-  lines(X[ord,j], functions.g[ord,j], lwd=3)
-}
+and we can obtain from the method `plot` the plots of the partial residuals together with the estimated curves. Once the fit is done and estimations of the constant $\mu$ and the additive functions $g_j$ are obtained, the partial residual associated to the  $j$th covariate for the $i$th observation is defined as $$R_{ij}=Y_i-\hat{\mu}-\sum_{k\neq i}\hat{g}_k(X_{ik}).$$ Then, points of the partial residuals obtained for the $j$th covariate are of the form $(X_{ij},R_{ij})$.
+```{r plot}
+plot(robust.fit)
 ```
 
 
 
-### With contaminated responses.
-
-In order to appreciate the differences of the estimation procedures when using a classical or robust procedure to estimate the additive components in an additive model, we will now contaminate a 10% of the responses and recalculate both estimators.
-
-```{r contaminated responses}
-eps <- rnorm(n,0,sd=0.15)
-prop.cont <- 0.10
-ou <- rbinom(n, size=1, prob=prop.cont) 
-eps.ou <- eps
-eps.ou[ ou == 1 ] <- rnorm(sum(ou),mean=15, sd=0.1)
-yout <- regression + eps.ou
-```
-
-And recompute the bandwidths with the K-fold cross-validation procedure (see the following section for the selected bandwidths). The optimal values are:
-```{r bandw-out}
-bandw <- c(0.05, 0.075)
-```
-
-And obtain the following fit
-```{r robust.fit.out}
-robust.fit.out <- backf.rob(yout ~ X, point=point, windows=bandw, type = 'Tukey', degree=1)
-```
-and the following predictions at the fixed point
-```{r prediction2}
-robust.fit.out$prediction
-c(function.g1(point[1]), function.g2(point[2]))
-```
-
-Then, we plot the partial residuals, the estimated curves (in blue) and the true functions (in black) for each additive function.
-
-```{r plots-simu2, fig.show="hold", out.width="33%"}
-lim.rob <- matrix(0, 2, 2)
-functions.g <- cbind(function.g1(X[,1]), function.g2(X[,2]))
-for(j in 1:2) {
-  res <- yout - robust.fit.out$alpha - robust.fit.out$g.matrix[,-j]
-  lim.rob[,j] <- range(res)
-  plot(X[,j], res, type='p', pch=19, col='gray45', xlab=colnames(X)[j], ylab='', 
-       cex=1, ylim=lim.rob[,j])
-  ord <- order(X[,j])
-  lines(X[ord,j], robust.fit.out$g.matrix[ord,j], lwd=3, col='blue')
-  lines(X[ord,j], functions.g[ord,j], lwd=3)
-}
-```
-
-
-It can be appreciated that the estimates state insensitive to the presence of atypical observations in the data.
-
-
-
-### Optimal bandwidths
-
-As it was mentioned before, we left to this section all computations related to bandwidth selection for the simulated example.
-
-Since for both clean and contaminated responses we compute robust bandwidths, we will first define a function to compute a K-fold cross-validation procedure. 
-
-As a robust prediction error measure we use `mu^2 + sigma^2` where `mu` and `sigma` are M-estimators of location and scale of
-the prediction errors, respectively. The code is copied below:
-
-```{r rkfoldfunction}
-backf.rob.cv <- function(k=5, Xp, yp, windows, degree, type) {
-  n <- length(yp)
-  k1 <- floor(n/k)
-  ids <- rep(1:k, each=k1)
-  if( length(ids) < n ) ids <- c(ids, 1:(n%%k))
-  ids <- sample(ids)
-  preds <- rep(NA, n)
-  for(j in 1:k) {
-    XX <- Xp[ids!=j,]
-    yy <- yp[ids!=j]
-    tmp <- backf.rob(yy ~ XX, point=Xp[ids==j,], windows=windows, degree=degree, type=type)
-    preds[ids==j] <- rowSums(tmp$prediction) + tmp$alpha
-  }
-  preds.res <- preds - yp
-  tmp.re <- RobStatTM::locScaleM(preds.res, na.rm=TRUE)
-  sal <- tmp.re$mu^2 + tmp.re$disper^2
-  return(sal)
-}
-```
-
-And so the optimal bandwidths are search over a grid. For the clean instance:
-
-```{r robust.5fold1, eval=FALSE}
-# Bandwidth selection with leave-one-out cross-validation
-# This takes some time to compute (approx 2 minutes running
-# R 3.6.3 on an Intel(R) Core(TM) i7-10900 CPU @ 2.90GHz)
-h1 <- c(0.05, 0.075, 0.1, 0.125)
-hh <- expand.grid(h1, h1)
-nh <- nrow(hh)
-rmspe <- rep(NA, nh)
-system.time({
-for(i in 1:nh){
-  print(i)
-  rmspe[i] <- backf.rob.cv(k=5, Xp=X, yp=y, windows=hh[i,], degree=1, type='Tukey') 
-}
-})
-i0 <- which.min(rmspe)
-bandw <- hh[i0,]
-```
-```{r optbandw1}
-bandw
-```
-and for the contaminated setting:
-
-```{r robust.5fold2, eval=FALSE}
-# Bandwidth selection with leave-one-out cross-validation
-# This takes some time to compute (approx 2 minutes running
-# R 3.6.3 on an Intel(R) Core(TM) i7-10900 CPU @ 2.90GHz)
-h1 <- c(0.05, 0.075, 0.1, 0.125)
-hh <- expand.grid(h1, h1)
-nh <- nrow(hh)
-rmspe <- rep(NA, nh)
-system.time({
-for(i in 1:nh){
-  print(i)
-  rmspe[i] <- backf.rob.cv(k=5, Xp=X, yp=yout, windows=hh[i,], degree=1, type='Tukey') 
-}
-})
-i0 <- which.min(rmspe)
-bandw <- hh[i0,]
-```
-```{r optbandw2}
-bandw
-```
-
-
-## And now with a real data set
-
-Here is a example on how `RBF` works with a real data set. 
-We use the Air Quality data. The interest is in
-predicting `Ozone` in terms of three explanatory 
-variables: `Solar.R`, `Wind` and `Temp`:
-```{r intro}
-library(RBF)
-data(airquality)
-pairs(airquality[, c('Ozone', 'Solar.R', 'Wind', 'Temp')], 
-      pch=19, col='gray30', cex=1.5)
-```
-
-<!---
-The following bandwidths were obtained via a robust 
-leave-one-out cross-validation procedure (described in the paper).
-As a robust prediction error measure we use `mu^2 + sigma^2` where
-`mu` and `sigma` are M-estimators of location and scale of
-the prediction errors, respectively. The code can be found in the
-README file in the GitHub repository.
-
-The code is copied below:
-```{r robust.leaveoneout, eval=FALSE}
-# Bandwidth selection with leave-one-out cross-validation
-## Without outliers
-# This takes a long time to compute (approx 380 minutes running
-# R 3.6.1 on an Intel(R) Core(TM) i7-4790 CPU @ 3.60GHz)
-ccs <- complete.cases(airquality)
-x <- as.matrix( airquality[ccs, c('Solar.R', 'Wind', 'Temp')] )
-y <- as.vector( airquality[ccs, 'Ozone'] )
-a <- c(1/2, 1, 1.5, 2, 2.5, 3)
-h1 <- a * sd(x[,1])
-h2 <- a * sd(x[,2])
-h3 <- a * sd(x[,3])
-hh <- expand.grid(h1, h2, h3)
-nh <- nrow(hh)
-rmspe <- rep(NA, nh)
-jbest <- 0
-cvbest <- +Inf
-# leave-one-out
-n <- nrow(x)
-for(i in 1:nh) {
-  # leave-one-out CV loop
-  preds <- rep(NA, n)
-  for(j in 1:n) {
-    tmp <- try( backf.rob(y ~ x, point = x[j, ],
-                          windows = hh[i, ], epsilon = 1e-6,
-                          degree = 1, type = 'Tukey', subset = c(-j) ))
-    if (class(tmp)[1] != "try-error") {
-      preds[j] <- rowSums(tmp$prediction) + tmp$alpha
-    }
-  }
-  pred.res <- preds - y
-  tmp.re <- RobStatTM::locScaleM(pred.res, na.rm=TRUE)
-  rmspe[i] <- tmp.re$mu^2 + tmp.re$disper^2
-  if( rmspe[i] < cvbest ) {
-    jbest <- i
-    cvbest <- rmspe[i]
-    print('Record')
-  }
-  print(c(i, rmspe[i]))
-}
-bandw <- hh[jbest,]
-```
---->
-
-Here we just set them to their optimal values:
-```{r bandw}
-bandw <- c(136.7285, 10.67314, 4.764985)
-```
-Now we use the robust backfitting algorithm to fit an additive
-model using Tukey's bisquare loss (the default tuning
-constant for this loss function is 4.685). We remove 
-cases with missing entries. 
-```{r rbfone}
-ccs <- complete.cases(airquality)
-fit.full <- backf.rob(Ozone ~ Solar.R + Wind + Temp, data=airquality,
-                subset=ccs, windows=bandw, degree=1, type='Tukey')
-```
-
-We display the 3 fits (one per additive component), being
-careful with the axis limits (which are stored to use them later):
-```{r showfits, fig.show="hold", out.width="33%"}
-lim.cl <- lim.rob <- matrix(0, 2, 3)
-x0 <- fit.full$Xp
-for(j in 1:3) {
-  re <- fit.full$y - fit.full$alpha - rowSums(fit.full$g.matrix[,-j])
-  lim.rob[,j] <- c(min(re), max(re))
-  plot(re ~ x0[,j], type='p', pch=19, col='gray30', 
-       xlab=colnames(x0)[j], ylab='', cex=1.5)
-  oo <- order(x0[,j])
-  lines(x0[oo,j], fit.full$g.matrix[oo,j], lwd=5, col='blue')
-}
-```
-
-NOTE: These plots could also be obtained using the `plot` method: 
-```{r plot.method, eval=FALSE}
-# Plot each component
-plot(fit.full, which=1:3)
-```
-
-<!---
-Aca iria cv para gam
-
---->
-
-The optimal bandwidths are `0.7`, `0.7` and `0.5` for `Solar.R`, 
-`Wind` and `Temp`, respectively. The code to compute the leave-one-out
-cross-validation is available in the README file in the GitHub repository.
-Below are plots of  partial residuals with
-the classical and robust fits overlaid:
-```{r classicfits, fig.show="hold", out.width="33%"}
-aircomplete <- airquality[ complete.cases(airquality), ]
-library(gam)
-fit.gam <- gam(Ozone ~ lo(Solar.R, span=.7) + lo(Wind, span=.7)+
-                 lo(Temp, span=.5), data=aircomplete)
-# Plot both fits (robust and classical) 
-x <- as.matrix( aircomplete[ , c('Solar.R', 'Wind', 'Temp')] )
-y <- as.vector( aircomplete[ , 'Ozone'] )
-fits <- predict(fit.gam, type='terms')
-# alpha.gam <- attr(fits, 'constant')
-for(j in 1:3) {
-  re <- fit.full$yp - fit.full$alpha - rowSums(fit.full$g.matrix[,-j])
-  plot(re ~ x[,j], type='p', pch=20, col='gray45', xlab=colnames(x)[j], ylab='')
-  oo <- order(x[,j])
-  lines(x[oo,j], fit.full$g.matrix[oo,j], lwd=5, col='blue')
-  lines(x[oo,j], fits[oo,j], lwd=5, col='magenta')
-}
-```
-
-To identify potential outiers 
-we look at the residuals from the robust fit, and use
-the function `boxplot`:
-```{r outliers, fig.width=4, fig.height=4}
-re.ro <- residuals(fit.full)
-ou.ro <- boxplot(re.ro, col='gray80')$out
-in.ro <- (1:length(re.ro))[ re.ro %in% ou.ro ]
-points(rep(1, length(in.ro)), re.ro[in.ro], pch=20, cex=1.5, col='red')
-```
-
-We highlight these suspicious observations on the
-scatter plot 
-```{r showouts}
-cs <- rep('gray30', nrow(aircomplete))
-cs[in.ro] <- 'red'
-os <- 1:nrow(aircomplete)
-os2 <- c(os[-in.ro], os[in.ro])
-pairs(aircomplete[os2, c('Ozone', 'Solar.R', 'Wind', 'Temp')], 
-      pch=19, col=cs[os2], cex=1.5)
-```
-
-and on the partial residuals plots
-```{r showouts2, fig.show="hold", out.width="33%"}
-for(j in 1:3) {
-  re <- fit.full$yp - fit.full$alpha - rowSums(fit.full$g.matrix[,-j])
-  plot(re ~ x[,j], type='p', pch=20, col='gray45', xlab=colnames(x)[j], ylab='')
-  points(re[in.ro] ~ x0[in.ro,j], pch=19, col='red', cex=1.5)
-  oo <- order(x[,j])
-  lines(x[oo,j], fit.full$g.matrix[oo,j], lwd=5, col='blue')
-  lines(x[oo,j], fits[oo,j], lwd=5, col='magenta')
-}
-```
-
-We now compute the classical backfitting algorithm on
-the data without the potential outliers identified by
-the robust fit (the optimal smoothing 
-parameters for the non-robust fit were 
-re-computed using leave-one-out cross-validation on the "clean" data set). 
-Note that now both fits (robust and non-robust) are  
-almost identical.
-```{r bothonclean, fig.show="hold", out.width="33%"}
-# Run the classical backfitting algorithm without outliers
-airclean <- aircomplete[-in.ro, ]
-fit.gam2 <- gam(Ozone ~ lo(Solar.R, span=.7) + lo(Wind, span=.8)+
-                  lo(Temp, span=.3), data=airclean)
-fits2 <- predict(fit.gam2, type='terms')
-# alpha.gam2 <- attr(fits2, 'constant')
-dd2 <- aircomplete[-in.ro, c('Solar.R', 'Wind', 'Temp')]
-for(j in 1:3) {
-  re <- fit.full$yp - fit.full$alpha - rowSums(fit.full$g.matrix[,-j])
-  plot(re ~ x[,j], type='p', pch=20, col='gray45', xlab=colnames(x)[j], ylab='')
-  points(re[in.ro] ~ x[in.ro,j], pch=20, col='red', cex=1.5)
-  oo <- order(dd2[,j])
-  lines(dd2[oo,j], fits2[oo,j], lwd=5, col='magenta')
-  oo <- order(x[,j])
-  lines(x[oo,j], fit.full$g.matrix[oo,j], lwd=5, col='blue')
-}
-```
-
-<!--- Y aca desde que dice Finally
-
---->
