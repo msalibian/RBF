@@ -70,24 +70,23 @@ $Y= \mu+ \sum_{j=1}^{10} g_j(\log(X_j))+ \epsilon.$
 
 ```{r read the dataset}
 datos <- read.csv("housing.csv", header = FALSE, sep="")
-x1 <- datos$V1
-x2 <- datos$V3
-x3 <- datos$V5
-x4 <- datos$V6
-x5 <- datos$V7
-x6 <- datos$V8
-x7 <- datos$V10
-x8 <- datos$V11
-x9 <- datos$V12
-x10 <- datos$V13
-X <- log(cbind(x1,x2,x3,x4,x5,x6,x7,x8,x9,x10))
-colnames(X) <- NULL
+x1 <- datos$V1 #log(datos$V1)
+x2 <- datos$V3 #log(datos$V3)
+x3 <- datos$V5 #log(datos$V5)
+x4 <- datos$V6 #log(datos$V6)
+x5 <- datos$V7 #log(datos$V7)
+x6 <- datos$V8 #log(datos$V8)
+x7 <- datos$V10 #log(datos$V10)
+x8 <- datos$V11 # log(datos$V11)
+x9 <- datos$V12 #log(datos$V12)
+x10 <- datos$V13 #log(datos$V13)
 y <- datos$V14
 ```
 
 Recall that bandwidth selection is an important issue when considering any kernel-based method. As in Härdle et al. (2004), bandwidths a $h_j$, for $1 \leq j \leq 10$ are chosen proportional to its standard deviation ($h_j=0.5 \hat{\sigma}_j$).
 ```{r bandwidths}
-bandw <- 1/2*apply(X,2,sd)
+X <- log(cbind(x1,x2,x3,x4,x5,x6,x7,x8,x9,x10)) #log(cbind(x1,x2,x3,x4,x5,x6,x7,x8,x9,x10))
+bandw <- (1/2)*apply(X,2,sd) 
 bandw
 ```
 
@@ -105,8 +104,55 @@ summary(robust.fit)
 ```
 and we can obtain from the method `plot` the plots of the partial residuals together with the estimated curves. Once the fit is done and estimations of the constant $\mu$ and the additive functions $g_j$ are obtained, the partial residual associated to the  $j$th covariate for the $i$th observation is defined as $$R_{ij}=Y_i-\hat{\mu}-\sum_{k\neq i}\hat{g}_k(X_{ik}).$$ Then, points of the partial residuals obtained for the $j$th covariate are of the form $(X_{ij},R_{ij})$.
 ```{r plot}
-plot(robust.fit)
+plot(robust.fit, which=c(1,2,4,10))
 ```
 
 
+If you want a prediction of the additive functions $\hat{g}_j$ at a certain point, you can add it in the argument `point` when doing the fit.
+```{r prediction}
+po <- colMeans(X)
+robust.fit1 <- backf.rob( y~X, windows = bandw, point = po)
+robust.fit1$prediction
+```
 
+A PARTIR DE ACA LO QUE NO ME GUSTA ES QUE CON GAM LAS CURVAS NO DAR PARECIDAS, MIENTRAS QUE SI LAS DAN SI USAMOS EL ESTIMADOR CLASICO DE NUESTRO PAQUETE. HABRÁ MANERA DE USAR ESTE MISMO EN LUGAR DE USAR EL DE, POR EJEMPLO, GAM? PORQUE SI ES ASI, LO QUE SE PUEDE HACER ES CONTAMINAR UN PEQUEÑO PORCENTAJE DE OBSERVACIONES Y VER COMO SE MODIFICAN LAS CURVAS.
+
+TAMBIEN LO QUE PUEDO MOSTRAR ES CÓMO NO CAMBIAR EL ROBUSTO CON Y SIN OUTLIERS Y VER EL ANTES Y EL DESPUES DEL CLASICO COMO PARA MOSTRAR SUS SENSIBILIDAD.
+
+In order to compare the robust and classical additive model estimators, we use the `R` package `gam`. The latter is also computed with the same bandwidths.
+
+```{r classical fit, warning=FALSE}
+library(gam)
+housing <- as.data.frame(cbind(y,X))
+#fit.gam <- gam(y~lo(x1, span=0.72)+ lo(x2,span= 0.25)+lo(x3, span=0.07)+lo(x4, span=0.04)+lo(x5, span=0.20)+lo(x6, span=0.18)+lo(x7, span=0.13)+lo(x8, span=0.04)+lo(x9, span=0.26)+lo(x10, span=0.20), data = housing)
+fit.gam <- gam(y~lo(x1, span=1.08)+ lo(x2,span= 0.39)+lo(x3, span=0.10)+lo(x4, span=0.06)+lo(x5, span=0.31)+lo(x6, span=0.27)+lo(x7, span=0.20)+lo(x8, span=0.06)+lo(x9, span=0.39)+lo(x10, span=0.30), data = housing)
+
+classical.fit <- backf.cl( y~X, windows = bandw, point = po)
+classical.fit$prediction
+```
+
+```{r plots classical and robust, warning=FALSE}
+fits <- predict(fit.gam, type='terms')
+for(j in 1:10) {
+  re <- robust.fit$yp - robust.fit$alpha - rowSums(robust.fit$g.matrix[,-j])
+  plot(re ~ X[,j], type='p', pch=20, col='gray45', xlab=colnames(X)[j], ylab='')
+  oo <- order(X[,j])
+  lines(X[oo,j], classical.fit$g.matrix[oo,j], lwd=5, col='green', lty=2)
+  lines(X[oo,j], fits[oo,j], lwd=5, col='magenta', lty=2) #Este es el de gam
+  lines(X[oo,j], robust.fit$g.matrix[oo,j], lwd=5, col='blue', lty=1)
+}
+```
+
+Now, we will contaminate the responses of a 2% of the observations.
+
+```{r outliers}
+ynew <- y
+ynew[1:10] <- rep(300,10)
+```
+Then, if the recalculate the robust fit, we obtain similar curves to what was obtained with the original data set.
+```{r robust fit with outliers}
+robust.fit.new <- backf.rob( ynew~X, windows = bandw, point = po)
+summary(robust.fit.new)
+robust.fit.new$prediction
+plot(robust.fit.new, which=c(1,2,4,10))
+```
