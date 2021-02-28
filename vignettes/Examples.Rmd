@@ -175,3 +175,9 @@ for(j in 1:10) {
 
 
 SI QUISIERAMOS HACER ALGO COMO COMPARAR EL CLASICO CON EL ROBUSTO EN EL MISMO GRAFICO, TENDRIAMOS EL PROBLEMA DE QUE NO DAN TAN PARECIDOS. ADEMÁS, CON GAM LAS CURVAS NO DAN PARECIDAS, MIENTRAS QUE SI LO SOS UN POCO MAS SI USAMOS EL ESTIMADOR CLASICO DE NUESTRO PAQUETE. SI NO TE GUSTA LO DE LOS OUTLIERS AGREGADOS A MANO, HABRÁ MANERA DE USAR ESTE MISMO EN LUGAR DE USAR EL DE GAM?
+
+### Bibliography
+
+Härdle, W., Müller, M., Sperlich, S. and Werwatz, A. (2004). *Nonparametric and Semiparametric Models*. Springer.
+
+Harrinson, D. and Rubinfeld, D. L. (1978). Hedonic prices and the demand for clean air. *J. Environ. Economics and Management*, **5**, 81-102.
