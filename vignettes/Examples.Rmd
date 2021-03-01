@@ -61,6 +61,11 @@ $Y= \mu+ \sum_{j=1}^{10} g_j(\log(X_j))+ \epsilon.$
 data(Boston, package='MASS')
 dd <- Boston[, c(1, 3, 5:8, 10:14)]
 dd[, -11] <- log( dd[, names(dd) != 'medv'] )
+dd$medv <- log(dd$medv)
+```
+
+```{r loadpckg}
+library(RBF)
 ```
 
 The backfitting estimators for each additive component are 
@@ -80,7 +85,7 @@ the robust backfitting estimator are:
 - `degree`: the degree of the  polynomial used for the kernel local regression, defaults to `0`,
 - `type`: specifies the robust loss function, options are `Huber` or `Tukey`, defaults to `Huber`.
 The command to compute the fit is:
-```{r robust fit}
+```{r robust fit, cache=TRUE}
 robust.fit <- backf.rob(medv ~ ., data = dd, degree=0, type='Huber', windows=bandw)
 ```
 The summary method provides information on the resulting fit: 
@@ -94,22 +99,32 @@ residuals: $$R_{ij}=Y_i-\hat{\mu}-\sum_{k\neq i}\hat{g}_k(X_{ik})$$.
 plot(robust.fit)
 ```
 
-If you want a prediction of the additive functions $\hat{g}_j$ at a certain point, you can add it in the argument `point` when doing the fit.
-```{r prediction}
-po <- colMeans(X)
-robust.fit1 <- backf.rob(y~X, windows = bandw, point = po)
+By default, `backf.rob` computes fitted values on the training
+set. If predictions at a different specific point are desired, 
+we can pass those points using the argumen `point`. For example, 
+to obtain predicted values at the point given by average of 
+each explanatory variable, we can use the following 
+command (note that this step implies re-fitting the whole model):
+```{r prediction, cache=TRUE}
+po <- colMeans(dd[, names(dd) != 'medv'])
+robust.fit1 <- backf.rob(medv ~ ., data = dd, degree=0, type='Huber', windows=bandw, point=po)
+```
+The values of the estimated components evaluated at the 
+corresponding coordinates of `po` are 
+returned in the `$prediction` element: 
+```{r showpred}
 robust.fit1$prediction
 ```
-
-In order to analyze the sensitivity of the robust estimator, we will contaminate the responses of a 1% of the observations.
+In order to illustrate the behaviour of the robust fit when 
+outliers are present in the data, we artifically introduce
+1% of atypical values in the response variable: 
 ```{r outliers}
-ynew <- y
-#ynew[c(4,89,197,198,199,200,299,291,301,350)]<- rep(400,10)
-ynew[1:5]<- rep(400,5)
+dd2 <- dd
+dd2$medv[1:5]<- rep(6, 5) # rep(400, 5)
 ```
 Then, if the recalculate the robust fit, we obtain similar curves to what was obtained with the original data set.
-```{r robustplotswithoutliers}
-robust.fit.new <- backf.rob(ynew~X, windows = bandw, point = po)
+```{r robustplotswithoutliers, cache=TRUE}
+robust.fit.new <- backf.rob(medv ~ ., data = dd2, degree=0, type='Huber', windows=bandw, point = po)
 summary(robust.fit.new)
 robust.fit.new$prediction
 plot(robust.fit.new)
@@ -119,12 +134,12 @@ Since the differences between the two estimations cannot be appreciated, we will
 
 ```{r robustplots2, warning=FALSE}
 for(j in 1:10) {
-  name.x <- bquote(paste('x')[.(j)]) 
+  name.x <- names(dd)[j] 
   name.y <- bquote(paste(hat('g')[.(j)]))
-  oo <- order(X[,j])
-  plot(X[oo,j], robust.fit.new$g.matrix[oo,j], type="l", lwd=5, col='blue', lty=1, 
+  oo <- order(dd2[,j])
+  plot(dd2[oo,j], robust.fit.new$g.matrix[oo,j], type="l", lwd=5, col='blue', lty=1, 
        xlab=name.x, ylab=name.y)
-  lines(X[oo,j], robust.fit$g.matrix[oo,j], lwd=5, col='green', lty=2)
+  lines(dd2[oo,j], robust.fit$g.matrix[oo,j], lwd=5, col='green', lty=2)
 }
 ```
 
@@ -132,32 +147,41 @@ However, the classical fit doesn't behave in this way. In order to observe the d
 
 ```{r gam, warning=FALSE}
 library(gam)
-dataset <- as.data.frame(cbind(y,X))
-colnames(dataset) <- c("y","x1","x2","x3","x4","x5","x6","x7","x8","x9","x10")
-fit.gam <- gam(y ~ lo(x1, span=1.62)+lo(x2, span=0.58)+lo(x3, span=0.15)+lo(x4, span=0.08)+
-                 lo(x5, span=0.46)+lo(x6, span=0.40)+lo(x7, span=0.30)+lo(x8, span=0.09)+
-                 lo(x9, span=0.58)+lo(x10, span=0.45), data=dataset) #gam(y ~ lo(x1, span=2.16)+lo(x2, span=0.78)+lo(x3, span=0.20)+lo(x4, span=0.12)+ lo(x5, span=0.62)+lo(x6, span=0.54)+lo(x7, span=0.40)+lo(x8, span=0.12)+ lo(x9, span=0.77)+lo(x10, span=0.60) , data=dataset)
+fit.gam <- gam(medv ~ lo(crim, span=1.62) + 
+                 lo(indus, span=0.58) + 
+                 lo(nox, span=0.15) + 
+                 lo(rm, span=0.08) +
+                 lo(age, span=0.46) + 
+                 lo(dis, span=0.40) + 
+                 lo(tax, span=0.30) + 
+                 lo(ptratio, span=0.09) +
+                 lo(black, span=0.58) + 
+                 lo(lstat, span=0.45), data=dd)
 fits <- predict(fit.gam, type='terms')
-dataset.new <- as.data.frame(cbind(ynew,X))
-colnames(dataset.new) <- c("ynew","x1","x2","x3","x4","x5","x6","x7","x8","x9","x10")
-fit.gam.new <- gam(ynew ~  lo(x1, span=1.62)+lo(x2, span=0.58)+lo(x3, span=0.15)+
-                     lo(x4, span=0.08)+lo(x5, span=0.46)+lo(x6, span=0.40)+lo(x7, span=0.30)+
-                     lo(x8, span=0.09)+ lo(x9, span=0.58)+lo(x10, span=0.45), data=dataset.new)
+fit.gam.new <- gam(medv ~ lo(crim, span=1.62) + 
+                 lo(indus, span=0.58) + 
+                 lo(nox, span=0.15) + 
+                 lo(rm, span=0.08) +
+                 lo(age, span=0.46) + 
+                 lo(dis, span=0.40) + 
+                 lo(tax, span=0.30) + 
+                 lo(ptratio, span=0.09) +
+                 lo(black, span=0.58) + 
+                 lo(lstat, span=0.45), data=dd2)
 fits.new <- predict(fit.gam.new, type='terms')
 ```
 
 Finally, the estimated curves with the classical fits are shown in the following plots. In orange and dashed lines the classical approach using the original dataset and in purple but solid lines the classical fit computed with the contaminated data.
 ```{r gamplots}
 for(j in 1:10) {
-  oo <- order(X[,j])
-  name.x <- bquote(paste('x')[.(j)])
+  oo <- order(dd2[,j])
+  name.x <- names(dd)[j] 
   name.y <- bquote(paste(hat('g')[.(j)]))
-  plot(X[oo,j], fits.new[oo,j], type="l", lwd=5, col='purple', lty=1, 
+  plot(dd2[oo,j], fits.new[oo,j], type="l", lwd=5, col='purple', lty=1, 
        xlab=name.x, ylab=name.y)
-  lines(X[oo,j], fits[oo,j], lwd=5, col='darkorange2', lty=2)
+  lines(dd2[oo,j], fits[oo,j], lwd=5, col='darkorange2', lty=2)
 }
 ```
-
 
 SI QUISIERAMOS HACER ALGO COMO COMPARAR EL CLASICO CON EL ROBUSTO EN EL MISMO GRAFICO, TENDRIAMOS EL PROBLEMA DE QUE NO DAN TAN PARECIDOS. ADEMÁS, CON GAM LAS CURVAS NO DAN PARECIDAS, MIENTRAS QUE SI LO SOS UN POCO MAS SI USAMOS EL ESTIMADOR CLASICO DE NUESTRO PAQUETE. SI NO TE GUSTA LO DE LOS OUTLIERS AGREGADOS A MANO, HABRÁ MANERA DE USAR ESTE MISMO EN LUGAR DE USAR EL DE GAM?
 
