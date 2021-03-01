@@ -8,7 +8,6 @@ knitr::opts_chunk$set(
 data(Boston, package='MASS')
 dd <- Boston[, c(1, 3, 5:8, 10:14)]
 dd[, -11] <- log( dd[, names(dd) != 'medv'] )
-dd$medv <- log(dd$medv)
 
 ## ----loadpckg-----------------------------------------------------------------
 library(RBF)
