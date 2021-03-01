@@ -17,97 +17,82 @@ knitr::opts_chunk$set(
 ```
 ## About this vignette
 
-In this vignette, we will show with a real data example and some contaminated responses how a robust backfitting procedure can be easily implemented.
+In this vignette we illustrate the use and properties of the
+robust backfitting estimator for additive models proposed in 
 
-The `R` package `RBF` (available on CRAN [here](https://cran.r-project.org/package=RBF)) 
-implements the robust back-fitting algorithm as proposed by
-Boente, Martinez and Salibian-Barrera  in 
+> Boente G, Martinez A, Salibian-Barrera M. (2017) Robust estimators for additive models using backfitting. Journal of Nonparametric Statistics. Taylor & Francis; 29, 744-767. [DOI: 10.1080/10485252.2017.1369077](https://doi.org/10.1080/10485252.2017.1369077)
 
-> Boente G, Martinez A, Salibian-Barrera M. (2017) Robust estimators for 
-> additive models using backfitting. Journal of Nonparametric Statistics. Taylor 
-> & Francis; 29, 744-767.
-> [DOI: 10.1080/10485252.2017.1369077](https://doi.org/10.1080/10485252.2017.1369077)
 
-This repository contains a development version of `RBF`
-which may differ slightly from the one available on CRAN
-(until the CRAN version is updated appropriately). 
+<!-- The `R` package `RBF` (available on CRAN [here](https://cran.r-project.org/package=RBF))  -->
+<!-- implements the robust back-fitting algorithm as proposed by -->
+<!-- Boente, Martinez and Salibian-Barrera  in  -->
 
-The package in this repository can be installed from within `R` by using the following code (assuming the [devtools](https://cran.r-project.org/package=devtools)) package is available:
-```R
-devtools::install_github("msalibian/RBF")
-```
-and charged in the `R` session by the following command
-```{r library}
-library("RBF")
-```
-Now that the `R` package is downloaded, we can now start to see how this procedure works.
+<!-- This repository contains a development version of `RBF` -->
+<!-- which may differ slightly from the one available on CRAN -->
+<!-- (until the CRAN version is updated appropriately).  -->
 
-We consider the Boston house price data of Harrinson and Rubinfeld (1978). This dataset was used as an example to model an additive model by Härdle et a. (2004). File `housing.csv` available in this GitHub repository contains $n=506$ observations for the census districts of the Boston metropolitan area. As in this book, we selected the following ten explanatory variables
+<!-- The package in this repository can be installed from within `R` by using the following code (assuming the [devtools](https://cran.r-project.org/package=devtools)) package is available: -->
+<!-- ```R -->
+<!-- devtools::install_github("msalibian/RBF") -->
+<!-- ``` -->
+<!-- and charged in the `R` session by the following command -->
+<!-- ```{r library} -->
+<!-- library("RBF") -->
+<!-- ``` -->
+<!-- Now that the `R` package is downloaded, we can now start to see how this procedure works. -->
 
-$X_1$: per capita crime rate by town,
+We will use the well-known `Boston` house price data of Harrinson and Rubinfeld (1978). This dataset was used as an example to model an additive model by Härdle et a. (2004). The data are available in the `MASS` package. It contains $n=506$ observations and 14 variables measured on the census districts of the Boston metropolitan area. Following the analysis in Härdle et a. (2004) we use the following 10 explanatory variables:
 
-$X_2$: proportion of non-retail business acres per town,
+- `crim`: per capita crime rate by town ($X_1$),
+- `indus`: proportion of non-retail business acres per town ($X_2$),
+- `nox`: nitric oxides concentration (parts per 10 million) ($X_3$),
+- `rm`: average number of rooms per dwelling ($X_4$),
+- `age`: proportion of owner-occupied units built prior to 1940 ($X_5$),
+- `dis`: weighted distances to five Boston employment centers ($X_6$),
+- `tax`: full-value property tax rate per $10,000 ($X_7$),
+- `ptratio`: pupil-teacher ratio by town ($X_8$),
+- `black`: $1,000(Bk-0.63)^2$ where $Bk$ is the proportion of people of Afrom American descent by town ($X_9$),
+- `lstat`: percent lower status of population ($X_{10}$),
 
-$X_3$: nitric oxides concentration (parts per 10 million),
-
-$X_4$: avarage number of rooms per dwelling,
-
-$X_5$: proportion of owner-occupied units built prior to 1940,
-
-$X_6$: weighted distances to five Boston employment centers,
-
-$X_7$: full-value property tax rate per $10,000,
-
-$X_8$: pupil-teacher ratio by town,
-
-$X_9$: $1,000(Bk-0.63)^2$ where $Bk$ is the proportion of people of Afrom American descent by town,
-
-$X_{10}$: percent lower status of population,
-
-and the $Y$ response variable is the median value of the owner-occupied homes in 1,000 USD. Then, the additive model assumed is
+The response variable $Y$ is `medv`, the median value of the owner-occupied homes in 1,000 USD, and the proposed  additive model is
 $Y= \mu+ \sum_{j=1}^{10} g_j(\log(X_j))+ \epsilon.$
 
-
 ```{r read the dataset}
-datos <- read.csv("housing.csv", header = FALSE, sep="")
-x1 <- log(datos$V1)
-x2 <- log(datos$V3)
-x3 <- log(datos$V5)
-x4 <- log(datos$V6)
-x5 <- log(datos$V7)
-x6 <- log(datos$V8)
-x7 <- log(datos$V10)
-x8 <- log(datos$V11)
-x9 <- log(datos$V12)
-x10 <- log(datos$V13)
-y <- datos$V14
+data(Boston, package='MASS')
+dd <- Boston[, c(1, 3, 5:8, 10:14)]
+dd[, -11] <- log( dd[, names(dd) != 'medv'] )
 ```
 
-Recall that bandwidth selection is an important issue when considering any kernel-based method. As in Härdle et al. (2004), bandwidths a $h_j$, for $1 \leq j \leq 10$ are chosen proportional to its standard deviation ($h_j=0.5 \hat{\sigma}_j$).
+The backfitting estimators for each additive component are 
+computed using kernel-based local polynomial regression, and thus 
+bandwidth selection is an important step. We follow 
+Härdle et al. (2004) and select bandwidths $h_j$, $1 \le j \le 10$, 
+proportional to the standard deviation of the corresponding
+explanatory variables $X_j$, specifically we set 
+$h_j = \hat{\sigma}_j / 2$):
 ```{r bandwidths}
-X <- cbind(x1,x2,x3,x4,x5,x6,x7,x8,x9,x10)
-colnames(X) <- NULL #HAY QUE ARREGLAR LOS NOMBRES CUANDO VIENEN CON NOMBRES EN EL .R DEL PAQUETE
-bandw <- (1/2)*apply(X,2,sd) 
-bandw
+bandw <- apply(dd[, names(dd) != 'medv'], 2, sd) / 2
 ```
-
-We will now compute the robust backfitting estimator in a similar way to how it's done in other well-known packages: using a `formula`. This argument and algo the `windows` argument are the only two arguments needed to obtain the robust fit since the other arguments have a default value. Then, we can just obtain our robust fit by doing
+To compute the robust backfitting estimator we specify the model using the
+standard `formula` notation in `R`. Other necessary arguments to compute
+the robust backfitting estimator are:
+- `windows`: the bandwidths,
+- `degree`: the degree of the  polynomial used for the kernel local regression, defaults to `0`,
+- `type`: specifies the robust loss function, options are `Huber` or `Tukey`, defaults to `Huber`.
+The command to compute the fit is:
 ```{r robust fit}
-robust.fit <- backf.rob(y~X, windows=bandw)
+robust.fit <- backf.rob(medv ~ ., data = dd, degree=0, type='Huber', windows=bandw)
 ```
-Covariates can be included as a matrix as before but also separated with `+`, that is `y~x1+x2+x3+x4+x5+x6+x7+x8+x9+x10`.
-
-Another important argument is the `type` argument which calls to the loss function used in the robust procedure. It's default value is the Huber's loss function (`type='Huber'`). The other option is to use the Tukey's bisquared loss function (`type='Tukey'`).
-
-Now, we can see how the robust fit performed using the `summary` method:
+The summary method provides information on the resulting fit: 
 ```{r summary}
 summary(robust.fit)
 ```
-and we can obtain from the method `plot` the plots of the partial residuals together with the estimated curves. Once the fit is done and estimations of the constant $\mu$ and the additive functions $g_j$ are obtained, the partial residual associated to the  $j$th covariate for the $i$th observation is defined as $$R_{ij}=Y_i-\hat{\mu}-\sum_{k\neq i}\hat{g}_k(X_{ik}).$$ Then, points of the partial residuals obtained for the $j$th covariate are of the form $(X_{ij},R_{ij})$.
+while the plot method can be used to visualize the estimated 
+additive components (displayed over the corresponding partial
+residuals: $$R_{ij}=Y_i-\hat{\mu}-\sum_{k\neq i}\hat{g}_k(X_{ik})$$. 
 ```{r plot}
 plot(robust.fit)
 ```
-
 
 If you want a prediction of the additive functions $\hat{g}_j$ at a certain point, you can add it in the argument `point` when doing the fit.
 ```{r prediction}
