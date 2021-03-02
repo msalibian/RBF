@@ -201,12 +201,12 @@ The scatter plot suggests that the relationship between ozone and the other vari
 data(airquality)
 ccs <- complete.cases(airquality)
 aircomplete <- airquality[ccs, c('Ozone', 'Solar.R', 'Wind', 'Temp')]
-pairs(aircomplete[, c('Ozone', 'Solar.R', 'Wind', 'Temp')], pch=19, col='gray30', cex=1.5)
+# pairs(aircomplete[, c('Ozone', 'Solar.R', 'Wind', 'Temp')], pch=19, col='gray30', cex=1.5)
 ```
 
 To fit the model above we use robust local linear kernel M-estimators and Tukey's bisquare loss function. These choices are set using the arguments ``degree = 1`` and ``type='Tukey'`` in the call to the function ``backf.rob``.  The model is specified with the standard formula notation in R. The argument ``windows`` is a vector with the bandwidths to be used with each kernel smoother. To estimate optimal values we used a robust leave-one-out cross-validation approach (see Boente et al., 2017). As a robust prediction error measure we use `mu^2 + sigma^2` where `mu` and `sigma` are M-estimators of location and scale of the prediction errors, respectively. 
 
-```{r robustcv, warning=FALSE, cache=TRUE}
+```{r robustcv, warning=FALSE, cache=TRUE, eval=FALSE}
 library(RBF)
 
 # Bandwidth selection with leave-one-out cross-validation
@@ -261,7 +261,7 @@ plot(fit.full)
 
 To compare the robust and classical additive model estimators we use the R package ``gam``. Optimal bandwidths were estimated using leave-one-out cross-validation as before.
 
-```{r gamcv, cache=TRUE, warning=FALSE}
+```{r gamcv, cache=TRUE, warning=FALSE, eval=FALSE}
 library(gam)
 a <- c(.3, .4, .5, .6, .7, .8, .9)
 hh <- expand.grid(a, a, a)
@@ -298,7 +298,6 @@ Both classical (in magenta and dashed lines) and robust (in blue and solid lines
 x <- as.matrix( aircomplete[ , c('Solar.R', 'Wind', 'Temp')] )
 y <- as.vector( aircomplete[ , 'Ozone'] )
 fits <- predict(fit.gam, type='terms')
-par(mfrow=c(2,2))
 for(j in 1:3) {
   re <- fit.full$yp - fit.full$alpha - rowSums(fit.full$g.matrix[,-j])
   plot(re ~ x[,j], type='p', pch=20, col='gray45', xlab=colnames(x)[j], ylab='')
@@ -343,7 +342,6 @@ The partial residuals corresponding to these points can be also visualized in re
 x <- as.matrix( aircomplete[ , c('Solar.R', 'Wind', 'Temp')] )
 y <- as.vector( aircomplete[ , 'Ozone'] )
 fits <- predict(fit.gam, type='terms')
-par(mfrow=c(2,2))
 for(j in 1:3) {
   re <- fit.full$yp - fit.full$alpha - rowSums(fit.full$g.matrix[,-j])
   plot(re ~ x[,j], type='p', pch=20, col='gray45', xlab=colnames(x)[j], ylab='')
@@ -358,7 +356,7 @@ To investigate whether the differences between the robust and non-robust estimat
 
 We ran a similar leave-one-out cross-validation experiment to select the spans for each the 3 univariate smoothers.
 
-```{r cvgamclean}
+```{r cvgamclean, eval=FALSE}
 airclean <- aircomplete[-in.ro, c('Ozone', 'Solar.R', 'Wind', 'Temp')]
 a <- c(.3, .4, .5, .6, .7, .8, .9)
 hh <- expand.grid(a, a, a)
@@ -386,6 +384,7 @@ for(i in 1:nh) {
 
 We use the optimal bandwidths to compute non-robust fit.
 ```{r fitgam2}
+airclean <- aircomplete[-in.ro, c('Ozone', 'Solar.R', 'Wind', 'Temp')]
 fit.gam2 <- gam(Ozone ~ lo(Solar.R, span=.7) + lo(Wind, span=.8)+
                   lo(Temp, span=.3), data=airclean) 
 ```
@@ -395,7 +394,6 @@ The following plot shows the estimated curves obtained with the classical estima
 ```{r finalplot}
 fits2 <- predict(fit.gam2, type='terms')
 dd2 <- aircomplete[-in.ro, c('Solar.R', 'Wind', 'Temp')]
-par(mfrow=c(2,2))
 for(j in 1:3) {
   re <- fit.full$yp - fit.full$alpha - rowSums(fit.full$g.matrix[,-j])
   plot(re ~ x[,j], type='p', pch=20, col='gray45', xlab=colnames(x)[j], ylab='')
@@ -405,7 +403,6 @@ for(j in 1:3) {
   oo <- order(x[,j])
   lines(x[oo,j], fit.full$g.matrix[oo,j], lwd=5, col='blue', lty=1)
 }
-par(mfrow=c(1,1))
 ```
 
 Note that both fits are now very close. An intuitive interpretation is that the robust fit has automatically down-weighted potential outliers and produced estimates very similar to the classical ones applied to the \lq\lq  clean\rq\rq\ observations.
@@ -511,10 +508,11 @@ perform slightly worse than the classical one when no model
 deviations occur. The boxplots below show that for this 
 robust backfitting estimator, this loss in prediction accuracy is
 in fact very small. 
-```{r boxplot.clean.predictions, fig.show="hold", out.width="33%"} 
-boxplot(tmspe.ro, tmspe.gam, names=c('Robust', 'Classical'), 
+
+```{r boxplot.clean.predictions, fig.show="hold", out.width="33%"}
+boxplot(tmspe.ro, tmspe.gam, names=c('Robust', 'Classical'),
         col=rep(c('tomato3', 'gray80'), 2), main='Trimmed MSPE On "clean" data')
-boxplot(mspe.ro, mspe.gam, names=c('Robust', 'Classical'), 
+boxplot(mspe.ro, mspe.gam, names=c('Robust', 'Classical'),
         col=rep(c('tomato3', 'gray80'), 2), main='Non-Trimmed MSPE On "clean" data')
 ```
 
