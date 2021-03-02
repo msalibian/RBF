@@ -33,7 +33,7 @@ robust.fit1$prediction
 
 ## ----outliers-----------------------------------------------------------------
 dd2 <- dd
-dd2$medv[1:5]<- rep(6, 5) # rep(400, 5)
+dd2$medv[1:5]<- rep(400, 5)
 
 ## ----robustplotswithoutliers, cache=TRUE--------------------------------------
 robust.fit.new <- backf.rob(medv ~ ., data = dd2, degree=0, type='Huber', windows=bandw, point = po)

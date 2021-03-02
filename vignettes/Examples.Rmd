@@ -119,7 +119,7 @@ outliers are present in the data, we artifically introduce
 1% of atypical values in the response variable: 
 ```{r outliers}
 dd2 <- dd
-dd2$medv[1:5]<- rep(6, 5) # rep(400, 5)
+dd2$medv[1:5]<- rep(400, 5)
 ```
 Then, if the recalculate the robust fit, we obtain similar curves to what was obtained with the original data set.
 ```{r robustplotswithoutliers, cache=TRUE}
