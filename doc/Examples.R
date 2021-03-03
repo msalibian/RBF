@@ -15,8 +15,9 @@ library(RBF)
 ## ----bandwidths---------------------------------------------------------------
 bandw <- apply(dd[, names(dd) != 'medv'], 2, sd) / 2
 
-## ----robust fit, cache=TRUE---------------------------------------------------
-robust.fit <- backf.rob(medv ~ ., data = dd, degree=0, type='Huber', windows=bandw)
+## ----robustfit, cache=TRUE----------------------------------------------------
+robust.fit <- backf.rob(medv ~ ., data = dd, degree = 0, type = 'Huber', 
+                        windows = bandw)
 
 ## ----summary------------------------------------------------------------------
 summary(robust.fit)
@@ -24,9 +25,10 @@ summary(robust.fit)
 ## ----plot---------------------------------------------------------------------
 plot(robust.fit)
 
-## ----prediction, cache=TRUE---------------------------------------------------
+## ----preds, cache=TRUE--------------------------------------------------------
 po <- colMeans(dd[, names(dd) != 'medv'])
-robust.fit1 <- backf.rob(medv ~ ., data = dd, degree=0, type='Huber', windows=bandw, point=po)
+robust.fit1 <- backf.rob(medv ~ ., data = dd, degree = 0, type = 'Huber', 
+                         windows = bandw, point = po)
 
 ## ----showpred-----------------------------------------------------------------
 robust.fit1$prediction
@@ -90,7 +92,7 @@ for(j in 1:10) {
 data(airquality)
 ccs <- complete.cases(airquality)
 aircomplete <- airquality[ccs, c('Ozone', 'Solar.R', 'Wind', 'Temp')]
-# pairs(aircomplete[, c('Ozone', 'Solar.R', 'Wind', 'Temp')], pch=19, col='gray30', cex=1.5)
+pairs(aircomplete[, c('Ozone', 'Solar.R', 'Wind', 'Temp')], pch=19, col='gray30', cex=1.5)
 
 ## ----robustcv, warning=FALSE, cache=TRUE, eval=FALSE--------------------------
 #  library(RBF)
@@ -114,7 +116,7 @@ aircomplete <- airquality[ccs, c('Ozone', 'Solar.R', 'Wind', 'Temp')]
 #    preds <- rep(NA, n)
 #    for(j in 1:n) {
 #      tmp <- try( backf.rob(Ozone ~ Solar.R + Wind + Temp, point = aircomplete[j, -1],
-#                            windows = hh[i, ], epsilon = 1e-6, data=aircomplete,
+#                            windows = hh[i, ], epsilon = 1e-6, data = aircomplete,
 #                            degree = 1, type = 'Tukey', subset = c(-j) ))
 #      if (class(tmp)[1] != "try-error") {
 #        preds[j] <- rowSums(tmp$prediction) + tmp$alpha
@@ -133,9 +135,9 @@ aircomplete <- airquality[ccs, c('Ozone', 'Solar.R', 'Wind', 'Temp')]
 bandw <- c(136.7285, 10.67314, 4.764985)
 
 ## ----fitfull------------------------------------------------------------------
-fit.full <- backf.rob(Ozone ~ Solar.R + Wind + Temp, windows=bandw, 
-                      epsilon=1e-6, degree=1, type='Tukey', 
-                      subset = ccs, data=airquality)
+fit.full <- backf.rob(Ozone ~ Solar.R + Wind + Temp, windows = bandw, 
+                      epsilon = 1e-6, degree = 1, type = 'Tukey', 
+                      subset = ccs, data = airquality)
 
 ## ----plotfitfull--------------------------------------------------------------
 plot(fit.full)
@@ -152,7 +154,7 @@ plot(fit.full)
 #    fi <- rep(0, n)
 #    for(j in 1:n) {
 #      tmp <- gam(Ozone ~ lo(Solar.R, span=hh[i,1]) + lo(Wind, span=hh[i,2])
-#                 + lo(Temp, span=hh[i,3]), data=aircomplete, subset=c(-j))
+#                 + lo(Temp, span=hh[i,3]), data = aircomplete, subset=c(-j))
 #      fi[j] <- as.numeric(predict(tmp, newdata=aircomplete[j, -1], type='response'))
 #    }
 #    ss <- mean((aircomplete$Ozone - fi)^2)
@@ -167,7 +169,7 @@ plot(fit.full)
 
 ## ----fitgam-------------------------------------------------------------------
 fit.gam <- gam(Ozone ~ lo(Solar.R, span=.7) + lo(Wind, span=.7)+
-                 lo(Temp, span=.5), data=aircomplete)
+                 lo(Temp, span=.5), data = aircomplete)
 
 ## ----plotrobgam---------------------------------------------------------------
 x <- as.matrix( aircomplete[ , c('Solar.R', 'Wind', 'Temp')] )
@@ -262,75 +264,65 @@ tms <- function(a, alpha=.1) {
   return( mean(a2[1:n0], na.rm=TRUE) )
 }
 
-## ----pred2, cache=TRUE, warning=FALSE-----------------------------------------
-dd <- airquality
-dd <- dd[complete.cases(dd), c('Ozone', 'Solar.R', 'Wind', 'Temp')]
-# 100 runs of K-fold CV
-M <- 100
-# 5-fold
-K <- 5
-n <- nrow(dd)
-# store (trimmed) TMSPE for robust and gam, and also
-tmspe.ro <- tmspe.gam <- vector('numeric', M)
-set.seed(123)
-ii <- (1:n)%%K + 1
-for(runs in 1:M) {
-  tmpro <- tmpgam <- vector('numeric', n)
-  ii <- sample(ii)
-  for(j in 1:K) {
-    fit.full <- backf.rob(Ozone ~ Solar.R + Wind + Temp, 
-                           point=dd[ii==j, -1], windows=bandw, 
-                           epsilon=1e-6, degree=1, type='Tukey', 
-                           subset = (ii!=j), data = dd)
-    tmpro[ ii == j ] <- rowSums(fit.full$prediction) + fit.full$alpha
-    fit.gam <- gam(Ozone ~ lo(Solar.R, span=.7) + lo(Wind, span=.7)+
-                     lo(Temp, span=.5), data=dd[ii!=j, ])
-    tmpgam[ ii == j ] <- predict(fit.gam, newdata=dd[ii==j, ], type='response')
-  }
-  tmspe.ro[runs] <- tms( dd$Ozone - tmpro, alpha=0.05)
-  tmspe.gam[runs] <- tms( dd$Ozone - tmpgam, alpha=0.05)
-}
+## ----pred2, cache=TRUE, warning=FALSE, eval=FALSE-----------------------------
+#  dd <- airquality
+#  dd <- dd[complete.cases(dd), c('Ozone', 'Solar.R', 'Wind', 'Temp')]
+#  # 100 runs of K-fold CV
+#  M <- 100
+#  # 5-fold
+#  K <- 5
+#  n <- nrow(dd)
+#  # store (trimmed) TMSPE for robust and gam, and also
+#  tmspe.ro <- tmspe.gam <- vector('numeric', M)
+#  set.seed(123)
+#  ii <- (1:n)%%K + 1
+#  for(runs in 1:M) {
+#    tmpro <- tmpgam <- vector('numeric', n)
+#    ii <- sample(ii)
+#    for(j in 1:K) {
+#      fit.full <- backf.rob(Ozone ~ Solar.R + Wind + Temp,
+#                             point=dd[ii==j, -1], windows = bandw,
+#                             epsilon = 1e-6, degree = 1, type = 'Tukey',
+#                             subset = (ii!=j), data = dd)
+#      tmpro[ ii == j ] <- rowSums(fit.full$prediction) + fit.full$alpha
+#      fit.gam <- gam(Ozone ~ lo(Solar.R, span=.7) + lo(Wind, span=.7)+
+#                       lo(Temp, span=.5), data = dd[ii!=j, ])
+#      tmpgam[ ii == j ] <- predict(fit.gam, newdata=dd[ii==j, ], type='response')
+#    }
+#    tmspe.ro[runs] <- tms( dd$Ozone - tmpro, alpha=0.05)
+#    tmspe.gam[runs] <- tms( dd$Ozone - tmpgam, alpha=0.05)
+#  }
 
-## ----pred3--------------------------------------------------------------------
-boxplot(tmspe.ro, tmspe.gam, names=c('Robust', 'Classical'), 
-        col=c('tomato3', 'gray80')) #, main='', ylim=c(130, 210))
-
-## ----pred.clean, cache=TRUE, warning=FALSE------------------------------------
-aq <- airquality
-aq2 <- aq[complete.cases(aq), c('Ozone', 'Solar.R', 'Wind', 'Temp')]
-airclean <- aq2[ -in.ro, ]
-bandw <- c(138.2699, 10.46753, 4.828436)
-M <- 100 
-K <- 5
-n <- nrow(airclean)
-mspe.ro <- mspe.gam <- tmspe.ro <- tmspe.gam <- vector('numeric', M)
-set.seed(17)
-ii <- (1:n)%%K + 1
-for(runs in 1:M) {
-  tmpro <- tmpgam <- vector('numeric', n)
-  ii <- sample(ii)
-  for(j in 1:K) {
-    fit.full <- try( backf.rob(Ozone ~ Solar.R + Wind + Temp, 
-                          point=airclean[ii==j, -1], windows=bandw, 
-                          epsilon=1e-6, degree=1, type='Tukey', 
-                          subset = (ii!=j), data = airclean) )
-    if (class(fit.full)[1] != "try-error") {
-      tmpro[ ii == j ] <- rowSums(fit.full$prediction) + fit.full$alpha
-    }
-    fit.gam <- gam(Ozone ~ lo(Solar.R, span=.7) + lo(Wind, span=.8)+
-                     lo(Temp, span=.3), data=airclean, subset = (ii!=j) )
-    tmpgam[ ii == j ] <- predict(fit.gam, newdata=airclean[ii==j, ], 
-                                 type='response')
-  }
-  tmspe.ro[runs] <- tms( airclean$Ozone - tmpro, alpha=0.05)
-  mspe.ro[runs] <- mean( ( airclean$Ozone - tmpro)^2, na.rm=TRUE)
-  tmspe.gam[runs] <- tms( airclean$Ozone - tmpgam, alpha=0.05)
-  mspe.gam[runs] <- mean( ( airclean$Ozone - tmpgam)^2, na.rm=TRUE)
-}
-
-## ----boxplot.clean.predictions, fig.show="hold", out.width="33%"--------------
-boxplot(tmspe.ro, tmspe.gam, names=c('Robust', 'Classical'),
-        col=rep(c('tomato3', 'gray80'), 2), main='Trimmed MSPE On "clean" data')
-boxplot(mspe.ro, mspe.gam, names=c('Robust', 'Classical'),
-        col=rep(c('tomato3', 'gray80'), 2), main='Non-Trimmed MSPE On "clean" data')
+## ----pred.clean, cache=TRUE, warning=FALSE, eval=FALSE------------------------
+#  aq <- airquality
+#  aq2 <- aq[complete.cases(aq), c('Ozone', 'Solar.R', 'Wind', 'Temp')]
+#  airclean <- aq2[ -in.ro, ]
+#  bandw <- c(138.2699, 10.46753, 4.828436)
+#  M <- 100
+#  K <- 5
+#  n <- nrow(airclean)
+#  mspe.ro <- mspe.gam <- tmspe.ro <- tmspe.gam <- vector('numeric', M)
+#  set.seed(17)
+#  ii <- (1:n)%%K + 1
+#  for(runs in 1:M) {
+#    tmpro <- tmpgam <- vector('numeric', n)
+#    ii <- sample(ii)
+#    for(j in 1:K) {
+#      fit.full <- try( backf.rob(Ozone ~ Solar.R + Wind + Temp,
+#                            point=airclean[ii==j, -1], windows = bandw,
+#                            epsilon = 1e-6, degree = 1, type = 'Tukey',
+#                            subset = (ii!=j), data = airclean) )
+#      if (class(fit.full)[1] != "try-error") {
+#        tmpro[ ii == j ] <- rowSums(fit.full$prediction) + fit.full$alpha
+#      }
+#      fit.gam <- gam(Ozone ~ lo(Solar.R, span=.7) + lo(Wind, span=.8)+
+#                       lo(Temp, span=.3), data = airclean, subset = (ii!=j) )
+#      tmpgam[ ii == j ] <- predict(fit.gam, newdata=airclean[ii==j, ],
+#                                   type='response')
+#    }
+#    tmspe.ro[runs] <- tms( airclean$Ozone - tmpro, alpha=0.05)
+#    mspe.ro[runs] <- mean( ( airclean$Ozone - tmpro)^2, na.rm=TRUE)
+#    tmspe.gam[runs] <- tms( airclean$Ozone - tmpgam, alpha=0.05)
+#    mspe.gam[runs] <- mean( ( airclean$Ozone - tmpgam)^2, na.rm=TRUE)
+#  }
 
