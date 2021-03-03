@@ -15,5 +15,5 @@ License: GPL (>=3.0)
 RoxygenNote: 7.1.1
 Encoding: UTF-8
 Imports: stats, graphics
-Suggests: knitr, rmarkdown, gam, RobStatTM
+Suggests: knitr, rmarkdown, gam, RobStatTM, MASS
 VignetteBuilder: knitr
