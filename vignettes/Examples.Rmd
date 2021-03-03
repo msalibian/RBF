@@ -201,8 +201,10 @@ The scatter plot suggests that the relationship between ozone and the other vari
 data(airquality)
 ccs <- complete.cases(airquality)
 aircomplete <- airquality[ccs, c('Ozone', 'Solar.R', 'Wind', 'Temp')]
-# pairs(aircomplete[, c('Ozone', 'Solar.R', 'Wind', 'Temp')], pch=19, col='gray30', cex=1.5)
+pairs(aircomplete[, c('Ozone', 'Solar.R', 'Wind', 'Temp')], pch=19, col='gray30', cex=1.5)
 ```
+
+\textcolor{red}{El pairs anterior estaba comentado. Si no lo vamos a poner, habria que sacar la parte del The scatter plot suggests me parece.}
 
 To fit the model above we use robust local linear kernel M-estimators and Tukey's bisquare loss function. These choices are set using the arguments ``degree = 1`` and ``type='Tukey'`` in the call to the function ``backf.rob``.  The model is specified with the standard formula notation in R. The argument ``windows`` is a vector with the bandwidths to be used with each kernel smoother. To estimate optimal values we used a robust leave-one-out cross-validation approach (see Boente et al., 2017). As a robust prediction error measure we use `mu^2 + sigma^2` where `mu` and `sigma` are M-estimators of location and scale of the prediction errors, respectively. 
 
@@ -462,8 +464,12 @@ for(runs in 1:M) {
 ```
 These are the boxplots. We see that the robust fit consistently fits the vast majority (95%) of the data better than the classical one. 
 ```{r pred3}
+#pdf('pred3.pdf', bg='transparent')
+#png('pred3.png', bg='transparent')
+#png('pred3-white.png')
 boxplot(tmspe.ro, tmspe.gam, names=c('Robust', 'Classical'), 
-        col=c('tomato3', 'gray80')) #, main='', ylim=c(130, 210))
+        col=c('tomato3', 'gray80'))#, main='', ylim=c(130, 210))
+#dev.off()
 ```
 
 As a sanity check, we compare the prediction accuracy of the robust and non-robust fits using only the "clean" data set. We re-compute the optimal bandwidths for the robust fit using leave-one-out cross validation as above, and as above, note that these bandwidths are kept fixed.  We use 100 runs of 5-fold cross-validation, and compute both the trimmed and the regular mean squared prediction errors of each fit.
@@ -510,13 +516,23 @@ robust backfitting estimator, this loss in prediction accuracy is
 in fact very small. 
 
 ```{r boxplot.clean.predictions, fig.show="hold", out.width="33%"}
+#pdf('tmspeclean.pdf', bg='transparent')
+#png('tmspeclean.png', bg='transparent')
+png('tmspeclean-white.png')
 boxplot(tmspe.ro, tmspe.gam, names=c('Robust', 'Classical'),
         col=rep(c('tomato3', 'gray80'), 2), main='Trimmed MSPE On "clean" data')
+dev.off()
+#pdf('nontmspeclean.pdf', bg='transparent')
+#png('nontmspeclean.png', bg='transparent')
+png('nontmspeclean-white.png')
 boxplot(mspe.ro, mspe.gam, names=c('Robust', 'Classical'),
         col=rep(c('tomato3', 'gray80'), 2), main='Non-Trimmed MSPE On "clean" data')
+dev.off()
 ```
 
 
+![Trimmed MSPE On "clean" data \label{fig:tmspeclean}](tmspeclean.png){ width=85% }
+![Non-Trimmed MSPE On "clean" data \label{fig:nontmspeclean}](nontmspeclean.png){ width=85% }
 
 
 
