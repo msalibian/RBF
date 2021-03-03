@@ -7,7 +7,7 @@ knitr::opts_chunk$set(
 ## ----read the dataset---------------------------------------------------------
 data(Boston, package='MASS')
 dd <- Boston[, c(1, 3, 5:8, 10:14)]
-dd[, -11] <- log( dd[, names(dd) != 'medv'] )
+dd[, names(dd) != 'medv'] <- log( dd[, names(dd) != 'medv'] )
 
 ## ----loadpckg-----------------------------------------------------------------
 library(RBF)
@@ -22,7 +22,7 @@ robust.fit <- backf.rob(medv ~ ., data = dd, degree = 0, type = 'Huber',
 ## ----summary------------------------------------------------------------------
 summary(robust.fit)
 
-## ----plot---------------------------------------------------------------------
+## ----plot, out.width  = "45%"-------------------------------------------------
 plot(robust.fit)
 
 ## ----preds, cache=TRUE--------------------------------------------------------
@@ -41,16 +41,15 @@ dd2$medv[1:5]<- rep(400, 5)
 robust.fit.new <- backf.rob(medv ~ ., data = dd2, degree=0, type='Huber', windows=bandw, point = po)
 summary(robust.fit.new)
 robust.fit.new$prediction
-plot(robust.fit.new)
 
-## ----robustplots2, warning=FALSE----------------------------------------------
+## ----robustplots2, warning=FALSE, out.width  = "45%"--------------------------
 for(j in 1:10) {
   name.x <- names(dd)[j] 
   name.y <- bquote(paste(hat('g')[.(j)]))
   oo <- order(dd2[,j])
-  plot(dd2[oo,j], robust.fit.new$g.matrix[oo,j], type="l", lwd=5, col='blue', lty=1, 
+  plot(dd2[oo,j], robust.fit.new$g.matrix[oo,j], type="l", lwd=2, col='blue', lty=1, 
        xlab=name.x, ylab=name.y)
-  lines(dd2[oo,j], robust.fit$g.matrix[oo,j], lwd=5, col='green', lty=2)
+  lines(dd2[oo,j], robust.fit$g.matrix[oo,j], lwd=2, col='green', lty=2)
 }
 
 ## ----gam, warning=FALSE-------------------------------------------------------
@@ -78,21 +77,21 @@ fit.gam.new <- gam(medv ~ lo(crim, span=1.62) +
                  lo(lstat, span=0.45), data=dd2)
 fits.new <- predict(fit.gam.new, type='terms')
 
-## ----gamplots-----------------------------------------------------------------
+## ----gamplots, out.width  = "45%"---------------------------------------------
 for(j in 1:10) {
   oo <- order(dd2[,j])
   name.x <- names(dd)[j] 
   name.y <- bquote(paste(hat('g')[.(j)]))
-  plot(dd2[oo,j], fits.new[oo,j], type="l", lwd=5, col='purple', lty=1, 
+  plot(dd2[oo,j], fits.new[oo,j], type="l", lwd=2, col='purple', lty=1, 
        xlab=name.x, ylab=name.y)
-  lines(dd2[oo,j], fits[oo,j], lwd=5, col='darkorange2', lty=2)
+  lines(dd2[oo,j], fits[oo,j], lwd=2, col='darkorange2', lty=2)
 }
 
-## ----scatterplot--------------------------------------------------------------
+## ----scatterplot, out.width  = "75%"------------------------------------------
 data(airquality)
 ccs <- complete.cases(airquality)
 aircomplete <- airquality[ccs, c('Ozone', 'Solar.R', 'Wind', 'Temp')]
-pairs(aircomplete[, c('Ozone', 'Solar.R', 'Wind', 'Temp')], pch=19, col='gray30', cex=1.5)
+pairs(aircomplete[, c('Ozone', 'Solar.R', 'Wind', 'Temp')], pch=19, col='gray30')
 
 ## ----robustcv, warning=FALSE, cache=TRUE, eval=FALSE--------------------------
 #  library(RBF)
@@ -139,7 +138,7 @@ fit.full <- backf.rob(Ozone ~ Solar.R + Wind + Temp, windows = bandw,
                       epsilon = 1e-6, degree = 1, type = 'Tukey', 
                       subset = ccs, data = airquality)
 
-## ----plotfitfull--------------------------------------------------------------
+## ----plotfitfull, out.width  = "45%"------------------------------------------
 plot(fit.full)
 
 ## ----gamcv, cache=TRUE, warning=FALSE, eval=FALSE-----------------------------
@@ -171,7 +170,7 @@ plot(fit.full)
 fit.gam <- gam(Ozone ~ lo(Solar.R, span=.7) + lo(Wind, span=.7)+
                  lo(Temp, span=.5), data = aircomplete)
 
-## ----plotrobgam---------------------------------------------------------------
+## ----plotrobgam, out.width  = "45%"-------------------------------------------
 x <- as.matrix( aircomplete[ , c('Solar.R', 'Wind', 'Temp')] )
 y <- as.vector( aircomplete[ , 'Ozone'] )
 fits <- predict(fit.gam, type='terms')
@@ -180,26 +179,26 @@ for(j in 1:3) {
   plot(re ~ x[,j], type='p', pch=20, col='gray45', xlab=colnames(x)[j], ylab='')
   #points(re[in.ro] ~ x[in.ro,j], pch=20, col='red', cex=2)
   oo <- order(x[,j])
-  lines(x[oo,j], fit.full$g.matrix[oo,j], lwd=5, col='blue', lty=1)
-  lines(x[oo,j], fits[oo,j], lwd=5, col='magenta', lty=2)
+  lines(x[oo,j], fit.full$g.matrix[oo,j], lwd=2, col='blue', lty=1)
+  lines(x[oo,j], fits[oo,j], lwd=2, col='magenta', lty=2)
 }
 
-## ----boxplot------------------------------------------------------------------
+## ----boxplot, out.width  = "50%"----------------------------------------------
 re.ro <- residuals(fit.full)
 ou.ro <- boxplot(re.ro, col='gray80')$out
 in.ro <- (1:length(re.ro))[ re.ro %in% ou.ro ]
-points(rep(1, length(in.ro)), re.ro[in.ro], pch=20, cex=3, col='red')
+points(rep(1, length(in.ro)), re.ro[in.ro], pch=20, col='red')
 (in.ro)
 
-## ----scatterplotpoints--------------------------------------------------------
+## ----scatterplotpoints, out.width  = "75%"------------------------------------
 cs <- rep('gray30', nrow(aircomplete))
 cs[in.ro] <- 'red'
 os <- 1:nrow(aircomplete)
 os2 <- c(os[-in.ro], os[in.ro])
 pairs(aircomplete[os2, c('Ozone', 'Solar.R', 'Wind', 'Temp')], 
-      pch=19, col=cs[os2], cex=1.5)
+      pch=19, col=cs[os2])
 
-## ----plotoutred---------------------------------------------------------------
+## ----plotoutred, out.width  = "45%"-------------------------------------------
 # Plot both fits (robust and classical) 
 x <- as.matrix( aircomplete[ , c('Solar.R', 'Wind', 'Temp')] )
 y <- as.vector( aircomplete[ , 'Ozone'] )
@@ -207,10 +206,10 @@ fits <- predict(fit.gam, type='terms')
 for(j in 1:3) {
   re <- fit.full$yp - fit.full$alpha - rowSums(fit.full$g.matrix[,-j])
   plot(re ~ x[,j], type='p', pch=20, col='gray45', xlab=colnames(x)[j], ylab='')
-  points(re[in.ro] ~ x[in.ro,j], pch=20, col='red', cex=2)
+  points(re[in.ro] ~ x[in.ro,j], pch=20, col='red')
   oo <- order(x[,j])
-  lines(x[oo,j], fit.full$g.matrix[oo,j], lwd=5, col='blue', lty=1)
-  lines(x[oo,j], fits[oo,j], lwd=5, col='magenta', lty=2)
+  lines(x[oo,j], fit.full$g.matrix[oo,j], lwd=2, col='blue', lty=1)
+  lines(x[oo,j], fits[oo,j], lwd=2, col='magenta', lty=2)
 }
 
 ## ----cvgamclean, eval=FALSE---------------------------------------------------
@@ -243,17 +242,17 @@ airclean <- aircomplete[-in.ro, c('Ozone', 'Solar.R', 'Wind', 'Temp')]
 fit.gam2 <- gam(Ozone ~ lo(Solar.R, span=.7) + lo(Wind, span=.8)+
                   lo(Temp, span=.3), data=airclean) 
 
-## ----finalplot----------------------------------------------------------------
+## ----finalplot, out.width  = "45%"--------------------------------------------
 fits2 <- predict(fit.gam2, type='terms')
 dd2 <- aircomplete[-in.ro, c('Solar.R', 'Wind', 'Temp')]
 for(j in 1:3) {
   re <- fit.full$yp - fit.full$alpha - rowSums(fit.full$g.matrix[,-j])
   plot(re ~ x[,j], type='p', pch=20, col='gray45', xlab=colnames(x)[j], ylab='')
-  points(re[in.ro] ~ x[in.ro,j], pch=20, col='red', cex=2)
+  points(re[in.ro] ~ x[in.ro,j], pch=20, col='red')
   oo <- order(dd2[,j])
-  lines(dd2[oo,j], fits2[oo,j], lwd=5, col='magenta', lty=2)
+  lines(dd2[oo,j], fits2[oo,j], lwd=2, col='magenta', lty=2)
   oo <- order(x[,j])
-  lines(x[oo,j], fit.full$g.matrix[oo,j], lwd=5, col='blue', lty=1)
+  lines(x[oo,j], fit.full$g.matrix[oo,j], lwd=2, col='blue', lty=1)
 }
 
 ## ----pred1--------------------------------------------------------------------

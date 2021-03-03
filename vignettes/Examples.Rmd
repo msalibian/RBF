@@ -15,12 +15,25 @@ knitr::opts_chunk$set(
   comment = "#>"
 )
 ```
-## About this vignette
+# About this vignette
 
 In this vignette we illustrate the use and properties of the
-robust backfitting estimator for additive models proposed in 
+robust backfitting estimator for additive models implemented
+in the package `RBF`. This estimator was originally proposed in 
+Boente G, Martinez A, Salibian-Barrera M. (2017). 
 
-> Boente G, Martinez A, Salibian-Barrera M. (2017) Robust estimators for additive models using backfitting. Journal of Nonparametric Statistics. Taylor & Francis; 29, 744-767. [DOI: 10.1080/10485252.2017.1369077](https://doi.org/10.1080/10485252.2017.1369077)
+We will use two data sets. With the first one we illustrate
+the robustness of the robust backfitting estimators 
+when a small 
+proportion of very large outliers are present in the training
+set, and compare them with those obtained with the standard backfitting 
+algorithm. With the second example, we show how these robust estimators
+can be interpreted as automatically detecting and downweighting 
+potential outliers in the training set. We also compare the 
+prediction accuracy of the robust and classical backfitting 
+algorithms. 
+
+<!-- Robust estimators for additive models using backfitting. Journal of Nonparametric Statistics. Taylor & Francis; 29, 744-767. [DOI: 10.1080/10485252.2017.1369077](https://doi.org/10.1080/10485252.2017.1369077) -->
 
 
 <!-- The `R` package `RBF` (available on CRAN [here](https://cran.r-project.org/package=RBF))  -->
@@ -41,7 +54,7 @@ robust backfitting estimator for additive models proposed in
 <!-- ``` -->
 <!-- Now that the `R` package is downloaded, we can now start to see how this procedure works. -->
 
-### Boston example
+## Boston example
 
 We will use the well-known `Boston` house price data of Harrinson and Rubinfeld (1978). This dataset was used as an example to model an additive model by Härdle et a. (2004). The data are available in the `MASS` package. It contains $n=506$ observations and 14 variables measured on the census districts of the Boston metropolitan area. Following the analysis in Härdle et a. (2004) we use the following 10 explanatory variables:
 
@@ -62,7 +75,7 @@ $$Y= \mu+ \sum_{j=1}^{10} g_j(\log(X_j))+ \epsilon.$$
 ```{r read the dataset}
 data(Boston, package='MASS')
 dd <- Boston[, c(1, 3, 5:8, 10:14)]
-dd[, -11] <- log( dd[, names(dd) != 'medv'] )
+dd[, names(dd) != 'medv'] <- log( dd[, names(dd) != 'medv'] )
 ```
 
 ```{r loadpckg}
@@ -70,23 +83,24 @@ library(RBF)
 ```
 
 The backfitting estimators for each additive component are 
-computed using kernel-based local polynomial regression, and thus 
-bandwidth selection is an important step. We follow 
-Härdle et al. (2004) and select bandwidths $h_j$, $1 \le j \le 10$, 
-proportional to the standard deviation of the corresponding
-explanatory variables $X_j$, specifically we set 
-$h_j = \hat{\sigma}_j / 2$: \textcolor{red}{OBS! EN REALIDAD ES EL DESVIO DEL LOGARITMO DE LAS $X_j$.}
-```{r bandwidths}
-bandw <- apply(dd[, names(dd) != 'medv'], 2, sd) / 2
-```
-To compute the robust backfitting estimator we specify the model using the
+computed using robust 
+kernel-based local polynomial regression.
+The model to be fit is specified using the
 standard `formula` notation in `R`. Other necessary arguments to compute
 the robust backfitting estimator are:
-
-- `windows`: the bandwidths,
+- `windows`: the bandwidths for the kernel estimators,
 - `degree`: the degree of the  polynomial used for the kernel local regression, defaults to `0`,
 - `type`: specifies the robust loss function, options are `Huber` or `Tukey`, defaults to `Huber`.
 
+As with all kernel-based estimators, bandwidth selection is an important step. In this example
+we follow 
+Härdle et al. (2004) and select bandwidths $h_j$, $1 \le j \le 10$, 
+proportional to the standard deviation of the corresponding
+explanatory variables $\log( X_j) $. Specifically we set 
+$h_j = \hat{\sigma}_j / 2$: 
+```{r bandwidths}
+bandw <- apply(dd[, names(dd) != 'medv'], 2, sd) / 2
+```
 The command to compute the fit is:
 ```{r robustfit, cache=TRUE}
 robust.fit <- backf.rob(medv ~ ., data = dd, degree = 0, type = 'Huber', 
@@ -98,15 +112,19 @@ summary(robust.fit)
 ```
 while the plot method can be used to visualize the estimated 
 additive components displayed over the corresponding partial
-residuals: $$R_{ij}=Y_i-\hat{\mu}-\sum_{k\neq i}\hat{g}_k(X_{ik}).$$ 
-```{r plot}
+residuals: 
+$$
+R_{ij}=Y_i-\hat{\mu}-\sum_{k\neq i}\hat{g}_k(X_{ik}) \, , 
+\quad 1 \le i \le 506\, , \quad 1 \le j \le 10 \, . 
+$$ 
+```{r plot, out.width  = "45%"}
 plot(robust.fit)
 ```
 
 By default, `backf.rob` computes fitted values on the training
 set. If predictions at a different specific point are desired, 
 we can pass those points using the argumen `point`. For example, 
-to obtain predicted values at the point given by average of 
+to obtain predicted values at the point given by the average of 
 each explanatory variable, we can use the following 
 command (note that this step implies re-fitting the whole model):
 ```{r preds, cache=TRUE}
@@ -132,24 +150,31 @@ Then, if the recalculate the robust fit, we obtain similar curves to what was ob
 robust.fit.new <- backf.rob(medv ~ ., data = dd2, degree=0, type='Huber', windows=bandw, point = po)
 summary(robust.fit.new)
 robust.fit.new$prediction
-plot(robust.fit.new)
 ```
+Because the magnitude of the outliers affects the scale of the 
+partial residuals plots, below we plot   
+the robust estimators for each additive component
+when computed with and without
+added outlires. 
+In green and dashed lines the robust estimator computed with the original data set, and in blue and solid lines the robust estimator computed with the contaminated data set.
 
-Since the differences between the two estimations cannot be appreciated, we will plot both robust fits for all the ten covariates. In green and dashed lines the robust estimator computed with the original data set, and in blue and solid lines the robust estimator computed with the contaminated data set.
-
-```{r robustplots2, warning=FALSE}
+```{r robustplots2, warning=FALSE, out.width  = "45%"}
 for(j in 1:10) {
   name.x <- names(dd)[j] 
   name.y <- bquote(paste(hat('g')[.(j)]))
   oo <- order(dd2[,j])
-  plot(dd2[oo,j], robust.fit.new$g.matrix[oo,j], type="l", lwd=5, col='blue', lty=1, 
+  plot(dd2[oo,j], robust.fit.new$g.matrix[oo,j], type="l", lwd=2, col='blue', lty=1, 
        xlab=name.x, ylab=name.y)
-  lines(dd2[oo,j], robust.fit$g.matrix[oo,j], lwd=5, col='green', lty=2)
+  lines(dd2[oo,j], robust.fit$g.matrix[oo,j], lwd=2, col='green', lty=2)
 }
 ```
 
-However, the classical fit doesn't behave in this way. In order to observe the difference in sensitivity of the robust fit with its classical counterpart, we will use package `gam` to estimate the additive functions under both settings: with the original dataset and with the one with the contaminated responses.
-
+It is easy to see that the fits obtained with the classical
+backfitting estimator when the training set contains outliers
+are dramatically different from the ones obtained with the original
+data set. We use the package `gam` to compute the 
+standard backfitting algorithm (based on local kernel regression
+smoothers). 
 ```{r gam, warning=FALSE}
 library(gam)
 fit.gam <- gam(medv ~ lo(crim, span=1.62) + 
@@ -175,20 +200,23 @@ fit.gam.new <- gam(medv ~ lo(crim, span=1.62) +
                  lo(lstat, span=0.45), data=dd2)
 fits.new <- predict(fit.gam.new, type='terms')
 ```
-
-Finally, the estimated curves with the classical fits are shown in the following plots. In orange and dashed lines the classical approach using the original dataset and in purple but solid lines the classical fit computed with the contaminated data.
-```{r gamplots}
+In the plots below, the estimates calculated with the original 
+`Boston` data set are shown with 
+orange and dashed lines, while those obtained with the 
+contaminated training set are shown with 
+purple and  solid lines. 
+```{r gamplots, out.width  = "45%"}
 for(j in 1:10) {
   oo <- order(dd2[,j])
   name.x <- names(dd)[j] 
   name.y <- bquote(paste(hat('g')[.(j)]))
-  plot(dd2[oo,j], fits.new[oo,j], type="l", lwd=5, col='purple', lty=1, 
+  plot(dd2[oo,j], fits.new[oo,j], type="l", lwd=2, col='purple', lty=1, 
        xlab=name.x, ylab=name.y)
-  lines(dd2[oo,j], fits[oo,j], lwd=5, col='darkorange2', lty=2)
+  lines(dd2[oo,j], fits[oo,j], lwd=2, col='darkorange2', lty=2)
 }
 ```
 
-### Airquality example
+## Airquality example
 
 The ``airquality`` data set contains 153 daily air quality measurements in the New York region between May and September, 1973 (Chambers et al., 1983). The interest is in modeling the mean Ozone (\lq\lq $\mbox{O}_3$\rq\rq) concentration as a function of 3 potential
 explanatory variables: solar radiance in the frequency band
@@ -199,14 +227,12 @@ The scatter plot suggests that the relationship between ozone and the other vari
 \mbox{Ozone}=\mu+g_{1}(\mbox{Solar.R})+g_{2}(\mbox{Wind})+g_{3}(\mbox{Temp}) + \varepsilon \, .
 \end{equation} 
 
-```{r scatterplot}
+```{r scatterplot, out.width  = "75%"}
 data(airquality)
 ccs <- complete.cases(airquality)
 aircomplete <- airquality[ccs, c('Ozone', 'Solar.R', 'Wind', 'Temp')]
-pairs(aircomplete[, c('Ozone', 'Solar.R', 'Wind', 'Temp')], pch=19, col='gray30', cex=1.5)
+pairs(aircomplete[, c('Ozone', 'Solar.R', 'Wind', 'Temp')], pch=19, col='gray30')
 ```
-
-\textcolor{red}{El pairs anterior estaba comentado. Si no lo vamos a poner, habria que sacar la parte del The scatter plot suggests me parece.}
 
 To fit the model above we use robust local linear kernel M-estimators and Tukey's bisquare loss function. These choices are set using the arguments ``degree = 1`` and ``type='Tukey'`` in the call to the function ``backf.rob``.  The model is specified with the standard formula notation in R. The argument ``windows`` is a vector with the bandwidths to be used with each kernel smoother. To estimate optimal values we used a robust leave-one-out cross-validation approach (see Boente et al., 2017). As a robust prediction error measure we use `mu^2 + sigma^2` where `mu` and `sigma` are M-estimators of location and scale of the prediction errors, respectively. 
 
@@ -259,7 +285,7 @@ fit.full <- backf.rob(Ozone ~ Solar.R + Wind + Temp, windows = bandw,
                       subset = ccs, data = airquality)
 ```
 The plot of the additive functions with their corresponding partial residuals are the following:
-```{r plotfitfull}
+```{r plotfitfull, out.width  = "45%"}
 plot(fit.full)
 ```
 
@@ -298,7 +324,7 @@ fit.gam <- gam(Ozone ~ lo(Solar.R, span=.7) + lo(Wind, span=.7)+
 
 Both classical (in magenta and dashed lines) and robust (in blue and solid lines) fits are shown in the following plot together with the partial residuals obtained by the robust fit.
 
-```{r plotrobgam}
+```{r plotrobgam, out.width  = "45%"}
 x <- as.matrix( aircomplete[ , c('Solar.R', 'Wind', 'Temp')] )
 y <- as.vector( aircomplete[ , 'Ozone'] )
 fits <- predict(fit.gam, type='terms')
@@ -307,43 +333,41 @@ for(j in 1:3) {
   plot(re ~ x[,j], type='p', pch=20, col='gray45', xlab=colnames(x)[j], ylab='')
   #points(re[in.ro] ~ x[in.ro,j], pch=20, col='red', cex=2)
   oo <- order(x[,j])
-  lines(x[oo,j], fit.full$g.matrix[oo,j], lwd=5, col='blue', lty=1)
-  lines(x[oo,j], fits[oo,j], lwd=5, col='magenta', lty=2)
+  lines(x[oo,j], fit.full$g.matrix[oo,j], lwd=2, col='blue', lty=1)
+  lines(x[oo,j], fits[oo,j], lwd=2, col='magenta', lty=2)
 }
 ```
-
-\textcolor{red}{No entiendo porqu\'e en el PDF se va para el costado un gr\'afico en lugar de para abajo.}
 
 The two fits differ mainly on the estimated effects of wind speed and temperature. The classical estimate for $g_1(\mbox{Temp})$ is consistently lower than the robust counterpart for $\mbox{Temp} \ge 85$. For wind speed,
 the non-robust estimate $\hat{g}_2(\mbox{Wind})$ suggests a higher effect over Ozone concentrations for low wind speeds than the one given by the robust estimate, and the opposite difference for higher speeds.
 
 Since residuals from a robust fit can generally be used to detect the presence of atypical observations in the training data, we plot the boxplot of the residuals obtained by the robust fit and 4 possible outlying points (indicated with red circles) can be observed.
 
-```{r boxplot}
+```{r boxplot, out.width  = "50%"}
 re.ro <- residuals(fit.full)
 ou.ro <- boxplot(re.ro, col='gray80')$out
 in.ro <- (1:length(re.ro))[ re.ro %in% ou.ro ]
-points(rep(1, length(in.ro)), re.ro[in.ro], pch=20, cex=3, col='red')
+points(rep(1, length(in.ro)), re.ro[in.ro], pch=20, col='red')
 (in.ro)
 ```
 
 We highlight these suspicious observations on the
 scatter plot.
 
-```{r scatterplotpoints}
+```{r scatterplotpoints, out.width  = "75%"}
 cs <- rep('gray30', nrow(aircomplete))
 cs[in.ro] <- 'red'
 os <- 1:nrow(aircomplete)
 os2 <- c(os[-in.ro], os[in.ro])
 pairs(aircomplete[os2, c('Ozone', 'Solar.R', 'Wind', 'Temp')], 
-      pch=19, col=cs[os2], cex=1.5)
+      pch=19, col=cs[os2])
 ```
 
 
 Note that not all these suspected atypical observations are particularly extreme, or directly evident on the scatter plot. However, as we will show below, they do have an important effect on the estimates of the components of the additive model. 
 
 The partial residuals corresponding to these points can be also visualized in red in the plot of the estimated curves.
-```{r plotoutred}
+```{r plotoutred, out.width  = "45%"}
 # Plot both fits (robust and classical) 
 x <- as.matrix( aircomplete[ , c('Solar.R', 'Wind', 'Temp')] )
 y <- as.vector( aircomplete[ , 'Ozone'] )
@@ -351,13 +375,12 @@ fits <- predict(fit.gam, type='terms')
 for(j in 1:3) {
   re <- fit.full$yp - fit.full$alpha - rowSums(fit.full$g.matrix[,-j])
   plot(re ~ x[,j], type='p', pch=20, col='gray45', xlab=colnames(x)[j], ylab='')
-  points(re[in.ro] ~ x[in.ro,j], pch=20, col='red', cex=2)
+  points(re[in.ro] ~ x[in.ro,j], pch=20, col='red')
   oo <- order(x[,j])
-  lines(x[oo,j], fit.full$g.matrix[oo,j], lwd=5, col='blue', lty=1)
-  lines(x[oo,j], fits[oo,j], lwd=5, col='magenta', lty=2)
+  lines(x[oo,j], fit.full$g.matrix[oo,j], lwd=2, col='blue', lty=1)
+  lines(x[oo,j], fits[oo,j], lwd=2, col='magenta', lty=2)
 }
 ```
-\textcolor{red}{Lo mismo con este gr\'afico.}
 
 To investigate whether the differences between the robust and non-robust estimators are due to the outliers, we recomputed the classical fit after removing them.
 
@@ -398,25 +421,24 @@ fit.gam2 <- gam(Ozone ~ lo(Solar.R, span=.7) + lo(Wind, span=.8)+
 
 The following plot shows the estimated curves obtained with the classical estimator using the \lq\lq clean\rq\rq\ data together with the robust ones (computed on the whole data set).  Outliers are highlighted in red. 
 
-```{r finalplot}
+```{r finalplot, out.width  = "45%"}
 fits2 <- predict(fit.gam2, type='terms')
 dd2 <- aircomplete[-in.ro, c('Solar.R', 'Wind', 'Temp')]
 for(j in 1:3) {
   re <- fit.full$yp - fit.full$alpha - rowSums(fit.full$g.matrix[,-j])
   plot(re ~ x[,j], type='p', pch=20, col='gray45', xlab=colnames(x)[j], ylab='')
-  points(re[in.ro] ~ x[in.ro,j], pch=20, col='red', cex=2)
+  points(re[in.ro] ~ x[in.ro,j], pch=20, col='red')
   oo <- order(dd2[,j])
-  lines(dd2[oo,j], fits2[oo,j], lwd=5, col='magenta', lty=2)
+  lines(dd2[oo,j], fits2[oo,j], lwd=2, col='magenta', lty=2)
   oo <- order(x[,j])
-  lines(x[oo,j], fit.full$g.matrix[oo,j], lwd=5, col='blue', lty=1)
+  lines(x[oo,j], fit.full$g.matrix[oo,j], lwd=2, col='blue', lty=1)
 }
 ```
-\textcolor{red}{Y con este.}
 
 Note that both fits are now very close. An intuitive interpretation is that the robust fit has automatically down-weighted potential outliers and produced estimates very similar to the classical ones applied to the \lq\lq  clean\rq\rq\ observations.
 
 
-#### Prediction comparison
+### Prediction comparison
 
 Finally, we compare the prediction accuracy obtained with each
 of the fits. Because we are not interested in predicting well any
@@ -470,8 +492,7 @@ for(runs in 1:M) {
 ```
 These are the boxplots. We see that the robust fit consistently fits the vast majority (95%) of the data better than the classical one. 
 
-![Boxplots of the prediction errors \label{fig:pred3}](pred3.png){ width=85% }
-
+![Boxplots of the prediction errors \label{fig:pred3}](pred3.png){ width=50% }
 
 As a sanity check, we compare the prediction accuracy of the robust and non-robust fits using only the "clean" data set. We re-compute the optimal bandwidths for the robust fit using leave-one-out cross validation as above, and as above, note that these bandwidths are kept fixed.  We use 100 runs of 5-fold cross-validation, and compute both the trimmed and the regular mean squared prediction errors of each fit.
 ```{r pred.clean, cache=TRUE, warning=FALSE, eval=FALSE}
@@ -517,17 +538,19 @@ robust backfitting estimator, this loss in prediction accuracy is
 in fact very small. 
 
 
-![Trimmed MSPE On \lq\lq clean\rq\rq data \label{fig:tmspeclean}](tmspeclean.png){ width=85% }
+![Trimmed MSPE On \lq\lq clean\rq\rq data \label{fig:tmspeclean}](tmspeclean.png){ width=50% }
 
 
 
 
 
-![Non-Trimmed MSPE On \lq\lq clean\rq\rq data \label{fig:nontmspeclean}](nontmspeclean.png){ width=85% }
+![Non-Trimmed MSPE On \lq\lq clean\rq\rq data \label{fig:nontmspeclean}](nontmspeclean.png){ width=50% }
 
 
 
-### Bibliography
+## Bibliography
+
+Boente G, Martinez A, and Salibian-Barrera M. (2017) Robust estimators for additive models using backfitting. *Journal of Nonparametric Statistics*, **29**, 744-767. [DOI: 10.1080/10485252.2017.1369077](https://doi.org/10.1080/10485252.2017.1369077)
 
 Chambers, J. M., Cleveland W. S., Kleiner B. and Tukey A. (1983). *Graphical Methods for Data Analysis*. 2nd edition. Chapman \& Hall.
 
