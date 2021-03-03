@@ -2,7 +2,7 @@
 title: "Examples"
 author: "Martínez and Salibian"
 date: "`r Sys.Date()`"
-output: rmarkdown::html_vignette
+output: pdf_document
 vignette: >
   %\VignetteIndexEntry{Examples}
   %\VignetteEngine{knitr::rmarkdown}
@@ -57,7 +57,7 @@ We will use the well-known `Boston` house price data of Harrinson and Rubinfeld 
 - `lstat`: percent lower status of population ($X_{10}$),
 
 The response variable $Y$ is `medv`, the median value of the owner-occupied homes in 1,000 USD, and the proposed  additive model is
-$Y= \mu+ \sum_{j=1}^{10} g_j(\log(X_j))+ \epsilon.$
+$$Y= \mu+ \sum_{j=1}^{10} g_j(\log(X_j))+ \epsilon.$$
 
 ```{r read the dataset}
 data(Boston, package='MASS')
@@ -75,7 +75,7 @@ bandwidth selection is an important step. We follow
 Härdle et al. (2004) and select bandwidths $h_j$, $1 \le j \le 10$, 
 proportional to the standard deviation of the corresponding
 explanatory variables $X_j$, specifically we set 
-$h_j = \hat{\sigma}_j / 2$: OBS! EN REALIDAD ES EL DESVIO DEL LOGARITMO DE LAS $X_j$.
+$h_j = \hat{\sigma}_j / 2$: \textcolor{red}{OBS! EN REALIDAD ES EL DESVIO DEL LOGARITMO DE LAS $X_j$.}
 ```{r bandwidths}
 bandw <- apply(dd[, names(dd) != 'medv'], 2, sd) / 2
 ```
@@ -89,7 +89,8 @@ the robust backfitting estimator are:
 
 The command to compute the fit is:
 ```{r robust fit, cache=TRUE}
-robust.fit <- backf.rob(medv ~ ., data = dd, degree=0, type='Huber', windows=bandw)
+robust.fit <- backf.rob(medv ~ ., data = dd, degree = 0, type = 'Huber', 
+                        windows = bandw)
 ```
 The summary method provides information on the resulting fit: 
 ```{r summary}
@@ -110,7 +111,8 @@ each explanatory variable, we can use the following
 command (note that this step implies re-fitting the whole model):
 ```{r prediction, cache=TRUE}
 po <- colMeans(dd[, names(dd) != 'medv'])
-robust.fit1 <- backf.rob(medv ~ ., data = dd, degree=0, type='Huber', windows=bandw, point=po)
+robust.fit1 <- backf.rob(medv ~ ., data = dd, degree = 0, type = 'Huber', 
+                         windows = bandw, point = po)
 ```
 The values of the estimated components evaluated at the 
 corresponding coordinates of `po` are 
@@ -230,7 +232,7 @@ for(i in 1:nh) {
   preds <- rep(NA, n)
   for(j in 1:n) {
     tmp <- try( backf.rob(Ozone ~ Solar.R + Wind + Temp, point = aircomplete[j, -1],
-                          windows = hh[i, ], epsilon = 1e-6, data=aircomplete,
+                          windows = hh[i, ], epsilon = 1e-6, data = aircomplete,
                           degree = 1, type = 'Tukey', subset = c(-j) ))
     if (class(tmp)[1] != "try-error") {
       preds[j] <- rowSums(tmp$prediction) + tmp$alpha
@@ -252,9 +254,9 @@ bandw <- c(136.7285, 10.67314, 4.764985)
 Now we use the robust backfitting algorithm to fit an additive model using Tukey's bisquare loss (the default tuning constant for this loss function is 4.685) and the optimal bandwidths.
 
 ```{r fitfull}
-fit.full <- backf.rob(Ozone ~ Solar.R + Wind + Temp, windows=bandw, 
-                      epsilon=1e-6, degree=1, type='Tukey', 
-                      subset = ccs, data=airquality)
+fit.full <- backf.rob(Ozone ~ Solar.R + Wind + Temp, windows = bandw, 
+                      epsilon = 1e-6, degree = 1, type = 'Tukey', 
+                      subset = ccs, data = airquality)
 ```
 The plot of the additive functions with their corresponding partial residuals are the following:
 ```{r plotfitfull}
@@ -275,7 +277,7 @@ for(i in 1:nh) {
   fi <- rep(0, n)
   for(j in 1:n) {
     tmp <- gam(Ozone ~ lo(Solar.R, span=hh[i,1]) + lo(Wind, span=hh[i,2])
-               + lo(Temp, span=hh[i,3]), data=aircomplete, subset=c(-j))
+               + lo(Temp, span=hh[i,3]), data = aircomplete, subset=c(-j))
     fi[j] <- as.numeric(predict(tmp, newdata=aircomplete[j, -1], type='response'))
   }
   ss <- mean((aircomplete$Ozone - fi)^2)
@@ -291,7 +293,7 @@ for(i in 1:nh) {
 The optimal bandwidths are `0.7`, `0.7` and `0.5` for `Solar.R`, `Wind` and `Temp`, respectively. We fit the backfitting algorithm with the optimal spans found above.
 ```{r fitgam}
 fit.gam <- gam(Ozone ~ lo(Solar.R, span=.7) + lo(Wind, span=.7)+
-                 lo(Temp, span=.5), data=aircomplete)
+                 lo(Temp, span=.5), data = aircomplete)
 ```
 
 Both classical (in magenta and dashed lines) and robust (in blue and solid lines) fits are shown in the following plot together with the partial residuals obtained by the robust fit.
@@ -309,6 +311,8 @@ for(j in 1:3) {
   lines(x[oo,j], fits[oo,j], lwd=5, col='magenta', lty=2)
 }
 ```
+
+\textcolor{red}{No entiendo porqu\'e en el PDF se va para el costado un gr\'afico en lugar de para abajo.}
 
 The two fits differ mainly on the estimated effects of wind speed and temperature. The classical estimate for $g_1(\mbox{Temp})$ is consistently lower than the robust counterpart for $\mbox{Temp} \ge 85$. For wind speed,
 the non-robust estimate $\hat{g}_2(\mbox{Wind})$ suggests a higher effect over Ozone concentrations for low wind speeds than the one given by the robust estimate, and the opposite difference for higher speeds.
@@ -353,6 +357,7 @@ for(j in 1:3) {
   lines(x[oo,j], fits[oo,j], lwd=5, col='magenta', lty=2)
 }
 ```
+\textcolor{red}{Lo mismo con este gr\'afico.}
 
 To investigate whether the differences between the robust and non-robust estimators are due to the outliers, we recomputed the classical fit after removing them.
 
@@ -406,6 +411,7 @@ for(j in 1:3) {
   lines(x[oo,j], fit.full$g.matrix[oo,j], lwd=5, col='blue', lty=1)
 }
 ```
+\textcolor{red}{Y con este.}
 
 Note that both fits are now very close. An intuitive interpretation is that the robust fit has automatically down-weighted potential outliers and produced estimates very similar to the classical ones applied to the \lq\lq  clean\rq\rq\ observations.
 
@@ -433,7 +439,7 @@ We use 100 runs of 5-fold CV to compare the
 the robust fit and the classical one. 
 Note that the bandwidths are kept fixed 
 at their optimal value estimated above. 
-```{r pred2, cache=TRUE, warning=FALSE}
+```{r pred2, cache=TRUE, warning=FALSE, eval=FALSE}
 dd <- airquality
 dd <- dd[complete.cases(dd), c('Ozone', 'Solar.R', 'Wind', 'Temp')]
 # 100 runs of K-fold CV
@@ -450,12 +456,12 @@ for(runs in 1:M) {
   ii <- sample(ii)
   for(j in 1:K) {
     fit.full <- backf.rob(Ozone ~ Solar.R + Wind + Temp, 
-                           point=dd[ii==j, -1], windows=bandw, 
-                           epsilon=1e-6, degree=1, type='Tukey', 
+                           point=dd[ii==j, -1], windows = bandw, 
+                           epsilon = 1e-6, degree = 1, type = 'Tukey', 
                            subset = (ii!=j), data = dd)
     tmpro[ ii == j ] <- rowSums(fit.full$prediction) + fit.full$alpha
     fit.gam <- gam(Ozone ~ lo(Solar.R, span=.7) + lo(Wind, span=.7)+
-                     lo(Temp, span=.5), data=dd[ii!=j, ])
+                     lo(Temp, span=.5), data = dd[ii!=j, ])
     tmpgam[ ii == j ] <- predict(fit.gam, newdata=dd[ii==j, ], type='response')
   }
   tmspe.ro[runs] <- tms( dd$Ozone - tmpro, alpha=0.05)
@@ -463,17 +469,12 @@ for(runs in 1:M) {
 }
 ```
 These are the boxplots. We see that the robust fit consistently fits the vast majority (95%) of the data better than the classical one. 
-```{r pred3}
-#pdf('pred3.pdf', bg='transparent')
-#png('pred3.png', bg='transparent')
-#png('pred3-white.png')
-boxplot(tmspe.ro, tmspe.gam, names=c('Robust', 'Classical'), 
-        col=c('tomato3', 'gray80'))#, main='', ylim=c(130, 210))
-#dev.off()
-```
+
+![Boxplots of the prediction errors \label{fig:pred3}](pred3.png){ width=85% }
+
 
 As a sanity check, we compare the prediction accuracy of the robust and non-robust fits using only the "clean" data set. We re-compute the optimal bandwidths for the robust fit using leave-one-out cross validation as above, and as above, note that these bandwidths are kept fixed.  We use 100 runs of 5-fold cross-validation, and compute both the trimmed and the regular mean squared prediction errors of each fit.
-```{r pred.clean, cache=TRUE, warning=FALSE}
+```{r pred.clean, cache=TRUE, warning=FALSE, eval=FALSE}
 aq <- airquality
 aq2 <- aq[complete.cases(aq), c('Ozone', 'Solar.R', 'Wind', 'Temp')]
 airclean <- aq2[ -in.ro, ]
@@ -489,14 +490,14 @@ for(runs in 1:M) {
   ii <- sample(ii)
   for(j in 1:K) {
     fit.full <- try( backf.rob(Ozone ~ Solar.R + Wind + Temp, 
-                          point=airclean[ii==j, -1], windows=bandw, 
-                          epsilon=1e-6, degree=1, type='Tukey', 
+                          point=airclean[ii==j, -1], windows = bandw, 
+                          epsilon = 1e-6, degree = 1, type = 'Tukey', 
                           subset = (ii!=j), data = airclean) )
     if (class(fit.full)[1] != "try-error") {
       tmpro[ ii == j ] <- rowSums(fit.full$prediction) + fit.full$alpha
     }
     fit.gam <- gam(Ozone ~ lo(Solar.R, span=.7) + lo(Wind, span=.8)+
-                     lo(Temp, span=.3), data=airclean, subset = (ii!=j) )
+                     lo(Temp, span=.3), data = airclean, subset = (ii!=j) )
     tmpgam[ ii == j ] <- predict(fit.gam, newdata=airclean[ii==j, ], 
                                  type='response')
   }
@@ -515,24 +516,14 @@ deviations occur. The boxplots below show that for this
 robust backfitting estimator, this loss in prediction accuracy is
 in fact very small. 
 
-```{r boxplot.clean.predictions, fig.show="hold", out.width="33%"}
-#pdf('tmspeclean.pdf', bg='transparent')
-#png('tmspeclean.png', bg='transparent')
-png('tmspeclean-white.png')
-boxplot(tmspe.ro, tmspe.gam, names=c('Robust', 'Classical'),
-        col=rep(c('tomato3', 'gray80'), 2), main='Trimmed MSPE On "clean" data')
-dev.off()
-#pdf('nontmspeclean.pdf', bg='transparent')
-#png('nontmspeclean.png', bg='transparent')
-png('nontmspeclean-white.png')
-boxplot(mspe.ro, mspe.gam, names=c('Robust', 'Classical'),
-        col=rep(c('tomato3', 'gray80'), 2), main='Non-Trimmed MSPE On "clean" data')
-dev.off()
-```
+
+![Trimmed MSPE On \lq\lq clean\rq\rq data \label{fig:tmspeclean}](tmspeclean.png){ width=85% }
 
 
-![Trimmed MSPE On "clean" data \label{fig:tmspeclean}](tmspeclean.png){ width=85% }
-![Non-Trimmed MSPE On "clean" data \label{fig:nontmspeclean}](nontmspeclean.png){ width=85% }
+
+
+
+![Non-Trimmed MSPE On \lq\lq clean\rq\rq data \label{fig:nontmspeclean}](nontmspeclean.png){ width=85% }
 
 
 
