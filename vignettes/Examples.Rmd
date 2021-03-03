@@ -2,7 +2,7 @@
 title: "Examples"
 author: "Martínez and Salibian"
 date: "`r Sys.Date()`"
-output: pdf_document
+output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Examples}
   %\VignetteEngine{knitr::rmarkdown}
@@ -88,7 +88,7 @@ the robust backfitting estimator are:
 - `type`: specifies the robust loss function, options are `Huber` or `Tukey`, defaults to `Huber`.
 
 The command to compute the fit is:
-```{r robust fit, cache=TRUE}
+```{r robustfit, cache=TRUE}
 robust.fit <- backf.rob(medv ~ ., data = dd, degree = 0, type = 'Huber', 
                         windows = bandw)
 ```
@@ -109,7 +109,7 @@ we can pass those points using the argumen `point`. For example,
 to obtain predicted values at the point given by average of 
 each explanatory variable, we can use the following 
 command (note that this step implies re-fitting the whole model):
-```{r prediction, cache=TRUE}
+```{r preds, cache=TRUE}
 po <- colMeans(dd[, names(dd) != 'medv'])
 robust.fit1 <- backf.rob(medv ~ ., data = dd, degree = 0, type = 'Huber', 
                          windows = bandw, point = po)
