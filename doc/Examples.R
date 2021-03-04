@@ -1,49 +1,49 @@
-## ----setup, include=FALSE----------------------------------------
+## ----setup, include=FALSE-----------------------------------------------------
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
 )
 
-## ----read the dataset--------------------------------------------
+## ----read the dataset---------------------------------------------------------
 data(Boston, package='MASS')
 dd <- Boston[, c(1, 3, 5:8, 10:14)]
 dd[, names(dd) != 'medv'] <- log( dd[, names(dd) != 'medv'] )
 
-## ----loadpckg----------------------------------------------------
+## ----loadpckg-----------------------------------------------------------------
 library(RBF)
 
-## ----bandwidths--------------------------------------------------
+## ----bandwidths---------------------------------------------------------------
 bandw <- apply(dd[, names(dd) != 'medv'], 2, sd) / 2
 
-## ----robustfit, cache=TRUE---------------------------------------
+## ----robustfit, cache=TRUE----------------------------------------------------
 robust.fit <- backf.rob(medv ~ ., data = dd, degree = 0, type = 'Huber', 
                         windows = bandw)
 
-## ----summary-----------------------------------------------------
+## ----summary------------------------------------------------------------------
 summary(robust.fit)
 
-## ----plot, out.width  = "45%"------------------------------------
+## ----plot, out.width  = "45%"-------------------------------------------------
 plot(robust.fit)
 
-## ----preds, cache=TRUE-------------------------------------------
+## ----preds, cache=TRUE--------------------------------------------------------
 po <- colMeans(dd[, names(dd) != 'medv'])
 robust.fit1 <- backf.rob(medv ~ ., data = dd, degree = 0, type = 'Huber', 
                          windows = bandw, point = po)
 
-## ----showpred----------------------------------------------------
+## ----showpred-----------------------------------------------------------------
 robust.fit1$prediction
 
-## ----outliers----------------------------------------------------
+## ----outliers-----------------------------------------------------------------
 dd2 <- dd
 dd2$medv[1:5]<- rep(400, 5)
 
-## ----robustplotswithoutliers, cache=TRUE-------------------------
+## ----robustplotswithoutliers, cache=TRUE--------------------------------------
 robust.fit.new <- backf.rob(medv ~ ., data = dd2, degree = 0, type = 'Huber', 
                             windows = bandw, point = po)
 summary(robust.fit.new)
 robust.fit.new$prediction
 
-## ----robustplots2, warning=FALSE, out.width  = "45%"-------------
+## ----robustplots2, warning=FALSE, out.width  = "45%"--------------------------
 for(j in 1:10) {
   name.x <- names(dd)[j] 
   name.y <- bquote(paste(hat('g')[.(j)]))
@@ -53,32 +53,22 @@ for(j in 1:10) {
   lines(dd2[oo,j], robust.fit$g.matrix[oo,j], lwd=2, col='green', lty=2)
 }
 
-## ----gam, warning=FALSE------------------------------------------
+## ----gam, warning=FALSE-------------------------------------------------------
 library(gam)
-fit.gam <- gam(medv ~ lo(crim, span=1.62) + 
-                 lo(indus, span=0.58) + 
-                 lo(nox, span=0.15) + 
-                 lo(rm, span=0.08) +
-                 lo(age, span=0.46) + 
-                 lo(dis, span=0.40) + 
-                 lo(tax, span=0.30) + 
-                 lo(ptratio, span=0.09) +
-                 lo(black, span=0.58) + 
-                 lo(lstat, span=0.45), data=dd)
+fit.gam <- gam(medv ~ lo(crim, span=1.62) + lo(indus, span=0.58) + 
+                 lo(nox, span=0.15) + lo(rm, span=0.08) +
+                 lo(age, span=0.46) + lo(dis, span=0.40) + 
+                 lo(tax, span=0.30) + lo(ptratio, span=0.09) +
+                 lo(black, span=0.58) + lo(lstat, span=0.45), data=dd)
 fits <- predict(fit.gam, type='terms')
-fit.gam.new <- gam(medv ~ lo(crim, span=1.62) + 
-                 lo(indus, span=0.58) + 
-                 lo(nox, span=0.15) + 
-                 lo(rm, span=0.08) +
-                 lo(age, span=0.46) + 
-                 lo(dis, span=0.40) + 
-                 lo(tax, span=0.30) + 
-                 lo(ptratio, span=0.09) +
-                 lo(black, span=0.58) + 
-                 lo(lstat, span=0.45), data=dd2)
+fit.gam.new <- gam(medv ~ lo(crim, span=1.62) + lo(indus, span=0.58) + 
+                 lo(nox, span=0.15) + lo(rm, span=0.08) +
+                 lo(age, span=0.46) + lo(dis, span=0.40) + 
+                 lo(tax, span=0.30) + lo(ptratio, span=0.09) +
+                 lo(black, span=0.58) + lo(lstat, span=0.45), data=dd2)
 fits.new <- predict(fit.gam.new, type='terms')
 
-## ----gamplots, out.width  = "45%"--------------------------------
+## ----gamplots, out.width  = "45%"---------------------------------------------
 for(j in 1:10) {
   oo <- order(dd2[,j])
   name.x <- names(dd)[j] 
@@ -88,13 +78,13 @@ for(j in 1:10) {
   lines(dd2[oo,j], fits[oo,j], lwd=2, col='darkorange2', lty=2)
 }
 
-## ----scatterplot, out.width  = "75%"-----------------------------
+## ----scatterplot, out.width  = "75%"------------------------------------------
 data(airquality)
 ccs <- complete.cases(airquality)
 aircomplete <- airquality[ccs, c('Ozone', 'Solar.R', 'Wind', 'Temp')]
 pairs(aircomplete[, c('Ozone', 'Solar.R', 'Wind', 'Temp')], pch=19, col='gray30')
 
-## ----robustcv, warning=FALSE, cache=TRUE, eval=FALSE-------------
+## ----robustcv, warning=FALSE, cache=TRUE, eval=FALSE--------------------------
 #  library(RBF)
 #  
 #  # Bandwidth selection with leave-one-out cross-validation
@@ -131,18 +121,18 @@ pairs(aircomplete[, c('Ozone', 'Solar.R', 'Wind', 'Temp')], pch=19, col='gray30'
 #  }
 #  (bandw <- hh[jbest,])
 
-## ----bandw-------------------------------------------------------
+## ----bandw--------------------------------------------------------------------
 bandw <- c(136.7285, 10.67314, 4.764985)
 
-## ----fitfull-----------------------------------------------------
+## ----fitfull------------------------------------------------------------------
 fit.full <- backf.rob(Ozone ~ Solar.R + Wind + Temp, windows = bandw, 
                       epsilon = 1e-6, degree = 1, type = 'Tukey', 
                       subset = ccs, data = airquality)
 
-## ----plotfitfull, out.width  = "45%"-----------------------------
+## ----plotfitfull, out.width  = "45%"------------------------------------------
 plot(fit.full)
 
-## ----gamcv, cache=TRUE, warning=FALSE, eval=FALSE----------------
+## ----gamcv, cache=TRUE, warning=FALSE, eval=FALSE-----------------------------
 #  library(gam)
 #  a <- c(.3, .4, .5, .6, .7, .8, .9)
 #  hh <- expand.grid(a, a, a)
@@ -165,13 +155,13 @@ plot(fit.full)
 #  }
 #  (hh[jbest,])
 #  # Var1 Var2 Var3
-#  # 131  0.7  0.7  0.5
+#  # 0.7  0.7  0.5
 
-## ----fitgam------------------------------------------------------
+## ----fitgam-------------------------------------------------------------------
 fit.gam <- gam(Ozone ~ lo(Solar.R, span=.7) + lo(Wind, span=.7)+
                  lo(Temp, span=.5), data = aircomplete)
 
-## ----plotrobgam, out.width  = "45%"------------------------------
+## ----plotrobgam, out.width  = "45%"-------------------------------------------
 x <- as.matrix( aircomplete[ , c('Solar.R', 'Wind', 'Temp')] )
 y <- as.vector( aircomplete[ , 'Ozone'] )
 fits <- predict(fit.gam, type='terms')
@@ -183,14 +173,14 @@ for(j in 1:3) {
   lines(x[oo,j], fits[oo,j], lwd=2, col='magenta', lty=2)
 }
 
-## ----boxplot, out.width  = "50%"---------------------------------
+## ----boxplot, out.width  = "50%"----------------------------------------------
 re.ro <- residuals(fit.full)
 ou.ro <- boxplot(re.ro, col='gray80')$out
 in.ro <- (1:length(re.ro))[ re.ro %in% ou.ro ]
 points(rep(1, length(in.ro)), re.ro[in.ro], pch=20, col='red')
 (in.ro)
 
-## ----scatterplotpoints, out.width  = "75%"-----------------------
+## ----scatterplotpoints, out.width  = "75%"------------------------------------
 cs <- rep('gray30', nrow(aircomplete))
 cs[in.ro] <- 'red'
 os <- 1:nrow(aircomplete)
@@ -198,7 +188,7 @@ os2 <- c(os[-in.ro], os[in.ro])
 pairs(aircomplete[os2, c('Ozone', 'Solar.R', 'Wind', 'Temp')], 
       pch=19, col=cs[os2])
 
-## ----plotoutred, out.width  = "45%"------------------------------
+## ----plotoutred, out.width  = "45%"-------------------------------------------
 # Plot both fits (robust and classical) 
 x <- as.matrix( aircomplete[ , c('Solar.R', 'Wind', 'Temp')] )
 y <- as.vector( aircomplete[ , 'Ozone'] )
@@ -212,7 +202,7 @@ for(j in 1:3) {
   lines(x[oo,j], fits[oo,j], lwd=2, col='magenta', lty=2)
 }
 
-## ----cvgamclean, eval=FALSE--------------------------------------
+## ----cvgamclean, eval=FALSE---------------------------------------------------
 #  airclean <- aircomplete[-in.ro, c('Ozone', 'Solar.R', 'Wind', 'Temp')]
 #  a <- c(.3, .4, .5, .6, .7, .8, .9)
 #  hh <- expand.grid(a, a, a)
@@ -234,15 +224,15 @@ for(j in 1:3) {
 #    }
 #  }
 #  (hh[jbest,])
-#  # # Var1 Var2 Var3
-#  # # 40  0.7  0.8  0.3
+#  # Var1 Var2 Var3
+#  # 0.7  0.8  0.3
 
-## ----fitgam2-----------------------------------------------------
+## ----fitgam2------------------------------------------------------------------
 airclean <- aircomplete[-in.ro, c('Ozone', 'Solar.R', 'Wind', 'Temp')]
 fit.gam2 <- gam(Ozone ~ lo(Solar.R, span=.7) + lo(Wind, span=.8)+
                   lo(Temp, span=.3), data=airclean) 
 
-## ----finalplot, out.width  = "45%"-------------------------------
+## ----finalplot, out.width  = "45%"--------------------------------------------
 fits2 <- predict(fit.gam2, type='terms')
 dd2 <- aircomplete[-in.ro, c('Solar.R', 'Wind', 'Temp')]
 for(j in 1:3) {
@@ -255,7 +245,7 @@ for(j in 1:3) {
   lines(x[oo,j], fit.full$g.matrix[oo,j], lwd=2, col='blue', lty=1)
 }
 
-## ----pred1-------------------------------------------------------
+## ----pred1--------------------------------------------------------------------
 tms <- function(a, alpha=.1) {
   # alpha is the proportion to trim
   a2 <- sort(a^2, na.last=NA)
@@ -263,7 +253,7 @@ tms <- function(a, alpha=.1) {
   return( mean(a2[1:n0], na.rm=TRUE) )
 }
 
-## ----pred2, cache=TRUE, warning=FALSE, eval=FALSE----------------
+## ----pred2, cache=TRUE, warning=FALSE, eval=FALSE-----------------------------
 #  dd <- airquality
 #  dd <- dd[complete.cases(dd), c('Ozone', 'Solar.R', 'Wind', 'Temp')]
 #  # 100 runs of K-fold CV
@@ -290,38 +280,5 @@ tms <- function(a, alpha=.1) {
 #    }
 #    tmspe.ro[runs] <- tms( dd$Ozone - tmpro, alpha=0.05)
 #    tmspe.gam[runs] <- tms( dd$Ozone - tmpgam, alpha=0.05)
-#  }
-
-## ----pred.clean, cache=TRUE, warning=FALSE, eval=FALSE-----------
-#  aq <- airquality
-#  aq2 <- aq[complete.cases(aq), c('Ozone', 'Solar.R', 'Wind', 'Temp')]
-#  airclean <- aq2[ -in.ro, ]
-#  bandw <- c(138.2699, 10.46753, 4.828436)
-#  M <- 100
-#  K <- 5
-#  n <- nrow(airclean)
-#  mspe.ro <- mspe.gam <- tmspe.ro <- tmspe.gam <- vector('numeric', M)
-#  set.seed(17)
-#  ii <- (1:n)%%K + 1
-#  for(runs in 1:M) {
-#    tmpro <- tmpgam <- vector('numeric', n)
-#    ii <- sample(ii)
-#    for(j in 1:K) {
-#      fit.full <- try( backf.rob(Ozone ~ Solar.R + Wind + Temp,
-#                            point=airclean[ii==j, -1], windows = bandw,
-#                            epsilon = 1e-6, degree = 1, type = 'Tukey',
-#                            subset = (ii!=j), data = airclean) )
-#      if (class(fit.full)[1] != "try-error") {
-#        tmpro[ ii == j ] <- rowSums(fit.full$prediction) + fit.full$alpha
-#      }
-#      fit.gam <- gam(Ozone ~ lo(Solar.R, span=.7) + lo(Wind, span=.8)+
-#                       lo(Temp, span=.3), data = airclean, subset = (ii!=j) )
-#      tmpgam[ ii == j ] <- predict(fit.gam, newdata=airclean[ii==j, ],
-#                                   type='response')
-#    }
-#    tmspe.ro[runs] <- tms( airclean$Ozone - tmpro, alpha=0.05)
-#    mspe.ro[runs] <- mean( ( airclean$Ozone - tmpro)^2, na.rm=TRUE)
-#    tmspe.gam[runs] <- tms( airclean$Ozone - tmpgam, alpha=0.05)
-#    mspe.gam[runs] <- mean( ( airclean$Ozone - tmpgam)^2, na.rm=TRUE)
 #  }
 
