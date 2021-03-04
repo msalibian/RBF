@@ -67,7 +67,7 @@ We will use the well-known `Boston` house price data of Harrinson and Rubinfeld 
 - `tax`: full-value property tax rate per 10,000 ($X_7$),
 - `ptratio`: pupil-teacher ratio by town ($X_8$),
 - `black`: $1,000(Bk-0.63)^2$ where $Bk$ is the proportion of people of Afrom American descent by town ($X_9$),
-- `lstat`: percent lower status of population ($X_{10}$),
+- `lstat`: percent lower status of population ($X_{10}$).
 
 The response variable $Y$ is `medv`, the median value of the owner-occupied homes in 1,000 USD, and the proposed  additive model is
 $$Y= \mu+ \sum_{j=1}^{10} g_j(\log(X_j))+ \epsilon.$$
@@ -96,7 +96,7 @@ As with all kernel-based estimators, bandwidth selection is an important step. I
 we follow 
 Härdle et al. (2004) and select bandwidths $h_j$, $1 \le j \le 10$, 
 proportional to the standard deviation of the corresponding
-explanatory variables $\log( X_j) $. Specifically we set 
+explanatory variables $\log(X_j)$. Specifically we set 
 $h_j = \hat{\sigma}_j / 2$: 
 ```{r bandwidths}
 bandw <- apply(dd[, names(dd) != 'medv'], 2, sd) / 2
@@ -110,7 +110,12 @@ The summary method provides information on the resulting fit:
 ```{r summary}
 summary(robust.fit)
 ```
-while the plot method can be used to visualize the estimated 
+OJO! This function returns the estimation of the intercept, the five-number summary and the mean of the residuals, the estimate of the residual standard error $\widehat{\sigma}$ and a robust version of the R-squared computed as 
+$$R^2_{rob}=\frac{\sum_{i=1}^n \rho\left((Y_i-\widehat{a})/\widehat{\sigma}\right)-\sum_{i=1}^n \rho\left(R_i/\widehat{\sigma}\right)}{\sum_{i=1}^n \rho\left((Y_i-\widehat{a})/\widehat{\sigma}\right)}$$
+where $\widehat{a}$ is a robust estimator of $a$ under the location regression model $Y=a+\epsilon$, that is, when no additive regression model is assumed, $R_i=Y_i-\widehat{\mu}-\sum_{j=1}^p \widehat{g}_j(X_{ij})$ and $\rho$ is the loss function in the `type` argument.
+
+
+The plot method can be used to visualize the estimated 
 additive components displayed over the corresponding partial
 residuals: 
 $$
@@ -147,7 +152,8 @@ dd2$medv[1:5]<- rep(400, 5)
 ```
 Then, if the recalculate the robust fit, we obtain similar curves to what was obtained with the original data set.
 ```{r robustplotswithoutliers, cache=TRUE}
-robust.fit.new <- backf.rob(medv ~ ., data = dd2, degree=0, type='Huber', windows=bandw, point = po)
+robust.fit.new <- backf.rob(medv ~ ., data = dd2, degree = 0, type = 'Huber', 
+                            windows = bandw, point = po)
 summary(robust.fit.new)
 robust.fit.new$prediction
 ```
@@ -155,7 +161,7 @@ Because the magnitude of the outliers affects the scale of the
 partial residuals plots, below we plot   
 the robust estimators for each additive component
 when computed with and without
-added outlires. 
+added outliers. 
 In green and dashed lines the robust estimator computed with the original data set, and in blue and solid lines the robust estimator computed with the contaminated data set.
 
 ```{r robustplots2, warning=FALSE, out.width  = "45%"}
@@ -173,8 +179,7 @@ It is easy to see that the fits obtained with the classical
 backfitting estimator when the training set contains outliers
 are dramatically different from the ones obtained with the original
 data set. We use the package `gam` to compute the 
-standard backfitting algorithm (based on local kernel regression
-smoothers). 
+standard backfitting algorithm (based on local kernel regression smoothers). OJO! Bandwidths selected to compute these estimates are again proportional to the standard deviation but a little larger than before in order to avoid badly conditioned matrices. Specifically we set $h_j=(3/4)\widehat{\sigma}_j$.
 ```{r gam, warning=FALSE}
 library(gam)
 fit.gam <- gam(medv ~ lo(crim, span=1.62) + 
@@ -331,7 +336,6 @@ fits <- predict(fit.gam, type='terms')
 for(j in 1:3) {
   re <- fit.full$yp - fit.full$alpha - rowSums(fit.full$g.matrix[,-j])
   plot(re ~ x[,j], type='p', pch=20, col='gray45', xlab=colnames(x)[j], ylab='')
-  #points(re[in.ro] ~ x[in.ro,j], pch=20, col='red', cex=2)
   oo <- order(x[,j])
   lines(x[oo,j], fit.full$g.matrix[oo,j], lwd=2, col='blue', lty=1)
   lines(x[oo,j], fits[oo,j], lwd=2, col='magenta', lty=2)
