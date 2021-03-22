@@ -1,5 +1,7 @@
+Robust backfitting
+================
 Matias Salibian
-2021-01-18
+2021-03-22
 
 ## A robust backfitting algorithm
 
@@ -10,8 +12,8 @@ Salibian-Barrera in
 
 > Boente G, Martinez A, Salibian-Barrera M. (2017) Robust estimators for
 > additive models using backfitting. Journal of Nonparametric
-> Statistics. Taylor & Francis; 29, 744-767.
-> [DOI: 10.1080/10485252.2017.1369077](https://doi.org/10.1080/10485252.2017.1369077)
+> Statistics. Taylor & Francis; 29, 744-767. [DOI:
+> 10.1080/10485252.2017.1369077](https://doi.org/10.1080/10485252.2017.1369077)
 
 This repository contains a development version of `RBF` which may differ
 slightly from the one available on CRAN (until the CRAN version is
@@ -39,7 +41,7 @@ pairs(airquality[, c('Ozone', 'Solar.R', 'Wind', 'Temp')],
       pch=19, col='gray30', cex=1.5)
 ```
 
-![](README_files/figure-gfm/intro-1.png)<!-- -->
+![](man/figures/intro-1.png)<!-- -->
 
 The following bandwidths were obtained via a robust leave-one-out
 cross-validation procedure (described in the paper). As a robust
@@ -122,7 +124,7 @@ for(j in 1:3) {
 }
 ```
 
-<img src="README_files/figure-gfm/showfits-1.png" width="33%" /><img src="README_files/figure-gfm/showfits-2.png" width="33%" /><img src="README_files/figure-gfm/showfits-3.png" width="33%" />
+<img src="man/figures/showfits-1.png" width="33%" /><img src="man/figures/showfits-2.png" width="33%" /><img src="man/figures/showfits-3.png" width="33%" />
 
 NOTE: These plots could also be obtained using the `plot` method:
 
@@ -183,7 +185,7 @@ for(j in 1:3) {
 }
 ```
 
-<img src="README_files/figure-gfm/classicfits-1.png" width="33%" /><img src="README_files/figure-gfm/classicfits-2.png" width="33%" /><img src="README_files/figure-gfm/classicfits-3.png" width="33%" />
+<img src="man/figures/classicfits-1.png" width="33%" /><img src="man/figures/classicfits-2.png" width="33%" /><img src="man/figures/classicfits-3.png" width="33%" />
 
 To identify potential outiers we look at the residuals from the robust
 fit, and use the function `boxplot`:
@@ -195,7 +197,7 @@ in.ro <- (1:length(re.ro))[ re.ro %in% ou.ro ]
 points(rep(1, length(in.ro)), re.ro[in.ro], pch=20, cex=1.5, col='red')
 ```
 
-![](README_files/figure-gfm/outliers-1.png)<!-- -->
+![](man/figures/outliers-1.png)<!-- -->
 
 We highlight these suspicious observations on the scatter plot
 
@@ -208,7 +210,7 @@ pairs(aircomplete[os2, c('Ozone', 'Solar.R', 'Wind', 'Temp')],
       pch=19, col=cs[os2], cex=1.5)
 ```
 
-![](README_files/figure-gfm/showouts-1.png)<!-- -->
+![](man/figures/showouts-1.png)<!-- -->
 
 and on the partial residuals plots
 
@@ -223,7 +225,7 @@ for(j in 1:3) {
 }
 ```
 
-<img src="README_files/figure-gfm/showouts2-1.png" width="33%" /><img src="README_files/figure-gfm/showouts2-2.png" width="33%" /><img src="README_files/figure-gfm/showouts2-3.png" width="33%" />
+<img src="man/figures/showouts2-1.png" width="33%" /><img src="man/figures/showouts2-2.png" width="33%" /><img src="man/figures/showouts2-3.png" width="33%" />
 
 We now compute the classical backfitting algorithm on the data without
 the potential outliers identified by the robust fit (the optimal
@@ -251,7 +253,7 @@ for(j in 1:3) {
 }
 ```
 
-<img src="README_files/figure-gfm/bothonclean-1.png" width="33%" /><img src="README_files/figure-gfm/bothonclean-2.png" width="33%" /><img src="README_files/figure-gfm/bothonclean-3.png" width="33%" />
+<img src="man/figures/bothonclean-1.png" width="33%" /><img src="man/figures/bothonclean-2.png" width="33%" /><img src="man/figures/bothonclean-3.png" width="33%" />
 
 Finally, we compare the prediction accuracy obtained with each of the
 fits. Because we are not interested in predicting well any possible
@@ -311,7 +313,7 @@ boxplot(tmspe.ro, tmspe.gam, names=c('Robust', 'Classical'),
         col=c('tomato3', 'gray80')) #, main='', ylim=c(130, 210))
 ```
 
-![](README_files/figure-gfm/pred3-1.png)<!-- -->
+![](man/figures/pred3-1.png)<!-- -->
 
 As a sanity check, we compare the prediction accuracy of the robust and
 non-robust fits using only the “clean” data set. We re-compute the
@@ -369,4 +371,4 @@ boxplot(mspe.ro, mspe.gam, names=c('Robust', 'Classical'),
         col=rep(c('tomato3', 'gray80'), 2), main='Non-Trimmed MSPE On "clean" data')
 ```
 
-<img src="README_files/figure-gfm/boxplot.clean.predictions-1.png" width="33%" /><img src="README_files/figure-gfm/boxplot.clean.predictions-2.png" width="33%" />
+<img src="man/figures/boxplot.clean.predictions-1.png" width="33%" /><img src="man/figures/boxplot.clean.predictions-2.png" width="33%" />

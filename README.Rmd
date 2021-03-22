@@ -7,7 +7,7 @@ output: github_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, warning=FALSE, message=FALSE,
-                      fig.width=6, fig.height=6)
+                      fig.width=6, fig.height=6, fig.path = "man/figures/")
 ```
 
 ## A robust backfitting algorithm
