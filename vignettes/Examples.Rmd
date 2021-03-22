@@ -107,7 +107,7 @@ $h_j = \hat{\sigma}_j / 2$:
 bandw <- apply(dd[, names(dd) != 'medv'], 2, sd) / 2
 ```
 We are now ready to compute the robust backfitting estimators: 
-```{r robustfit, cache=TRUE}
+```{r robustfit}
 robust.fit <- backf.rob(medv ~ ., data = dd, degree = 0, type = 'Huber', 
                         windows = bandw)
 ```
@@ -142,7 +142,7 @@ we can pass those points using the argumen `point`. For example,
 to obtain predicted values at a point `po` given by the average of 
 the (log transformed) explanatory variables, we can use the following 
 command (note that this step implies re-fitting the whole model):
-```{r preds, cache=TRUE}
+```{r preds}
 po <- colMeans(dd[, names(dd) != 'medv'])
 robust.fit1 <- backf.rob(medv ~ ., data = dd, degree = 0, type = 'Huber', 
                          windows = bandw, point = po)
@@ -164,7 +164,7 @@ We now calculate the robust estimators using  the contaminated
 data set. Note that we expect them  to be very similar to 
 those we obtained before with the original 
 training set. 
-```{r robustplotswithoutliers, cache=TRUE}
+```{r robustplotswithoutliers}
 robust.fit.new <- backf.rob(medv ~ ., data = dd2, degree = 0, type = 'Huber', 
                             windows = bandw, point = po)
 summary(robust.fit.new)
@@ -251,7 +251,7 @@ The scatter plot suggests that the relationship between ozone and the other vari
 \end{equation} 
 To fit this model above we use robust local linear kernel M-estimators and Tukey's bisquare loss function. These choices are set using the arguments ``degree = 1`` and ``type='Tukey'`` in the call to the function ``backf.rob``.  The model is specified with the standard formula notation in R. The argument ``windows`` is a vector with the bandwidths to be used with each kernel smoother. To estimate optimal values we used a robust leave-one-out cross-validation approach (see Boente et al., 2017). As a robust prediction error measure we use `mu^2 + sigma^2` where `mu` and `sigma` are M-estimators of location and scale of the prediction errors, respectively. 
 
-```{r robustcv, warning=FALSE, cache=TRUE, eval=FALSE}
+```{r robustcv, warning=FALSE, eval=FALSE}
 library(RBF)
 
 # Bandwidth selection with leave-one-out cross-validation
@@ -309,7 +309,7 @@ As before, we use the R package `gam` to compute the
 classical additive model estimators for this model. 
 Optimal bandwidths were calculated using 
 leave-one-out cross-validation as before:
-```{r gamcv, cache=TRUE, warning=FALSE, eval=FALSE}
+```{r gamcv, warning=FALSE, eval=FALSE}
 library(gam)
 a <- c(.3, .4, .5, .6, .7, .8, .9)
 hh <- expand.grid(a, a, a)
@@ -476,7 +476,7 @@ We use 100 runs of 5-fold CV to compare the
 the robust fit and the classical one. 
 Note that the bandwidths are kept fixed 
 at their optimal value estimated above. 
-```{r pred2, cache=TRUE, warning=FALSE, eval=FALSE}
+```{r pred2, warning=FALSE, eval=FALSE}
 dd <- airquality
 dd <- dd[complete.cases(dd), c('Ozone', 'Solar.R', 'Wind', 'Temp')]
 # 100 runs of K-fold CV
