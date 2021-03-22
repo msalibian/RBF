@@ -75,8 +75,10 @@
 
       </header><div class="row">
   <div class="contents col-md-9">
-
-<p>Matias Salibian 2021-01-18</p>
+<div id="robust-backfitting" class="section level1">
+<div class="page-header"><h1 class="hasAnchor">
+<a href="#robust-backfitting" class="anchor"></a>Robust backfitting</h1></div>
+<p>Matias Salibian 2021-03-22</p>
 <div id="a-robust-backfitting-algorithm" class="section level2">
 <h2 class="hasAnchor">
 <a href="#a-robust-backfitting-algorithm" class="anchor"></a>A robust backfitting algorithm</h2>
@@ -97,7 +99,7 @@
 <span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span><span class="op">(</span><span class="va">airquality</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/graphics/pairs.html">pairs</a></span><span class="op">(</span><span class="va">airquality</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">'Ozone'</span>, <span class="st">'Solar.R'</span>, <span class="st">'Wind'</span>, <span class="st">'Temp'</span><span class="op">)</span><span class="op">]</span>, 
       pch<span class="op">=</span><span class="fl">19</span>, col<span class="op">=</span><span class="st">'gray30'</span>, cex<span class="op">=</span><span class="fl">1.5</span><span class="op">)</span></code></pre></div>
-<p><img src="README_files/figure-gfm/intro-1.png"><!-- --></p>
+<p><img src="reference/figures/intro-1.png"><!-- --></p>
 <p>The following bandwidths were obtained via a robust leave-one-out cross-validation procedure (described in the paper). As a robust prediction error measure we use <code>mu^2 + sigma^2</code> where <code>mu</code> and <code>sigma</code> are M-estimators of location and scale of the prediction errors, respectively. The code is copied below:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Bandwidth selection with leave-one-out cross-validation</span>
@@ -160,7 +162,7 @@
   <span class="va">oo</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/order.html">order</a></span><span class="op">(</span><span class="va">x0</span><span class="op">[</span>,<span class="va">j</span><span class="op">]</span><span class="op">)</span>
   <span class="fu"><a href="https://rdrr.io/r/graphics/lines.html">lines</a></span><span class="op">(</span><span class="va">x0</span><span class="op">[</span><span class="va">oo</span>,<span class="va">j</span><span class="op">]</span>, <span class="va">fit.full</span><span class="op">$</span><span class="va">g.matrix</span><span class="op">[</span><span class="va">oo</span>,<span class="va">j</span><span class="op">]</span>, lwd<span class="op">=</span><span class="fl">5</span>, col<span class="op">=</span><span class="st">'blue'</span><span class="op">)</span>
 <span class="op">}</span></code></pre></div>
-<p><img src="README_files/figure-gfm/showfits-1.png" width="33%"><img src="README_files/figure-gfm/showfits-2.png" width="33%"><img src="README_files/figure-gfm/showfits-3.png" width="33%"></p>
+<p><img src="reference/figures/showfits-1.png" width="33%"><img src="reference/figures/showfits-2.png" width="33%"><img src="reference/figures/showfits-3.png" width="33%"></p>
 <p>NOTE: These plots could also be obtained using the <code>plot</code> method:</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Plot each component</span>
@@ -208,14 +210,14 @@
   <span class="fu"><a href="https://rdrr.io/r/graphics/lines.html">lines</a></span><span class="op">(</span><span class="va">x</span><span class="op">[</span><span class="va">oo</span>,<span class="va">j</span><span class="op">]</span>, <span class="va">fit.full</span><span class="op">$</span><span class="va">g.matrix</span><span class="op">[</span><span class="va">oo</span>,<span class="va">j</span><span class="op">]</span>, lwd<span class="op">=</span><span class="fl">5</span>, col<span class="op">=</span><span class="st">'blue'</span><span class="op">)</span>
   <span class="fu"><a href="https://rdrr.io/r/graphics/lines.html">lines</a></span><span class="op">(</span><span class="va">x</span><span class="op">[</span><span class="va">oo</span>,<span class="va">j</span><span class="op">]</span>, <span class="va">fits</span><span class="op">[</span><span class="va">oo</span>,<span class="va">j</span><span class="op">]</span>, lwd<span class="op">=</span><span class="fl">5</span>, col<span class="op">=</span><span class="st">'magenta'</span><span class="op">)</span>
 <span class="op">}</span></code></pre></div>
-<p><img src="README_files/figure-gfm/classicfits-1.png" width="33%"><img src="README_files/figure-gfm/classicfits-2.png" width="33%"><img src="README_files/figure-gfm/classicfits-3.png" width="33%"></p>
+<p><img src="reference/figures/classicfits-1.png" width="33%"><img src="reference/figures/classicfits-2.png" width="33%"><img src="reference/figures/classicfits-3.png" width="33%"></p>
 <p>To identify potential outiers we look at the residuals from the robust fit, and use the function <code>boxplot</code>:</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">re.ro</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/residuals.html">residuals</a></span><span class="op">(</span><span class="va">fit.full</span><span class="op">)</span>
 <span class="va">ou.ro</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/graphics/boxplot.html">boxplot</a></span><span class="op">(</span><span class="va">re.ro</span>, col<span class="op">=</span><span class="st">'gray80'</span><span class="op">)</span><span class="op">$</span><span class="va">out</span>
 <span class="va">in.ro</span> <span class="op">&lt;-</span> <span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="va">re.ro</span><span class="op">)</span><span class="op">)</span><span class="op">[</span> <span class="va">re.ro</span> <span class="op">%in%</span> <span class="va">ou.ro</span> <span class="op">]</span>
 <span class="fu"><a href="https://rdrr.io/r/graphics/points.html">points</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="va">in.ro</span><span class="op">)</span><span class="op">)</span>, <span class="va">re.ro</span><span class="op">[</span><span class="va">in.ro</span><span class="op">]</span>, pch<span class="op">=</span><span class="fl">20</span>, cex<span class="op">=</span><span class="fl">1.5</span>, col<span class="op">=</span><span class="st">'red'</span><span class="op">)</span></code></pre></div>
-<p><img src="README_files/figure-gfm/outliers-1.png"><!-- --></p>
+<p><img src="reference/figures/outliers-1.png"><!-- --></p>
 <p>We highlight these suspicious observations on the scatter plot</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">cs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span><span class="op">(</span><span class="st">'gray30'</span>, <span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span><span class="op">(</span><span class="va">aircomplete</span><span class="op">)</span><span class="op">)</span>
@@ -224,7 +226,7 @@
 <span class="va">os2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="va">os</span><span class="op">[</span><span class="op">-</span><span class="va">in.ro</span><span class="op">]</span>, <span class="va">os</span><span class="op">[</span><span class="va">in.ro</span><span class="op">]</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/graphics/pairs.html">pairs</a></span><span class="op">(</span><span class="va">aircomplete</span><span class="op">[</span><span class="va">os2</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">'Ozone'</span>, <span class="st">'Solar.R'</span>, <span class="st">'Wind'</span>, <span class="st">'Temp'</span><span class="op">)</span><span class="op">]</span>, 
       pch<span class="op">=</span><span class="fl">19</span>, col<span class="op">=</span><span class="va">cs</span><span class="op">[</span><span class="va">os2</span><span class="op">]</span>, cex<span class="op">=</span><span class="fl">1.5</span><span class="op">)</span></code></pre></div>
-<p><img src="README_files/figure-gfm/showouts-1.png"><!-- --></p>
+<p><img src="reference/figures/showouts-1.png"><!-- --></p>
 <p>and on the partial residuals plots</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw">for</span><span class="op">(</span><span class="va">j</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">)</span> <span class="op">{</span>
@@ -235,7 +237,7 @@
   <span class="fu"><a href="https://rdrr.io/r/graphics/lines.html">lines</a></span><span class="op">(</span><span class="va">x</span><span class="op">[</span><span class="va">oo</span>,<span class="va">j</span><span class="op">]</span>, <span class="va">fit.full</span><span class="op">$</span><span class="va">g.matrix</span><span class="op">[</span><span class="va">oo</span>,<span class="va">j</span><span class="op">]</span>, lwd<span class="op">=</span><span class="fl">5</span>, col<span class="op">=</span><span class="st">'blue'</span><span class="op">)</span>
   <span class="fu"><a href="https://rdrr.io/r/graphics/lines.html">lines</a></span><span class="op">(</span><span class="va">x</span><span class="op">[</span><span class="va">oo</span>,<span class="va">j</span><span class="op">]</span>, <span class="va">fits</span><span class="op">[</span><span class="va">oo</span>,<span class="va">j</span><span class="op">]</span>, lwd<span class="op">=</span><span class="fl">5</span>, col<span class="op">=</span><span class="st">'magenta'</span><span class="op">)</span>
 <span class="op">}</span></code></pre></div>
-<p><img src="README_files/figure-gfm/showouts2-1.png" width="33%"><img src="README_files/figure-gfm/showouts2-2.png" width="33%"><img src="README_files/figure-gfm/showouts2-3.png" width="33%"></p>
+<p><img src="reference/figures/showouts2-1.png" width="33%"><img src="reference/figures/showouts2-2.png" width="33%"><img src="reference/figures/showouts2-3.png" width="33%"></p>
 <p>We now compute the classical backfitting algorithm on the data without the potential outliers identified by the robust fit (the optimal smoothing parameters for the non-robust fit were re-computed using leave-one-out cross-validation on the “clean” data set). Note that now both fits (robust and non-robust) are<br>
 almost identical.</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
@@ -255,7 +257,7 @@ almost identical.</p>
   <span class="va">oo</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/order.html">order</a></span><span class="op">(</span><span class="va">x</span><span class="op">[</span>,<span class="va">j</span><span class="op">]</span><span class="op">)</span>
   <span class="fu"><a href="https://rdrr.io/r/graphics/lines.html">lines</a></span><span class="op">(</span><span class="va">x</span><span class="op">[</span><span class="va">oo</span>,<span class="va">j</span><span class="op">]</span>, <span class="va">fit.full</span><span class="op">$</span><span class="va">g.matrix</span><span class="op">[</span><span class="va">oo</span>,<span class="va">j</span><span class="op">]</span>, lwd<span class="op">=</span><span class="fl">5</span>, col<span class="op">=</span><span class="st">'blue'</span><span class="op">)</span>
 <span class="op">}</span></code></pre></div>
-<p><img src="README_files/figure-gfm/bothonclean-1.png" width="33%"><img src="README_files/figure-gfm/bothonclean-2.png" width="33%"><img src="README_files/figure-gfm/bothonclean-3.png" width="33%"></p>
+<p><img src="reference/figures/bothonclean-1.png" width="33%"><img src="reference/figures/bothonclean-2.png" width="33%"><img src="reference/figures/bothonclean-3.png" width="33%"></p>
 <p>Finally, we compare the prediction accuracy obtained with each of the fits. Because we are not interested in predicting well any possible outliers in the data, we evaluate the quality of the predictions using a 5%-trimmed mean squared prediction error (effectively measuring the prediction accuracy on 95% of the data). We use this alpha-trimmed mean squared function:</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">tms</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">a</span>, <span class="va">alpha</span><span class="op">=</span><span class="fl">.1</span><span class="op">)</span> <span class="op">{</span>
@@ -297,7 +299,7 @@ almost identical.</p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/graphics/boxplot.html">boxplot</a></span><span class="op">(</span><span class="va">tmspe.ro</span>, <span class="va">tmspe.gam</span>, names<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">'Robust'</span>, <span class="st">'Classical'</span><span class="op">)</span>, 
         col<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">'tomato3'</span>, <span class="st">'gray80'</span><span class="op">)</span><span class="op">)</span> <span class="co">#, main='', ylim=c(130, 210))</span></code></pre></div>
-<p><img src="README_files/figure-gfm/pred3-1.png"><!-- --></p>
+<p><img src="reference/figures/pred3-1.png"><!-- --></p>
 <p>As a sanity check, we compare the prediction accuracy of the robust and non-robust fits using only the “clean” data set. We re-compute the optimal bandwidths for the robust fit using leave-one-out cross validation as above, and as above, note that these bandwidths are kept fixed. We use 100 runs of 5-fold cross-validation, and compute both the trimmed and the regular mean squared prediction errors of each fit.</p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">aq</span> <span class="op">&lt;-</span> <span class="va">airquality</span>
@@ -337,10 +339,10 @@ almost identical.</p>
         col<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">'tomato3'</span>, <span class="st">'gray80'</span><span class="op">)</span>, <span class="fl">2</span><span class="op">)</span>, main<span class="op">=</span><span class="st">'Trimmed MSPE On "clean" data'</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/graphics/boxplot.html">boxplot</a></span><span class="op">(</span><span class="va">mspe.ro</span>, <span class="va">mspe.gam</span>, names<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">'Robust'</span>, <span class="st">'Classical'</span><span class="op">)</span>, 
         col<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">'tomato3'</span>, <span class="st">'gray80'</span><span class="op">)</span>, <span class="fl">2</span><span class="op">)</span>, main<span class="op">=</span><span class="st">'Non-Trimmed MSPE On "clean" data'</span><span class="op">)</span></code></pre></div>
-<p><img src="README_files/figure-gfm/boxplot.clean.predictions-1.png" width="33%"><img src="README_files/figure-gfm/boxplot.clean.predictions-2.png" width="33%"></p>
+<p><img src="reference/figures/boxplot.clean.predictions-1.png" width="33%"><img src="reference/figures/boxplot.clean.predictions-2.png" width="33%"></p>
 </div>
 </div>
-
+</div>
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
