@@ -148,7 +148,7 @@ approach.
 The ``airquality`` data set contains 153 daily air quality measurements in
 the New York region between May and September, 1973
 [@ChambersClevelandKleinerTukey1983]. The interest is in modeling the mean
-Ozone (\lq\lq $\mbox{O}_3$\rq\rq) concentration as a function of 3 potential
+Ozone (\lq\lq Ozone\rq\rq) concentration as a function of 3 potential
 explanatory variables: solar radiance in the frequency band
 4000-7700 (\lq\lq Solar.R\rq\rq), wind speed (\lq\lq Wind\rq\rq) and
 temperature (\lq\lq Temp\rq\rq). We focus on the 111 complete entries in the
@@ -170,7 +170,7 @@ using an additive regression model of the form
 
 <!--Based on the results of the simulation study reported in
 @BoenteMartinezSalibian2017, w-->
-To fit the model above we use robust local linear kernel M-estimators and
+To fit the model above we use robust local linear kernel M-estimators with a 
 Tukey's bisquare loss function. These choices are set using the
 arguments ``degree = 1`` and ``type='Tukey'`` in the call to the function ``backf.rob``. 
 <!-- $\rho$ function we use its default value ``k.t = 4.685``, which corresponds
@@ -249,7 +249,7 @@ blue solid lines indicate the robust fit and magenta dashed ones the classical o
 ![Partial residuals and fits for the ``airquality`` data. Robust and classical fits are shown with solid blue and dashed magenta lines, respectively.  \label{fig:ozonetodos}](Figure-ozone-todos.png){ width=85% } 
 
 The two fits differ mainly on the estimated effects of wind speed and
-temperature. The classical estimate for $g_1(\mbox{Temp})$ is consistently
+temperature. The classical estimate for $g_3(\mbox{Temp})$ is consistently
 lower than the robust counterpart for $\mbox{Temp} \ge 85$. For wind speed,
 the non-robust estimate $\hat{g}_2(\mbox{Wind})$ suggests a higher effect
 over Ozone concentrations for low wind speeds than the one given by the
@@ -346,7 +346,13 @@ Outliers are highlighted in red. Note that both fits are now very close.
 An intuitive interpretation is that the robust fit has automatically down-weighted potential outliers 
 and produced estimates very similar to the classical ones applied to the \lq\lq  clean\rq\rq\ observations.
 
-![Plots of estimated curves and partial residuals. The solid blue lines indicate the robust fit computed on the whole data set, while the classical estimators computed on the \lq\lq clean\rq\rq data are shown with dashed magenta lines. Larger red circles indicate potential outliers. \label{fig:ozoneout}](Figure-ozone-out-cla-rob.png){ width=85% }
+![Plots of estimated curves and partial residuals. 
+The solid blue lines indicate the robust fit computed 
+on the whole data set, while the classical estimators 
+computed on the \lq\lq clean\rq\rq
+data are shown with dashed magenta lines. 
+Larger red circles indicate potential outliers. 
+\label{fig:ozoneout}](Figure-ozone-out-cla-rob.png){ width=85% }
 
 <!--
 <center> <img src="Figure-ozone-out-cla-rob-g1.png" 
@@ -378,7 +384,9 @@ Red points correspond to the potential outliers.
 The software is available at the Comprehensive R Archive Network [CRAN](https://CRAN.R-project.org/) 
 and also at the  GitHub repository
 [https://github.com/msalibian/RBF](https://github.com/msalibian/RBF). The GitHub repository also 
-contains detailed scripts reproducing the data analysis above.
+contains detailed scripts reproducing the data analysis above,
+and another detailed example is included in the package 
+vignette. 
 
 Contributions to this project can be submitted via pull requests on the GitHub repository. 
 Similarly, GitHub issues are the preferred venue to report suggestions and
