@@ -379,7 +379,7 @@ The software is available at the Comprehensive R Archive Network [CRAN](https://
 and also at the  GitHub repository
 [https://github.com/msalibian/RBF](https://github.com/msalibian/RBF). The GitHub repository also 
 contains detailed scripts reproducing the data analysis above,
-and another detailed example is included in the package 
+and another example is included in the package 
 vignette. 
 
 Contributions to this project can be submitted via pull requests on the GitHub repository. 
