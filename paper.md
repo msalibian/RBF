@@ -346,13 +346,7 @@ Outliers are highlighted in red. Note that both fits are now very close.
 An intuitive interpretation is that the robust fit has automatically down-weighted potential outliers 
 and produced estimates very similar to the classical ones applied to the \lq\lq  clean\rq\rq\ observations.
 
-![Plots of estimated curves and partial residuals. 
-The solid blue lines indicate the robust fit computed 
-on the whole data set, while the classical estimators 
-computed on the \lq\lq clean\rq\rq\
-data are shown with dashed magenta lines. 
-Larger red circles indicate potential outliers. 
-\label{fig:ozoneout}](Figure-ozone-out-cla-rob.png){ width=85% }
+![Plots of estimated curves and partial residuals. The solid blue lines indicate the robust fit computed on the whole data set, while the classical estimators computed on the \lq\lq clean\rq\rq\ data are shown with dashed magenta lines. Larger red circles indicate potential outliers. \label{fig:ozoneout}](Figure-ozone-out-cla-rob.png){ width=85% }
 
 <!--
 <center> <img src="Figure-ozone-out-cla-rob-g1.png" 
