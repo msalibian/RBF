@@ -127,8 +127,9 @@ where the minimization is computed over $\mu \in \mathbb{R}$, and functions
 $g_j$ with $E[g_j(X_j)] = 0$ and $E[g_j^2(X_j)] < \infty$. The loss function
 $\rho : \mathbb{R} \to \mathbb{R}$ is even, non-decreasing and non-negative,
 and $\sigma$ is the residual scale parameter. In practice, we replace
-$\sigma$ by a preliminary robust estimator $\hat{\sigma}$ (for example, a
-local MAD) and the expected value by the average over the training set. Note
+$\sigma$ by a preliminary robust estimator $\hat{\sigma}$ (for example,
+the Median Absolute Deviations (MAD) of the residuals from a local median
+fit) and the expected value by the average over the training set. Note
 that different choices of the loss function $\rho$ yield fits with varying
 robustness properties. Typical choices for $\rho$ are Tukey's bisquare family
 and Huber's loss [@maronna2018robust], and when $\rho(t) = t^2$, this
