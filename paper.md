@@ -134,7 +134,8 @@ $\rho : \mathbb{R} \to \mathbb{R}$ is even,
 non-decreasing and non-negative, and $\sigma$ is the residual
 scale parameter. In practice, we replace $\sigma$ by 
 a preliminary robust estimator $\hat{\sigma}$ 
-(for example, a local MAD). 
+(for example, a local MAD)  and the expected value 
+by the average over the training set. 
 Note that different choices of the loss function 
 $\rho$ yield fits with
 varying robustness properties. 
