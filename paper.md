@@ -42,9 +42,12 @@ of outliers in the training set.
 
 # Statement of Need
 
-The purpose of ``RBF`` is to provide a user-friendly implementation of a
-robust kernel-based estimation procedure for additive models that is resistant to
-the presence of potential outliers. 
+The purpose of ``RBF`` is to provide a user-friendly implementation of the 
+robust kernel-based estimation procedure for additive models 
+proposed in @BoenteMartinezSalibian2017, which are 
+resistant to
+the presence of potentially atypical or outlying observations
+in the training set. 
 
 # Implementation Goals
 
@@ -85,12 +88,16 @@ If $Y$ denotes the response variable, and $\textbf{X} = (X_1, \ldots, X_d)^\top$
 a vector of explanatory variables, then an additive regression model
 postulates that
 \begin{equation} \label{eq:model} 
-Y \ = \ \mu + \sum_{j=1}^d g_j(X_j) \, + \, \epsilon \, ,
+Y \ = \ \mu + \sum_{j=1}^d g_j(X_j) \, + \, \sigma \, 
+\epsilon \, ,
 \end{equation}
-where the error $\epsilon$ is independent of $\textbf{X}$ and centered at
-zero, the location parameter $\mu \in \mathbb{R}$, and $g_j \, : \, \mathbb{R}
-\to \mathbb{R}$ are smooth functions. Note that if $g_j( X_j ) = \beta_j \,
-X_j$ for some $\beta_j \in \mathbb{R}$ then \autoref{eq:model} reduces to a
+where the error $\epsilon$ is independent of $\textbf{X}$ and its distribution is centered at
+zero, $\sigma > 0$ is an unknown scale parameter, 
+the location parameter $\mu \in \mathbb{R}$, and $g_j \, : \, \mathbb{R}
+\to \mathbb{R}$ are smooth functions. Note that if 
+for all $1 \le j \le d$ we have 
+$g_j( X_j ) = \beta_j \,
+X_j$ for some $\beta_j \in \mathbb{R}$, then \autoref{eq:model} reduces to a
 standard linear regression model.
 <!-- The functions $g_j$ can be interpreted as the marginal effect
 of the $j$-th covariate on the expected value of the response when all
@@ -125,10 +132,14 @@ over $\mu \in \mathbb{R}$, and functions $g_j$ with $E[g_j(X_j)] = 0$ and
 $E[g_j^2(X_j)] < \infty$. The loss function 
 $\rho : \mathbb{R} \to \mathbb{R}$ is even,
 non-decreasing and non-negative, and $\sigma$ is the residual
-scale. Different choices of the loss function $\rho$ yield fits with
+scale parameter. In practice, we replace $\sigma$ by 
+a preliminary robust estimator $\hat{\sigma}$ 
+(for example, a local MAD). 
+Note that different choices of the loss function 
+$\rho$ yield fits with
 varying robustness properties. 
 Typical choices for $\rho$ are Tukey's bisquare family
-and Huber's loss [@maronna2018robust].  Note that when $\rho(t) =
+and Huber's loss [@maronna2018robust], and when $\rho(t) =
 t^2$, this approach reduces to the standard backfitting.  
 
 Simulation experiments reported in @BoenteMartinezSalibian2017 show that the
@@ -172,7 +183,7 @@ using an additive regression model of the form
 @BoenteMartinezSalibian2017, w-->
 To fit the model above we use robust local linear kernel M-estimators with a 
 Tukey's bisquare loss function. These choices are set using the
-arguments ``degree = 1`` and ``type='Tukey'`` in the call to the function ``backf.rob``. 
+arguments ``degree = 1`` and ``type = 'Tukey'`` in the call to the function ``backf.rob``. 
 <!-- $\rho$ function we use its default value ``k.t = 4.685``, which corresponds
 to a linear regression estimator with 95\% efficiency when errors are Gaussian.
 This choice provides a good balance between robustness and efficiency. -->
@@ -214,7 +225,7 @@ iterations).
 -->
 
 A different kernel M-estimator can be used in the robust backfitting
-algorithm by setting ``type='Huber'`` in the call above. Unlike Tukey's
+algorithm by setting ``type = 'Huber'`` in the call above. Unlike Tukey's
 re-descending score function, Huber's function is monotone, and numerical
 experiments show that the resulting estimator typically has larger bias. 
 However, the corresponding objective function is convex and thus standard
