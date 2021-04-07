@@ -1,7 +1,7 @@
 Robust backfitting
 ================
 Matias Salibian
-2021-03-22
+2021-04-07
 
 ## A robust backfitting algorithm
 
@@ -14,6 +14,10 @@ Salibian-Barrera in
 > additive models using backfitting. Journal of Nonparametric
 > Statistics. Taylor & Francis; 29, 744-767. [DOI:
 > 10.1080/10485252.2017.1369077](https://doi.org/10.1080/10485252.2017.1369077)
+
+A paper about this software package appeared in the [The Journal of Open
+Source Software](https://joss.theoj.org/) and can be found here:
+[![DOI](https://joss.theoj.org/papers/10.21105/joss.02992/status.svg)](https://doi.org/10.21105/joss.02992)
 
 This repository contains a development version of `RBF` which may differ
 slightly from the one available on CRAN (until the CRAN version is
