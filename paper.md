@@ -33,7 +33,7 @@ Although highly flexible, non-parametric regression models typically require
 large sample sizes to be estimated reliably, particularly when they include
 many explanatory variables. Additive models provide an alternative that is
 more flexible than linear models, not affected by the curse of
-dimensionality, and also allow the exploration of individual covariate
+dimensionality, and also allows the exploration of individual covariate
 effects. Standard algorithms to fit these models can be highly susceptible to
 the presence of a few atypical or outlying observations in the data. The
 ``RBF`` [@RBF] package for R implements the robust estimator for additive
@@ -76,9 +76,9 @@ smoothing parameter used for obtaining the estimator.
 -->
 
 Additive models offer a non-parametric generalization of linear models
-[@HastieTibshirani1990]. They are flexible, interpretable and avoid the
-*curse of dimensionality* which means that, as the number of explanatory
-variables increases, neighbourhoods rapidly become sparse, and much fewer
+[@HastieTibshirani1990]. They are flexible, interpretable, and avoid the
+*curse of dimensionality*, which means that as the number of explanatory
+variables increases, neighbourhoods rapidly become sparse, and many fewer
 training observations are available to estimate the regression function at
 any one point.
 
@@ -142,7 +142,7 @@ proportions and settings. Those experiments also confirm that the robust
 backfitting estimators are very similar to the standard ones when the data do
 not contain atypical observations.
 
-In the next Section we illustrate the use of the robust backfitting algorithm
+In the next section we illustrate the use of the robust backfitting algorithm
 as implemented in the ``RBF`` package by applying it to a real data set. We
 also compare the results with those obtained with the standard backfitting
 approach.
@@ -152,7 +152,7 @@ approach.
 The ``airquality`` data set contains 153 daily air quality measurements in
 the New York region between May and September, 1973
 [@ChambersClevelandKleinerTukey1983]. The interest is in modeling the mean
-Ozone (\lq\lq Ozone\rq\rq) concentration as a function of 3 potential
+ozone (\lq\lq Ozone\rq\rq) concentration as a function of three potential
 explanatory variables: solar radiance in the frequency band
 4000-7700 (\lq\lq Solar.R\rq\rq), wind speed (\lq\lq Wind\rq\rq) and
 temperature (\lq\lq Temp\rq\rq). We focus on the 111 complete entries in the
@@ -253,7 +253,7 @@ dashed ones the classical one.
 
 ![Partial residuals and fits for the ``airquality`` data. Robust and classical fits are shown with solid blue and dashed magenta lines, respectively.  \label{fig:ozonetodos}](Figure-ozone-todos.png){ width=85% } 
 
-The two fits differ mainly on the estimated effects of wind speed and
+The two fits differ mainly in the estimated effects of wind speed and
 temperature. The classical estimate for $g_3(\mbox{Temp})$ is consistently
 lower than the robust counterpart for $\mbox{Temp} \ge 85$. For wind speed,
 the non-robust estimate $\hat{g}_2(\mbox{Wind})$ suggests a higher effect
@@ -281,7 +281,7 @@ corresponding estimated additive components of the model.
 
 Residuals from a robust fit can generally be used to detect the presence of
 atypical observations in the training data. \autoref{fig:boxplot}
-displays a boxplot of these residuals. We note 4 possible outlying points
+displays a boxplot of these residuals. We note four possible outlying points
 (indicated with red circles).
 
 <!-- In addition to displaying the boxplot, we use the function
