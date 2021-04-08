@@ -1,6 +1,3 @@
-Robust backfitting
-================
-
 ## RBF 2.1.0
 
  - Add a vignette file with additional examples.
@@ -8,3 +5,4 @@ Robust backfitting
  - Add `formula` output to print methods (via calls).
  - Fix problem for predicting with the argument `point` in the `backf.cl` function.
  - Update README file with link to JOSS paper.
+ 
