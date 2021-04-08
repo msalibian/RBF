@@ -9,8 +9,8 @@ Authors@R: c(person("Matias", "Salibian-Barrera", role = c("aut", "cre"), email 
 Description: A robust backfitting algorithm for additive models based on (robust) local polynomial 
              kernel smoothers. It includes both bounded and re-descending (kernel) M-estimators, and
              it computes predictions for points outside the training set if desired. See
-             Boente, Martinez and Salibian-Barrera (2017) <doi:10.1080/10485252.2017.1369077> for
-             details. 
+             Boente, Martinez and Salibian-Barrera (2017) <doi:10.1080/10485252.2017.1369077> and 
+             Martinez and Salibian-Barrera (2021) <doi:10.21105/joss.02992> for details. 
 License: GPL (>=3.0)
 RoxygenNote: 7.1.1
 Encoding: UTF-8

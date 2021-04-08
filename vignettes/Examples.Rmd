@@ -22,6 +22,7 @@ robust backfitting estimator for additive models, and
 illustrate the use of the package `RBF` that implements it. 
 These estimators were originally proposed in 
 Boente G, Martinez A, Salibian-Barrera M. (2017). 
+See also Martinez A. and Salibian-Barrera M. (2021).
 
 Below we analyze two data sets. The first one
 shows the robustness of the robust backfitting estimators 
@@ -572,3 +573,5 @@ Chambers, J. M., Cleveland W. S., Kleiner B. and Tukey A. (1983). *Graphical Met
 Härdle, W., Müller, M., Sperlich, S. and Werwatz, A. (2004). *Nonparametric and Semiparametric Models*. Springer. [DOI: 10.1007/978-3-642-17146-8](https://doi.org/10.1007/978-3-642-17146-8)
 
 Harrinson, D. and Rubinfeld, D. L. (1978). Hedonic prices and the demand for clean air. *J. Environ. Economics and Management*, **5**, 81-102. [DOI: 10.1016/0095-0696(78)90006-2](https://doi.org/10.1016/0095-0696(78)90006-2)
+
+Martinez A, and Salibian-Barrera M. (2021) RBF: An R package to compute a robust backfitting estimator for additive models. *Journal of Open Source Software*, **6(60)**. [DOI: 10.21105/joss.02992](https://doi.org/10.21105/joss.02992)
