@@ -742,7 +742,8 @@ predict.backf <- function(object, ...){
 #'
 #' @author Alejandra Mercedes Martinez \email{ale_m_martinez@hotmail.com}
 #'
-#' @rawNamespace S3method(fitted.values, backf)
+#' @method fitted.values backf
+#' @export
 fitted.values.backf <- function(object,...){
   UseMethod("fitted")
 }

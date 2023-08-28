@@ -4,7 +4,7 @@
 \alias{fitted.values.backf}
 \title{Fitted values for objects of class \code{backf}}
 \usage{
-fitted.values.backf(object, ...)
+\method{fitted.values}{backf}(object, ...)
 }
 \arguments{
 \item{object}{an object of class \code{backf}, a result of a call to \code{\link{backf.cl}} or \code{\link{backf.rob}}.}
