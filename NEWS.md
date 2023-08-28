@@ -1,3 +1,6 @@
+## RBF 2.1.1
+ - Fixed conflict between Details section of package man page and DESCRIPTION content.
+
 ## RBF 2.1.0
 
  - Add a vignette.
